@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+    <meta charset="UTF-8">
+    <title>Seat Reservation Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="text-center"><h2>[[${pageTitle}]]</h2></div>
+
+        <form th:action="@{/admin/seats/save}" method="post" th:object="${seat}" enctype="multipart/form-data"
+              style="max-width: 500px; margin: 0 auto;">
+            <input type="hidden" th:field="*{id}">
+            <div class="border border-secondary rounded p-3">
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Name:</label>
+                    <div class="col-sm-8">
+                        <input type="text" th:field="*{name}" class="form-control" placeholder="G01" required th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:errors="*{name}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Vehicle:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" required th:field="*{vehicle}">
+                            <option value=""></option>
+                            <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.name}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('vehicle')}" class="invalid-feedback">
+                            <span th:errors="*{vehicle}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary m-2">Save</button>
+                    <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+    <script type="text/javascript">
+        function cancelForm() {
+            window.location = "[[@{/admin/seats}]]";
+        }
+
+    </script>
+</div>
+
+</body>
+</html>

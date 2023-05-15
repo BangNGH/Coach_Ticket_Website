@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+  <meta charset="UTF-8">
+  <title>Seat Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid">
+    <div class="text-center"><h2>[[${pageTitle}]]</h2></div>
+
+    <form th:action="@{/admin/seat-reservation/save}" method="post" th:object="${seatReservation}" enctype="multipart/form-data"
+          style="max-width: 500px; margin: 0 auto;">
+      <input type="hidden" th:field="*{id}">
+      <div class="border border-secondary rounded p-3">
+
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Booking:</label>
+          <div class="col-sm-8">
+            <select class="form-control" required th:field="*{booking}" name="booking" onchange="loadSeats()">
+              <option value=""></option>
+              <option th:each="ticket : ${tickets}" th:value="${ticket.id}" th:text="${ticket.user.email}"></option>
+            </select>
+            <div th:if="${#fields.hasErrors('booking')}" class="invalid-feedback">
+              <span th:errors="*{booking}"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Choose Seat reservation:</label>
+          <div class="col-sm-8">
+            <select class="form-control" th:field="*{seat}" required name="seat">
+              <option value=""></option>
+            </select>
+            <div th:if="${#fields.hasErrors('seat')}" class="invalid-feedback">
+              <span th:errors="*{seat}"></span>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary m-2">Save</button>
+          <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+    <script th:inline="javascript">
+      function loadSeats() {
+        var bookingId = $("select[name='booking']").val();
+        var seatsSelect = $("select[name='seat']");
+
+        // Clear previous options
+        seatsSelect.empty();
+
+        // Load seats via AJAX
+        $.ajax({
+          url: '/api/seat-reservation/load-seats', // Đường dẫn API để tải danh sách seat dựa trên bookingId
+          method: 'GET',
+          data: {bookingId: bookingId},
+          success: function(seats) {
+            // Đổ danh sách seat vào trường "seat" trong form
+            $.each(seats, function(index, seat) {
+              seatsSelect.append('<option value="' + seat.id + '">' + seat.name + '</option>');
+            });
+          },
+          error: function() {
+            // Xử lý lỗi nếu có
+          }
+        });
+      }
+    </script>
+
+  </div>
+  <script type="text/javascript">
+    function cancelForm() {
+      window.location = "[[@{/admin/seat-reservation}]]";
+    }
+
+  </script>
+</div>
+
+</body>
+</html>

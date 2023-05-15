@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Voler Admin Dashboard</title>
+
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <link rel="stylesheet" th:href="@{/css/chart.min.css}">
+
+  <link rel="stylesheet" th:href="@{/css/perfect-scrollbar.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
+  <style>
+    .activeCurrentPage {
+      background-color: #007bff;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<div id="app"><!--Main content-->
+  <span th:replace="admin/fragments/sidebar :: sidebar"></span>
+  <div id="main"><!--Content id-->
+    <span th:replace="admin/fragments/header :: header"></span>
+    <div layout:fragment="content"><!--dynamic content-->
+
+    </div>
+    <span th:replace="admin/fragments/footer :: footer"></span>
+  </div>
+</div>
+<script th:src="@{/js/perfect-scrollbar.min.js}"></script>
+
+<script th:src="@{/js/chart.min.js}"></script>
+<script th:src="@{/js/apexcharts.min.js}"></script>
+<script th:src="@{/js/dashboard.js}"></script>
+
+<script th:src="@{/js/feather.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+
+
+</body>
+</html>

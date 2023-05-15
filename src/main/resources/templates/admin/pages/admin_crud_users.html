@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Users</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <div class="container-fluid text-center">
+    <div><h2>Manage Users</h2></div>
+    <input type="text" class="input-group-text" placeholder="search by email, name" id="q" size="50">
+    <hr/>
+
+
+    <div th:if="${raMessage}" class="alert alert-success text-center">
+      [[${raMessage}]]
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger text-center">
+      [[${errorMessage}]]
+    </div>
+
+    <div>
+      <table class="table table-bordered" id="tblUsers">
+        <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Full Name</th>
+          <th>E-mail</th>
+          <th>Password</th>
+          <th>Address</th>
+          <th>Role</th>
+          <th>Is-Enabled?</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="user : ${users}">
+          <tr>
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.fullname}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.password}"></td>
+            <td th:text="${user.address}"></td>
+            <td th:text="${user.role}"></td>
+            <td th:text="${user.enabled}"></td>
+            <td>
+              <a th:href="@{'/admin/users/edit/' + ${user.id}}">Edit</a> |
+              <a th:href="@{'/admin/users/delete/' + ${user.id}}">Delete</a>
+            </td>
+          </tr>
+        </th:block>
+        </tbody>
+      </table>
+      <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+              <a class="page-link" th:href="@{/admin/users/page/1}">First</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+              <a class="page-link" th:href="@{/admin/users/page/{page}(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+              <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                 th:href="@{/admin/users/page/{page}(page=${page})}" th:text="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+              <a class="page-link" th:href="@{/admin/users/page/{page}(page=${currentPage + 1})}">Next</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+              <a class="page-link" th:href="@{/admin/users/page/{page}(page=${totalPages})}">Last</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+        <a th:href="@{/admin/users/new}" class="btn btn-info" style="float: right; margin: 10px">Create User</a>
+    </div>
+  </div>
+  <script th:src="@{/js/ajax/users.js}"></script>
+</div>
+
+</body>
+</html>

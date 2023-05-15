@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="text-center"><h2>[[${pageTitle}]]</h2></div>
+
+        <form th:action="@{/admin/bookings/save}" method="post" th:object="${booking}"
+              style="max-width: 500px; margin: 0 auto;">
+            <input type="hidden" th:field="*{id}">
+            <div class="border border-secondary rounded p-3">
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Trip:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" required name="trip" th:field="*{trip}" onchange="loadTrips()">
+                            <option value=""></option>
+                            <option th:each="trip : ${trips}" th:value="${trip.id}" th:text="${trip.route.name} +' '+ ${trip.startTime}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('trip')}" class="invalid-feedback">
+                            <span th:errors="*{trip}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Trip-info:</label>
+                    <div class="col-sm-8">
+                            <input class="form-control" type="text" id="tripInfo" disabled/>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Booking-Date:</label>
+                    <div class="col-sm-8">
+                        <input type="date" th:field="*{booking_date}" class="form-control" required th:classappend="${#fields.hasErrors('booking_date')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:errors="*{booking_date}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">User:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" required th:field="*{user}">
+                            <option value=""></option>
+                            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullname}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('user')}" class="invalid-feedback">
+                            <span th:errors="*{user}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Is-Paid:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" th:field="*{isPaid}">
+                            <option value="True">True</option>
+                            <option value="False">False</option>
+                        </select>
+                    </div>
+                </div>
+<!--
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Booking-time:</label>
+                    <div class="col-sm-8">
+                        <input type="datetime-local" id="booking-time" th:field="*{booking_time}" class="form-control" th:classappend="${#fields.hasErrors('booking_time')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:errors="*{booking_time}"></div>
+                    </div>
+                </div>
+-->
+<!--
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Round trip ticket?:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" th:field="*{round_trip_ticket}">
+                            <option value="False">False</option>
+                            <option value="True">True</option>
+                        </select>
+                    </div>
+                </div>-->
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary m-2">Save</button>
+                    <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+                </div>
+            </div>
+
+        </form>
+        <script th:inline="javascript">
+            function loadTrips() {
+                var tripId = $("select[name='trip']").val();
+                var tripInfo = $("#tripInfo");
+
+                // Clear previous options
+                tripInfo.empty();
+
+                // Load seats via AJAX
+                $.ajax({
+                    url: '/api/bookings/load-trip',
+                    method: 'GET',
+                    data: {tripId: tripId},
+                    success: function(trip) {
+                        // Đổ danh sách seat vào trường "seat" trong form
+                        tripInfo.val(trip.vehicle.name + ' ' + ' Giá:' + trip.price +'đ');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        alert("ajax load fail")
+                    }
+
+                });
+            }
+        </script>
+    </div>
+
+    <script type="text/javascript">
+        function cancelForm() {
+            window.location = "[[@{/admin/bookings}]]";
+        }
+    </script>
+</div>
+
+</body>
+</html>

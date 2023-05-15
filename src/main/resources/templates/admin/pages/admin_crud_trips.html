@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Trips</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <div class="container-fluid text-center">
+    <div><h2>Manage Trips</h2></div>
+    <input type="text" class="input-group-text" placeholder="search trips" id="q" size="50">
+    <hr/>
+    <div th:if="${raMessage}" class="alert alert-success text-center">
+      [[${raMessage}]]
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger text-center">
+      [[${errorMessage}]]
+    </div>
+
+    <div>
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Tuyến</th>
+          <th>Xe</th>
+          <th>Giờ đi</th>
+          <th>Giá</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        <th:block th:each="trip: ${trips}">
+          <tr>
+            <td>[[${trip.id}]]</td>
+            <td>[[${trip.route.name}]]</td>
+            <td>[[${trip.vehicle.name}]]</td>
+            <td>[[${trip.startTime}]]</td>
+            <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
+            <td>
+              <a th:href="@{'/admin/trips/edit/' + ${trip.id}}">Edit</a> |
+              <a th:href="@{'/admin/trips/delete/' + ${trip.id}}">Delete</a>
+            </td>
+          </tr>
+        </th:block>
+        </tbody>
+      </table>
+
+      <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+              <a class="page-link" th:href="@{/admin/trips/page/1}">First</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+              <a class="page-link" th:href="@{/admin/trips/page/{page}(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+              <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                 th:href="@{/admin/trips/page/{page}(page=${page})}" th:text="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+              <a class="page-link" th:href="@{/admin/trips/page/{page}(page=${currentPage + 1})}">Next</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+              <a class="page-link" th:href="@{/admin/trips/page/{page}(page=${totalPages})}">Last</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <a th:href="@{/admin/trips/new}" class="btn btn-info" style="float: right; margin: 10px">Create Trip</a>
+    </div>
+    <script th:src="@{/js/ajax/trips.js}"></script>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+</head>
+<body>
+<header id="header" th:fragment="header">
+    <div class="header-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-sm-6 col-6 header-top-left">
+                    <ul>
+                        <li>
+                            <a th:href="@{/logout}" style="color: snow" th:inline="text">Login/Logout</a>
+                        </li>
+                        <li><a style="color: snow" th:inline="text">Hello <span th:remove="tag"
+                                                                                sec:authentication="name"></span>!</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-6 header-top-right">
+                    <div class="header-social">
+                        <a href="#"><i class="fab fa-facebook"></i></a> <a href="#"><i
+                            class="fab fa-twitter"></i></a> <a href="#"><i
+                            class="fab fa-dribbble"></i></a> <a href="#"><i
+                            class="fab fa-behance"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container main-menu">
+        <div class="row align-items-center justify-content-between d-flex">
+            <div id="logo">
+                <a href="index.html"><img src="img/logo.png" alt="" title=""/></a>
+            </div>
+            <nav id="nav-menu-container">
+                <ul class="nav-menu">
+                    <li><a th:href="@{/home}">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="hotels.html">Hotels</a></li>
+                    <li><a href="insurance.html">Insurence</a></li>
+                    <li class="menu-has-children"><a href="">Blog</a>
+                        <ul>
+                            <li><a href="blog-home.html">Blog Home</a></li>
+                            <li><a href="blog-single.html">Blog Single</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-has-children"><a href="">Pages</a>
+                        <ul>
+                            <li><a href="elements.html">Elements</a></li>
+                            <li class="menu-has-children"><a href="">Level 2 </a>
+                                <ul>
+                                    <li><a href="#">Item One</a></li>
+                                    <li><a href="#">Item Two</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <!-- #nav-menu-container -->
+        </div>
+    </div>
+</header>
+<section class="banner-area relative">
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div
+                class="row fullscreen align-items-center justify-content-between">
+            <div class="col-lg-6 col-md-6 banner-left">
+                <h6 class="text-white">Away from monotonous life</h6>
+                <h1 class="text-white">Magical Travel</h1>
+                <p class="text-white">If you are looking at blank cassettes on
+                    the web, you may be very confused at the difference in price. You
+                    may see some for as low as $.17 each.</p>
+                <a href="#" class="primary-btn text-uppercase">Get Started</a>
+            </div>
+            <div class="col-lg-4 col-md-6 banner-right">
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="flight" role="tabpanel" aria-labelledby="flight-tab">
+                        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+                            [[${errorMessage}]]
+                        </div>
+                        <form class="form-wrap" th:action="@{/home/find}" method="post" id="tripForm">
+                           <!-- <div class="form-group row">
+                                <label class="col-form-label col-sm-3">Loại vé:</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="round-trip" id="round-trip"
+                                               value="true" checked>
+                                        <label class="form-check-label" for="round-trip">Khứ hồi</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="round-trip" id="one-way"
+                                               value="false">
+                                        <label class="form-check-label" for="one-way">Một chiều</label>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-3">Điểm đi:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" required id="startCity" name="startCity">
+                                        <option value=""></option>
+                                        <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-3">Điểm đến:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" required id="endCity" name="endCity">
+                                        <option value=""></option>
+                                        <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-3">Ngày đi :</label>
+                                <div class="col-sm-9">
+                                    <input type="date" id="startTime" class="form-control" required name="startTime">
+                                </div>
+                            </div>
+                           <!-- <div class="form-group row">
+                                <label class="col-form-label col-sm-3">Ngày về:</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control" id="endTime" name="endTime">
+                                </div>
+                            </div>-->
+                            <button type="submit" class="primary-btn text-uppercase">Tìm chuyến xe</button>
+                        </form>
+                        <script>
+                            // Lấy ngày hiện tại
+                            var currentDate = new Date().toISOString().split('T')[0];
+
+                            // Thiết lập thuộc tính min của input
+                            document.getElementById('startTime').setAttribute('min', currentDate);
+
+                            var now = new Date();
+                            // Chuyển đổi thành chuỗi định dạng yyyy-mm-dd để có thể sử dụng cho input date
+                            var dateString = now.toISOString().slice(0,10);
+                            // Đặt giá trị của input "start-time" là thời gian hiện tại
+                            document.getElementById("startTime").value = dateString;
+                            document.getElementById("endTime").value = dateString;
+
+                            /*const roundTrip = document.querySelector('#round-trip');
+                            const oneWay = document.querySelector('#one-way');
+                            const endTimeInput = document.querySelector('#endTime');
+
+                            roundTrip.addEventListener('change', () => {
+                                if (roundTrip.checked) {
+                                    endTimeInput.style.display = 'block';
+
+                                } else {
+                                    endTimeInput.style.display = 'none';
+                                }
+                            });
+
+                            oneWay.addEventListener('change', () => {
+                                if (oneWay.checked) {
+                                    endTimeInput.style.display = 'none';
+                                } else {
+                                    endTimeInput.style.display = 'block';
+                                }
+                            });
+*/
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

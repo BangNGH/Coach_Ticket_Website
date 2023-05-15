@@ -1,0 +1,115 @@
+package dacs.nguyenhuubang.bookingwebsiteV1.controller;
+
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Route;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.RouteService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.TripService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.VehiclesService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@RequiredArgsConstructor
+@RequestMapping("/admin/trips")
+@Controller
+public class TripController {
+    private final RouteService routeService;
+    private final VehiclesService vehiclesService;
+    private final TripService tripService;
+
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
+        int pageSize = 5;
+        Page<Trip> page = tripService.findPaginated(pageNo, pageSize);
+        List<Trip> trips = page.getContent();
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("trips", trips);
+        return "admin/pages/admin_crud_trips";
+    }
+
+    @GetMapping("")
+    public String getTrips(Model model){
+        return findPaginated(1, model);
+    }
+
+    @GetMapping("/new")
+    public String showCreateForm(Model model){
+        model.addAttribute("pageTitle", "Create New");
+        List<Route> routes = routeService.getRoutes();
+        List<Vehicle> vehicles = vehiclesService.getList();
+        if (routes.isEmpty() || vehicles.isEmpty()){
+            model.addAttribute("message", "Các khóa ngoại liên quan đã bị xóa");
+            return "error_message";
+        }
+        model.addAttribute("trip", new Trip());
+        model.addAttribute("routes", routes);
+        model.addAttribute("vehicles", vehicles);
+        return "admin/pages/trip_form";
+    }
+    @PostMapping("/save")
+    public String save(@Valid @ModelAttribute("trip") Trip trip, BindingResult bindingResult, Model model, RedirectAttributes re) throws IOException {
+        if (bindingResult.hasErrors()) {
+            List<Route> routes = routeService.getRoutes();
+            model.addAttribute("routes", routes);
+            List<Vehicle> vehicles = vehiclesService.getList();
+            model.addAttribute("vehicles", vehicles);
+            return "admin/pages/trip_form";
+        }
+
+
+        tripService.save(trip);
+        re.addFlashAttribute("raMessage", "The trip has been saved successfully.");
+        return "redirect:/admin/trips";
+    }
+
+
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
+        try{
+            Trip trip = tripService.get(id);
+            model.addAttribute("trip", trip);
+            model.addAttribute("pageTitle", "Edit Trip (ID: "+id+")");
+            List<Route> routes = routeService.getRoutes();
+            model.addAttribute("routes", routes);
+            List<Vehicle> vehicles = vehiclesService.getList();
+            model.addAttribute("vehicles", vehicles);
+            return "admin/pages/trip_form";
+        }catch (ResourceNotFoundException e){
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/trips";
+        }
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
+        try{
+            tripService.delete(id);
+            ra.addFlashAttribute("raMessage", "The trip (ID: "+id+") has been deleted");
+        }catch (ResourceNotFoundException e){
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }catch (CannotDeleteException e){
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/trips";
+    }
+
+}

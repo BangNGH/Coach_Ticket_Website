@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Seat-Reservation</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="container-fluid text-center">
+        <div><h2>Manage Seat-Reservation</h2></div>
+        <input type="text" class="input-group-text" placeholder="search seat-reservation" id="q" size="50">
+        <hr/>
+        <div th:if="${raMessage}" class="alert alert-success text-center">
+            [[${raMessage}]]
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+            [[${errorMessage}]]
+        </div>
+
+        <div>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User Booking</th>
+                    <th>Vehicle</th>
+                    <th>Seat-Reservation</th>
+                    <th>License-Plates</th>
+                    <th>Start Time</th>
+                    <th>Seat available</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="seatReservation : ${seatReservations}">
+                    <tr>
+                        <td>[[${seatReservation.id}]]</td>
+                        <td>[[${seatReservation.booking.user.email}]]</td>
+                        <td>[[${seatReservation.seat.vehicle.name}]]</td>
+                        <td>[[${seatReservation.seat.name}]]</td>
+                        <td>[[${seatReservation.seat.vehicle.licensePlates}]]</td>
+                        <td>[[${seatReservation.booking.trip.startTime}]] [[${#temporals.format(seatReservation.booking.booking_date, 'dd/MM/yyyy')}]]</td>
+                        <td>[[${seatReservation.seatsAvailable}]]</td>
+                        <td>
+                            <a th:href="@{'/admin/seat-reservation/edit/' + ${seatReservation.id}}">Edit</a> |
+                            <a th:href="@{'/admin/seat-reservation/delete/' + ${seatReservation.id}}">Delete</a>
+                        </td>
+                    </tr>
+                </th:block>
+
+                </tbody>
+            </table>
+
+            <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+                            <a class="page-link" th:href="@{/admin/seat-reservation/page/1}">First</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+                            <a class="page-link" th:href="@{/admin/seat-reservation/page/{page}(page=${currentPage - 1})}">Previous</a>
+                        </li>
+                        <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+                            <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                               th:href="@{/admin/seat-reservation/page/{page}(page=${page})}" th:text="${page}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+                            <a class="page-link" th:href="@{/admin/seat-reservation/page/{page}(page=${currentPage + 1})}">Next</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+                            <a class="page-link" th:href="@{/admin/seat-reservation/page/{page}(page=${totalPages})}">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <a th:href="@{/admin/seat-reservation/new}" class="btn btn-info" style="float: right; margin: 10px">Create SeatReservation</a>
+
+        </div>
+    </div>
+    <script th:src="@{/js/ajax/seatreservation.js}"></script>
+
+</div>
+</body>
+</html>
