@@ -1,6 +1,5 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,9 @@ public class BookingService {
         return (List<Booking>)bookingRepository.findAll();
     }
 
-    public void save(Booking booking) {
+    public Booking save(Booking booking) {
         bookingRepository.save(booking);
+        return booking;
     }
 
     public Booking get(Integer id){

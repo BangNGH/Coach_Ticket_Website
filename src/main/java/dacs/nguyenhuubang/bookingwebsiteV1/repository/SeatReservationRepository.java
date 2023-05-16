@@ -1,9 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.repository;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.SeatReservation;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -30,6 +27,8 @@ public interface SeatReservationRepository extends JpaRepository<SeatReservation
     List<Seat> listAvailableSeat(Vehicle vehicle, Trip trip, LocalDate bookingDate);
 
 
+    @Query("SELECT s.seat FROM SeatReservation s where s.booking =?1")
+    List<Seat> reservedSeat(Booking booking);
 }
 /*    @Modifying
     @Transactional

@@ -174,52 +174,7 @@
                 }
             });
         </script>
-
-
-
     </div>
 </div>
 </body>
 </html>
-<!--    <script>
-        $(document).ready(function () {
-            $('#bookTickets').click(function () {
-                var selectedSeats = $('input[name="selectedSeats"]:checked').map(function () {
-                    return $(this).val();
-                }).get();
-
-                if (selectedSeats.length === 0) {
-                    alert('Bạn cần chọn ít nhất một ghế để đặt vé.');
-                    return;
-                }
-
-                var selectedTrip = $('input[name="selectedTrip"]:checked').val();
-                if (selectedTrip === undefined) {
-                    alert('Bạn cần chọn chuyến xe để đặt vé.');
-                    return;
-                }
-
-                var csrfToken = $("meta[name='_csrf']").attr("content");
-                var csrfHeader = $("meta[name='_csrf_header']").attr("content");
-
-                $.ajax({
-                    url: '/bookTickets',
-                    type: 'POST',
-                    data: {
-                        tripId: selectedTrip,
-                        seatIds: selectedSeats
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader(csrfHeader, csrfToken);
-                    },
-                    success: function (data) {
-                        // Thực hiện các thay đổi trong trang của bạn để hiển thị thông tin đặt vé
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        // Hiển thị thông báo lỗi nếu cần thiết
-                    }
-                });
-            });
-        });
-
-    </script>-->

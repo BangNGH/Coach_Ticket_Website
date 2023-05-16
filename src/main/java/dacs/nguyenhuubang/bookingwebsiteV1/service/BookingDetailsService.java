@@ -25,14 +25,12 @@ public class BookingDetailsService {
         return bookingDetailsRepo.findAll();
     }
 
-    public void save(BookingDetails bookingDetails, String existsTicketCode) {
+    public BookingDetails save(BookingDetails bookingDetails, String existsTicketCode) {
 
         if (existsTicketCode.isBlank()) {
             Booking foundBooking = bookingService.get(bookingDetails.getId().getBookingId());
             bookingDetails.setBooking(foundBooking);
             Float totalPrice = bookingDetails.getNumberOfTickets() * foundBooking.getTrip().getPrice();
-            System.out.println(totalPrice);
-            System.out.println(foundBooking.getId());
             bookingDetails.setTotalPrice(totalPrice);
             String ticketCode = UUID.randomUUID().toString().substring(0, 8);
             bookingDetails.getId().setTicketCode(ticketCode);
@@ -49,11 +47,8 @@ public class BookingDetailsService {
             id.setBookingId(foundBooking.getId());
             id.setTicketCode(existsTicketCode);
             bookingDetailsRepo.save(exists);
-
         }
-
-
-
+        return bookingDetails;
     }
 
     public BookingDetails get(BookingDetailsId bookingDetailsId) {

@@ -1,9 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.SeatReservation;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
@@ -22,9 +19,12 @@ import java.util.*;
 public class SeatReservationService {
     private final SeatReservationRepository seatReservationRepository;
 
-
     public List<SeatReservation> getList() {
         return (List<SeatReservation>) seatReservationRepository.findAll();
+    }
+
+    public List<Seat> getReservedSeat(Booking booking) {
+        return seatReservationRepository.reservedSeat(booking);
     }
 
     public void save(SeatReservation seatReservation, Integer id) {

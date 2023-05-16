@@ -49,9 +49,13 @@ public class Booking {
     @JsonIgnore
     private List<SeatReservation> seatReservations;
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<BookingDetails> bookingDetails;
+
     @PreRemove
     private void checkForDependencies() {
-        if (!seatReservations.isEmpty()) {
+        if (!seatReservations.isEmpty()||!bookingDetails.isEmpty()) {
             throw new CannotDeleteException("Cannot delete Booking with associated SeatReservation");
         }
     }
