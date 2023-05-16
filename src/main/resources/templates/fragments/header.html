@@ -135,17 +135,14 @@
                         </form>
                         <script>
                             // Lấy ngày hiện tại
-                            var currentDate = new Date().toISOString().split('T')[0];
-
-                            // Thiết lập thuộc tính min của input
-                            document.getElementById('startTime').setAttribute('min', currentDate);
-
                             var now = new Date();
+                            var dateString02 = now.toISOString().slice(0,10);
+
                             // Chuyển đổi thành chuỗi định dạng yyyy-mm-dd để có thể sử dụng cho input date
-                            var dateString = now.toISOString().slice(0,10);
                             // Đặt giá trị của input "start-time" là thời gian hiện tại
-                            document.getElementById("startTime").value = dateString;
-                            document.getElementById("endTime").value = dateString;
+                            document.getElementById('startTime').setAttribute('min', dateString02);
+                            document.getElementById("startTime").value = dateString02;
+                            document.getElementById("endTime").value = dateString02;
 
                             /*const roundTrip = document.querySelector('#round-trip');
                             const oneWay = document.querySelector('#one-way');

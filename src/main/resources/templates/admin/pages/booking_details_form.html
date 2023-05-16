@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid">
+    <div class="text-center"><h2>[[${pageTitle}]]</h2></div>
+
+    <form th:action="@{/admin/booking-details/save}" method="post" th:object="${bookingDetails}"
+          style="max-width: 500px; margin: 0 auto;">
+      <input type="hidden" th:field="*{id.ticketCode}">
+      <div class="border border-secondary rounded p-3">
+
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">BookingID:</label>
+          <div class="col-sm-8">
+            <select class="form-control" required id="trip" th:field="*{id.bookingId}" onchange="loadBooking()">
+              <option value=""></option>
+              <option th:each="booking : ${bookings}"th:value="${booking.id}" th:text="${booking.id}"></option>
+            </select>
+            <div th:if="${#fields.hasErrors('booking')}" class="invalid-feedback">
+              <span th:errors="*{booking}"></span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Trip-info:</label>
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="tripInfo" disabled/>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Number of tickets:</label>
+          <div class="col-sm-8">
+            <input type="number" th:field="*{numberOfTickets}" class="form-control" required min="1" th:classappend="${#fields.hasErrors('numberOfTickets')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:errors="*{numberOfTickets}"></div>
+          </div>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary m-2">Save</button>
+          <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+    <script th:inline="javascript">
+      function loadBooking() {
+        var tripId = $("select[name='id.bookingId']").val();
+        var tripInfo = $("#tripInfo");
+        // Clear previous options
+        tripInfo.empty();
+
+        // Load seats via AJAX
+        $.ajax({
+          url: '/api/booking-details/load-booking',
+          method: 'GET',
+          data: {tripId: tripId},
+          success: function(trip) {
+            tripInfo.val(trip.trip.route.name + ' ' + ' User:' + trip.user.email);
+          },
+          error: function(xhr, status, error) {
+            console.log(xhr.responseText);
+            console.log(status);
+            console.log(error);
+            alert("ajax load fail")
+          }
+
+        });
+      }
+    </script>
+
+  </div>
+
+  <script type="text/javascript">
+    function cancelForm() {
+      window.location = "[[@{/admin/booking-details}]]";
+    }
+  </script>
+</div>
+
+</body>
+</html>

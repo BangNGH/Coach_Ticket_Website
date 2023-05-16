@@ -5,12 +5,14 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.SeatService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.TripService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.UserBookingService;
@@ -35,7 +37,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UsersBookingController {
 
-    private final UserBookingService userBookingService;
+    private final BookingService bookingService;
+    private final UserService userService;
+
     private final TripService tripService;
     private final SeatService seatService;
 
@@ -83,6 +87,23 @@ public class UsersBookingController {
 
     @PostMapping("/save")
     public String saveBooking(Model model,@ModelAttribute("trip")Trip trip, @RequestParam("date")@DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re){
+
+        Trip bookingTrip = trip;
+        Booking booking = new Booking();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity user = userService.findbyEmail(email).get();
+
+        System.out.println(user.getEmail());
+        System.out.println(trip.getId());
+
+        booking.setTrip(bookingTrip);
+        booking.setBooking_date(date);
+        booking.setIsPaid(false);
+        booking.setUser(user);
+
+        bookingService.save(booking);
+
 
 
         return "page/confirm_payment";

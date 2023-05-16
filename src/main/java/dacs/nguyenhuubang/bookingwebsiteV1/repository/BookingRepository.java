@@ -11,4 +11,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT p FROM Booking p WHERE CONCAT(p.trip.route.name, ' ', p.user.fullname) LIKE %?1%")
     List<Booking> search(String keyword);
+
 }

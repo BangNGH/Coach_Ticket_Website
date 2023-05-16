@@ -17,15 +17,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BookingDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @EmbeddedId
+    private BookingDetailsId id;
 
-    @NotNull(message = "Booking ID cannot be null.")
+    @MapsId("bookingId")
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "booking_id")
+    @JsonIgnore
     private Booking booking;
 
     @NotNull(message = "numberOfTickets cannot be null.")
@@ -33,7 +31,6 @@ public class BookingDetails {
     @Column
     private Integer numberOfTickets;
 
-    @NotNull(message = "Total price cannot be null.")
     @Column(name = "total_price")
     private Float totalPrice;
 }
