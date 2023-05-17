@@ -7,14 +7,19 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+
 import dacs.nguyenhuubang.bookingwebsiteV1.config.Config;
 import dacs.nguyenhuubang.bookingwebsiteV1.dto.paymentDTO;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
+import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @Controller
@@ -31,7 +37,7 @@ public class UsersBookingController {
     private final BookingService bookingService;
     private final BookingDetailsService bookingDetailsService;
     private final UserService userService;
-
+    private final ApplicationEventPublisher publisher;
     private final TripService tripService;
     private final SeatService seatService;
     private final SeatReservationService seatReservationService;
@@ -69,11 +75,11 @@ public class UsersBookingController {
                 model.addAttribute("header", "Xác nhận chuyến đi");
                 model.addAttribute("currentPage", "xác nhận");
                 return "pages/confirm_booking";
-            }else {
+            } else {
                 re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
                 return "redirect:/home";
             }
-        }catch (ResourceNotFoundException e){
+        } catch (ResourceNotFoundException e) {
             re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
             return "redirect:/home";
         }
@@ -81,14 +87,14 @@ public class UsersBookingController {
 
     @PostMapping("/save")
     @Transactional(rollbackFor = {Exception.class, Throwable.class})
-    public String saveBooking(Model model,@ModelAttribute("trip")Trip trip, @RequestParam("date")@DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws UnsupportedEncodingException {
+    public String saveBooking(Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws UnsupportedEncodingException {
 
         List<Seat> seatsReserved = new ArrayList<>();
         for (Integer seatId : seatIds) {
             Seat seat = seatService.get(Long.valueOf(seatId));
             seatsReserved.add(seat);
         }
-        if (seatsReserved.isEmpty()){
+        if (seatsReserved.isEmpty()) {
             re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
             return "redirect:/home";
         }
@@ -112,7 +118,7 @@ public class UsersBookingController {
 
         bookingDetails.setId(bookingDetailsId);
         bookingDetails.setNumberOfTickets(seatsReserved.size());
-        BookingDetails  savedBookingDetails = bookingDetailsService.save(bookingDetails, " ");
+        BookingDetails savedBookingDetails = bookingDetailsService.save(bookingDetails, " ");
 
         try {
             //Save seat reservation
@@ -132,14 +138,14 @@ public class UsersBookingController {
                     seatReservationService.save(seatReservation, tempId);
                 }
             }
-        }catch (SeatHasBeenReseredException e){
+        } catch (SeatHasBeenReseredException e) {
             model.addAttribute("message", e.getMessage());
             return "error_message";
         }
 
 
         //Thanh toán
-        long amount = (long)(savedBookingDetails.getTotalPrice()*100);
+        long amount = (long) (savedBookingDetails.getTotalPrice() * 100);
         String vnp_TxnRef = Config.getRandomNumber(8);
         String vnp_TmnCode = Config.vnp_TmnCode;
 
@@ -154,7 +160,7 @@ public class UsersBookingController {
         vnp_Params.put("vnp_OrderInfo", String.valueOf(savedBooking.getId()));
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", Config.vnp_Returnurl);
-      //  vnp_Params.put("vnp_bookingId", );
+        //  vnp_Params.put("vnp_bookingId", );
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -203,34 +209,52 @@ public class UsersBookingController {
     }
 
     @GetMapping("/payment-result")
-    public String showResult(Model model,@RequestParam("vnp_Amount") String amount,
+    public String showResult(Model model, @RequestParam("vnp_Amount") String amount,
                              @RequestParam("vnp_PayDate") String date,
                              @RequestParam("vnp_OrderInfo") String bookingId,
-                             @RequestParam("vnp_ResponseCode") String responseCode
-                             ){
-        if (responseCode.equals("00")){
-            Booking booking =bookingService.get(Integer.parseInt(bookingId));
+                             @RequestParam("vnp_ResponseCode") String responseCode,
+                             final HttpServletRequest request
+    ) {
+        if (responseCode.equals("00")) {
+            Booking booking = bookingService.get(Integer.parseInt(bookingId));
             booking.setIsPaid(true);
             Booking myBooking = bookingService.save(booking);
-
-
             List<Seat> reservedSeat = seatReservationService.getReservedSeat(myBooking);
-
-            model.addAttribute("route", myBooking.getTrip().getRoute().getName());
-            model.addAttribute("startDate", myBooking.getBooking_date());
-            model.addAttribute("startTime", myBooking.getTrip().getStartTime());
-            model.addAttribute("vehicle", myBooking.getTrip().getVehicle().getName());
-            model.addAttribute("licensePlates", myBooking.getTrip().getVehicle().getLicensePlates());
             String totalPrice = amount.substring(0, amount.length() - 2);
+
+
             model.addAttribute("totalPrice", totalPrice);
-            model.addAttribute("status", myBooking.getIsPaid());
-            model.addAttribute("info", myBooking.getUser().getEmail());
+            model.addAttribute("myBooking", myBooking);
             model.addAttribute("seatsReserved", reservedSeat);
-        }
-        else {
+            model.addAttribute("startTime", date);
+            model.addAttribute("currentPage", "Thanh toán");
+
+            List<String> ticketCodes = bookingDetailsService.getTicketCodes(myBooking);
+            String send_ticketCodes = "";
+            for (String tc : ticketCodes) {
+                String code = tc;
+                send_ticketCodes += code + ", ";
+            }
+            send_ticketCodes = send_ticketCodes.substring(0, send_ticketCodes.length() - 2);
+
+
+            String send_numberOfTicket = String.valueOf(reservedSeat.size());
+            String send_reservedSeatNames = ""; // Chuỗi để lưu tên các ghế đã đặt
+            for (Seat seat : reservedSeat) {
+                String seatName = seat.getName();
+                send_reservedSeatNames += seatName + ", "; // Thêm tên của ghế vào chuỗi
+            }
+            send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
+            publisher.publishEvent(new BookingCompleteEvent(myBooking, totalPrice, send_reservedSeatNames, send_numberOfTicket,send_ticketCodes, applicationUrl(request)));
+
+        } else {
             model.addAttribute("error", "Xảy ra lỗi trong quá trình thanh toán");
         }
         return "pages/payment_result";
+    }
+
+    private String applicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 }
 

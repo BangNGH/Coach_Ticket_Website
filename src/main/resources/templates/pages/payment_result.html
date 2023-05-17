@@ -43,21 +43,21 @@
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label>Tuyến đi:</label>
-                <span class="form-control" th:text="${route}"></span>
+                <span class="form-control" th:text="${myBooking.trip.route.name}"></span>
               </div>
               <div class="form-group col-md-6">
                 <label>Ngày đi:</label>
-                <span class="form-control" th:text="${startDate}"></span>
+                <span class="form-control" th:text="${myBooking.booking_date}"></span>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label>Giờ khởi hành:</label>
-                <span class="form-control" th:text="${startTime}"></span>
+                <span class="form-control" th:text="${myBooking.trip.startTime}"></span>
               </div>
               <div class="form-group col-md-6">
                 <label>Loại xe/Biển số:</label>
-                <span class="form-control" th:text="${vehicle} + ' / ' + ${licensePlates}"></span>
+                <span class="form-control" th:text="${myBooking.trip.vehicle.name} + ' / ' + ${myBooking.trip.vehicle.licensePlates}"></span>
               </div>
             </div>
             <div class="form-group">
@@ -70,11 +70,11 @@
             </div>
             <div class="form-group">
               <label>Trạng thái:</label>
-              <span class="form-control" th:text="${status} ? 'Đã thanh toán' : 'Chưa thanh toán'"></span>
+              <span class="form-control" th:text="${myBooking.isPaid} ? 'Đã thanh toán' : 'Chưa thanh toán'"></span>
             </div>
             <div class="form-group">
               <label>Tên liên hệ/email:</label>
-              <span class="form-control" th:text="${info}"></span>
+              <span class="form-control" th:text="${myBooking.user.email}"></span>
             </div>
           </div>
         </div>

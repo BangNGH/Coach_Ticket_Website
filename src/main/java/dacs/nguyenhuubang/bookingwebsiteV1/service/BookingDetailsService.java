@@ -25,6 +25,10 @@ public class BookingDetailsService {
         return bookingDetailsRepo.findAll();
     }
 
+    public List<String> getTicketCodes(Booking booking) {
+        return bookingDetailsRepo.getTicketCode(booking);
+    }
+
     public BookingDetails save(BookingDetails bookingDetails, String existsTicketCode) {
 
         if (existsTicketCode.isBlank()) {
@@ -35,8 +39,7 @@ public class BookingDetailsService {
             String ticketCode = UUID.randomUUID().toString().substring(0, 8);
             bookingDetails.getId().setTicketCode(ticketCode);
             bookingDetailsRepo.save(bookingDetails);
-        }
-        else {
+        } else {
             Booking foundBooking = bookingService.get(bookingDetails.getId().getBookingId());
             BookingDetails exists = bookingDetailsRepo.findByIdTicketCode(existsTicketCode);
             exists.setBooking(foundBooking);

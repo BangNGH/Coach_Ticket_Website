@@ -29,6 +29,7 @@ public interface SeatReservationRepository extends JpaRepository<SeatReservation
 
     @Query("SELECT s.seat FROM SeatReservation s where s.booking =?1")
     List<Seat> reservedSeat(Booking booking);
+
 }
 /*    @Modifying
     @Transactional

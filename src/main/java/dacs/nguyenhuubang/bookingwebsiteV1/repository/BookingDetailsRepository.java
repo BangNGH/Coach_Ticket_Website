@@ -13,4 +13,7 @@ public interface BookingDetailsRepository extends JpaRepository<BookingDetails, 
     List<BookingDetails> search(String keyword);
 
     BookingDetails findByIdTicketCode(String ticketCode);
+
+    @Query("SELECT p.id.ticketCode FROM BookingDetails p WHERE p.booking = ?1 ")
+    List<String> getTicketCode(Booking booking);
 }
