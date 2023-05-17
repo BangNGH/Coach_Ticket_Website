@@ -27,7 +27,7 @@
   <div class="payment-container">
     <div class="vh-100 d-flex justify-content-center align-items-center">
       <div class="col-md-4">
-        <div class="card payment-card bg-white shadow p-5">
+        <div class="card payment-card bg-white shadow p-4">
           <div class="mb-4 text-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="text-success bi bi-check-circle payment-success-icon"
                  viewBox="0 0 16 16">
@@ -67,6 +67,10 @@
             <div class="form-group">
               <label>Tổng tiền:</label>
               <span class="form-control" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span>
+            </div>
+            <div class="form-group">
+              <label>Phương thức thanh toán:</label>
+              <span class="form-control" th:text="${paymentMethod}"></span>
             </div>
             <div class="form-group">
               <label>Trạng thái:</label>
