@@ -31,48 +31,53 @@ import java.util.stream.Collectors;
 public class HomeController {
 
     private final CityService cityService;
-    private final TripRepository tripRepository;
+    private final TripService tripService;
     private final SeatReservationRepository seatReservationRepo;
-
-
 
     @RequestMapping(value = {"", "/"})
     public String home(Model model) {
         List<City> cities = cityService.getCities();
-        model.addAttribute("cities",cities);
+        model.addAttribute("cities", cities);
         return "pages/home_page";
     }
+
     @RequestMapping(value = {"/find"})
     public String getTrips(Model model, RedirectAttributes re, @RequestParam("startCity") City startCity,
-                           @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime
-                          ) {
-        if (startCity.equals(endCity)){
-            model.addAttribute("errorMessage", "Start-city and End-city must be difference!");
+                           @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
+                           @RequestParam(value = "endTime", required = false) LocalDate endTime) {
+        if (startCity==endCity){
+            re.addFlashAttribute("errorMessage", "Vui lòng chọn thành phố khác nhau");
             return "redirect:/";
         }
-        List<Trip> foundTrips = tripRepository.findTripsByCitiesAndStartTime(startCity, endCity);
-        Map<Integer, Integer> availableSeatsMap = new HashMap<>();
-        Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
-        for (Trip trip : foundTrips) {
-            int totalSeat = trip.getVehicle().getCapacity();
-            int seatReserved = seatReservationRepo.checkAvailableSeat(trip, startTime);
-            List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, startTime);
-            int availableSeats = totalSeat - seatReserved;
+        try {
+            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            Map<Integer, Integer> availableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            for (Trip trip : foundTrips) {
+                int totalSeat = trip.getVehicle().getCapacity();
+                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, startTime);
+                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, startTime);
+                int availableSeats = totalSeat - seatReserved;
 
-            loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
-            availableSeatsMap.put(trip.getId(), availableSeats);
+                loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                availableSeatsMap.put(trip.getId(), availableSeats);
+            }
+
+            model.addAttribute("foundTrips", foundTrips);
+            model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+            model.addAttribute("availableSeatsMap", availableSeatsMap);
+            model.addAttribute("header", "Tìm chuyến");
+            model.addAttribute("currentPage", "Tìm chuyến");
+            model.addAttribute("startCity", startCity.getName());
+            model.addAttribute("endCity", endCity.getName());
+            model.addAttribute("startTime", startTime);
+            model.addAttribute("endTime", endTime);
+
+            return "pages/find_trip";
+        } catch (RuntimeException e) {
+            re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+            return "redirect:/";
         }
-
-        model.addAttribute("foundTrips", foundTrips);
-        model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
-        model.addAttribute("availableSeatsMap", availableSeatsMap);
-        model.addAttribute("header", "Tìm chuyến");
-        model.addAttribute("currentPage", "Tìm chuyến");
-        model.addAttribute("startCity", startCity.getName());
-        model.addAttribute("endCity", endCity.getName());
-        model.addAttribute("startTime", startTime);
-
-        return "pages/find_trip";
     }
 
 

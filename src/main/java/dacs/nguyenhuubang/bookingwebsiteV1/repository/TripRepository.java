@@ -22,5 +22,5 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
         List<Trip> findTripsByCitiesAndStartTime(@Param("startCity") City startCity,
                                                  @Param("endCity") City endCity);
 
-
+       // List<Trip> findRoundTrip(@Param("startCity") City startCity, @Param("endCity") City endCity);
 }

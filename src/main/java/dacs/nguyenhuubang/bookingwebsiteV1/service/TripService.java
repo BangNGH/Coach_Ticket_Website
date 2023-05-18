@@ -1,4 +1,5 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
@@ -52,5 +53,9 @@ public class TripService {
     public Page<Trip> findPaginated(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return this.tripRepository.findAll(pageable);
+    }
+
+    public List<Trip> findTripsByCitiesAndStartTime(City startCity, City endCity) {
+       return tripRepository.findTripsByCitiesAndStartTime(startCity, endCity);
     }
 }

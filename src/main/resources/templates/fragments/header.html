@@ -73,21 +73,21 @@
                             [[${errorMessage}]]
                         </div>
                         <form class="form-wrap" th:action="@{/home/find}" method="post" id="tripForm">
-                           <!-- <div class="form-group row">
+                            <div class="form-group row">
                                 <label class="col-form-label col-sm-3">Loại vé:</label>
                                 <div class="col-sm-9">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="round-trip" id="round-trip"
-                                               value="true" checked>
-                                        <label class="form-check-label" for="round-trip">Khứ hồi</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="round-trip" id="one-way"
-                                               value="false">
+                                               value="false" checked>
                                         <label class="form-check-label" for="one-way">Một chiều</label>
                                     </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="round-trip" id="round-trip"
+                                               value="true" >
+                                        <label class="form-check-label" for="round-trip">Khứ hồi</label>
+                                    </div>
                                 </div>
-                            </div>-->
+                            </div>
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-3">Điểm đi:</label>
                                 <div class="col-sm-9">
@@ -112,12 +112,12 @@
                                     <input type="date" id="startTime" class="form-control" required name="startTime">
                                 </div>
                             </div>
-                           <!-- <div class="form-group row">
+                            <div class="form-group row">
                                 <label class="col-form-label col-sm-3">Ngày về:</label>
                                 <div class="col-sm-9">
-                                    <input type="date" class="form-control" id="endTime" name="endTime">
+                                    <input disabled type="date" class="form-control" style="display: none;" id="endTime" name="endTime">
                                 </div>
-                            </div>-->
+                            </div>
                             <button type="submit" class="primary-btn text-uppercase">Tìm chuyến xe</button>
                         </form>
                         <script>
@@ -129,29 +129,35 @@
                             // Đặt giá trị của input "start-time" là thời gian hiện tại
                             document.getElementById('startTime').setAttribute('min', dateString02);
                             document.getElementById("startTime").value = dateString02;
-                            document.getElementById("endTime").value = dateString02;
 
-                            /*const roundTrip = document.querySelector('#round-trip');
+                            const roundTrip = document.querySelector('#round-trip');
                             const oneWay = document.querySelector('#one-way');
                             const endTimeInput = document.querySelector('#endTime');
 
                             roundTrip.addEventListener('change', () => {
                                 if (roundTrip.checked) {
                                     endTimeInput.style.display = 'block';
+                                    endTimeInput.removeAttribute('disabled');
+                                    document.getElementById('endTime').setAttribute('min', dateString02);
+                                    document.getElementById("endTime").value = dateString02;
 
                                 } else {
                                     endTimeInput.style.display = 'none';
+                                    endTimeInput.setAttribute('disabled', 'disabled');
                                 }
                             });
 
                             oneWay.addEventListener('change', () => {
                                 if (oneWay.checked) {
                                     endTimeInput.style.display = 'none';
+                                    endTimeInput.setAttribute('disabled', 'disabled');
                                 } else {
                                     endTimeInput.style.display = 'block';
+                                    endTimeInput.removeAttribute('disabled');
+                                    document.getElementById('endTime').setAttribute('min', dateString02);
+                                    document.getElementById("endTime").value = dateString02;
                                 }
                             });
-*/
                         </script>
 
                     </div>

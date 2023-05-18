@@ -2,90 +2,177 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layouts/sub_layout">
 <head>
-  <meta charset="UTF-8">
-  <title>Payment</title>
-  <style>
-    .payment-container {
-      margin-top: 80px;
-      margin-bottom: 75px;
+    <meta charset="UTF-8">
+    <title>Payment</title>
+    <style>
+        .payment-container {
+            margin-top: 80px;
+            margin-bottom: 75px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    }
+        .payment-card {
+            border: 3px solid #28a745;
+            min-width: 500px;
+        }
 
-    .payment-card {
-      border: 3px solid #28a745;
-    }
+        .payment-success-icon {
+            width: 75px;
+            height: 75px;
+            color: #28a745;
+        }
 
-    .payment-success-icon {
-      width: 75px;
-      height: 75px;
-      color: #28a745;
-    }
-  </style>
+
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
-  <div class="payment-container">
-    <div class="vh-100 d-flex justify-content-center align-items-center">
-      <div class="col-md-4">
-        <div class="card payment-card bg-white shadow p-4">
-          <div class="mb-4 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="text-success bi bi-check-circle payment-success-icon"
-                 viewBox="0 0 16 16">
-              <path
-                      d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-              <path
-                      d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-            </svg>
-          </div>
-          <div class="text-center">
-            <h1>Thành công</h1>
-            <p>Thông tin chi tiết vé</p>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label>Tuyến đi:</label>
-                <span class="form-control" th:text="${myBooking.trip.route.name}"></span>
-              </div>
-              <div class="form-group col-md-6">
-                <label>Ngày đi:</label>
-                <span class="form-control" th:text="${myBooking.booking_date}"></span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label>Giờ khởi hành:</label>
-                <span class="form-control" th:text="${myBooking.trip.startTime}"></span>
-              </div>
-              <div class="form-group col-md-6">
-                <label>Loại xe/Biển số:</label>
-                <span class="form-control" th:text="${myBooking.trip.vehicle.name} + ' / ' + ${myBooking.trip.vehicle.licensePlates}"></span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Ghế đã chọn:</label>
-              <label style="font-weight: bold" th:each="seat : ${seatsReserved}" th:text="${seat.name} + ', '"></label>
-            </div>
-            <div class="form-group">
-              <label>Tổng tiền:</label>
-              <span class="form-control" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span>
-            </div>
-            <div class="form-group">
-              <label>Phương thức thanh toán:</label>
-              <span class="form-control" th:text="${paymentMethod}"></span>
-            </div>
-            <div class="form-group">
-              <label>Trạng thái:</label>
-              <span class="form-control" th:text="${myBooking.isPaid} ? 'Đã thanh toán' : 'Chưa thanh toán'"></span>
-            </div>
-            <div class="form-group">
-              <label>Tên liên hệ/email:</label>
-              <span class="form-control" th:text="${myBooking.user.email}"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="payment-container">
+        <div class="col-md-4">
+            <div class="vh-100 d-flex justify-content-center align-items-center">
+                <div class="col-md-4">
+                    <div class="card payment-card bg-white shadow p-4">
+                        <div class="mb-4 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="text-success bi bi-check-circle payment-success-icon"
+                                 viewBox="0 0 16 16">
+                                <path
+                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path
+                                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                        </div>
+                        <div class="text-center">
+                            <h1>Thành công</h1>
+                            <p>Thông tin chi tiết vé lượt về</p>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Tuyến đi:</label>
+                                    <span class="form-control" th:text="${myBooking.trip.route.name}"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Ngày về:</label>
+                                    <span class="form-control"
+                                          th:text="${#temporals.format(myBooking.booking_date, 'dd/MM/yyyy')}"></span>
 
-  </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Giờ khởi hành:</label>
+                                    <span class="form-control" th:text="${myBooking.trip.startTime}"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Loại xe/Biển số:</label>
+                                    <span class="form-control"
+                                          th:text="${myBooking.trip.vehicle.name} + ' / ' + ${myBooking.trip.vehicle.licensePlates}"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mã vé:</label>
+                                <span class="form-control" style="font-weight: bold"
+                                      th:text="${myBooking.bookingDetails[0].id.ticketCode}"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Ghế đặt trước:</label>
+                                <label style="font-weight: bold" th:each="seat : ${seatsReserved}"
+                                       th:text="${seat.name} + ', '"></label>
+                            </div>
+                            <div class="form-group">
+                                <label>Tổng tiền:</label>
+                                <span class="form-control"
+                                      th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Phương thức thanh toán:</label>
+                                <span class="form-control" th:text="${paymentMethod}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Trạng thái:</label>
+                                <span class="form-control"
+                                      th:text="${myBooking.isPaid} ? 'Đã thanh toán' : 'Chưa thanh toán'"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Email liên hệ:</label>
+                                <span class="form-control" th:text="${myBooking.user.email}"></span>
+                            </div>
+                            <div th:if="!${hasRoundTrip}" class="form-group">
+                                <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và lưu trữ nó, khi lên xe quý khách vui lòng xuất trình email đã gửi cho nhân viên soát vé.</p>
+                                <p th:if="${bookingTransit}">Đối với quý khách có nhu cầu đi xe trung chuyển vui lòng điền thông tin vào đường dẫn bên dưới.</p>
+                                <a th:if="${bookingTransit}" th:href="@{/form-transit}" class="btn btn-info">Đặt xe trung chuyển</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div th:if="${hasRoundTrip}" class="vh-100 d-flex justify-content-center align-items-center">
+                <div class="col-md-4">
+                    <div class="card payment-card bg-white shadow p-4">
+                        <div class="mb-4 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="text-success bi bi-check-circle payment-success-icon"
+                                 viewBox="0 0 16 16">
+                                <path
+                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path
+                                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                        </div>
+                        <div class="text-center">
+                            <h1>Thành công</h1>
+                            <p>Thông tin chi tiết vé đi</p>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Tuyến đi:</label>
+                                    <span class="form-control" th:text="${myBooking2.trip.route.name}"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Ngày đi:</label>
+                                    <span class="form-control"
+                                          th:text="${#temporals.format(myBooking2.booking_date, 'dd/MM/yyyy')}"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Giờ khởi hành:</label>
+                                    <span class="form-control" th:text="${myBooking2.trip.startTime}"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Loại xe/Biển số:</label>
+                                    <span class="form-control"
+                                          th:text="${myBooking2.trip.vehicle.name} + ' / ' + ${myBooking2.trip.vehicle.licensePlates}"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mã vé:</label>
+                                <span class="form-control" style="font-weight: bold"
+                                      th:text="${myBooking.bookingDetails[0].id.ticketCode}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Ghế đặt trước:</label>
+                                <label style="font-weight: bold" th:each="seat : ${seatsReserved2}"
+                                       th:text="${seat.name} + ', '"></label>
+                            </div>
+                            <div th:if="${hasRoundTrip}" class="form-group">
+                                <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và lưu trữ nó, khi lên xe quý khách vui lòng xuất trình email đã gửi cho nhân viên soát vé.</p>
+                                <p th:if="${bookingTransit}">Đối với quý khách có nhu cầu đi xe trung chuyển vui lòng điền thông tin vào đường dẫn bên dưới.</p>
+                                <a th:if="${bookingTransit}" th:href="@{/form-transit}" class="btn btn-info">Đặt xe trung chuyển</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 </div>
 </body>
 </html>

@@ -50,9 +50,9 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
                 "</style></head>" +
                 "<body>" +
                 "<h2>Hi, " + theUser.getFullname() + "</h2>" +
-                "<p>Thank you for registering with us. Please, follow the link below to complete your registration:</p>" +
-                "<p><a href=\"" + url + "\">Verify your email to activate your account</a></p>" +
-                "<p>Thank you,<br>Users Registration Portal Service</p>" +
+                "<p>Cám ơn bạn đã đăng ký tại khoản tại Voley. Để xác nhận việc đăng ký tài khoản của bạn, vui lòng ấn vòng đường link bên dưới:</p>" +
+                "<p><a href=\"" + url + "\">Xác nhận đăng ký</a></p>" +
+                "<p>Thank you,<br>Website đặt vé xe Voley</p>" +
                 "</body></html>";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);

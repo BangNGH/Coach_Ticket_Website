@@ -6,6 +6,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
+import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -26,31 +27,49 @@ public class TicketsController {
 
     private final UserService userService;
     private final BookingService bookingService;
-    private final BookingDetailsService bookingDetailsService;
 
-    @GetMapping("/manage-receipts")
-    private String showReceipts(Model model, Principal principal) {
-        System.out.println(userService);
+    @GetMapping("/page/{pageNo}")
+    private String findPage(@PathVariable(value = "pageNo") int pageNo, Model model, Principal principal) {
+        int pageSize=5;
         String email = principal.getName();
         UserEntity user = userService.findbyEmail(email).get();
-        System.out.println(user.getEmail());
-        List<Booking> bookedTrip = bookingService.getBookedTripsByUserId(user.getId(), true);
+        //List<Booking> bookedTrip = bookingService.getBookedTripsByUserId(user.getId(), true);
+
+
+        Page<Booking> bookedTripPage  = bookingService.findPage(user.getId(), true,pageNo, pageSize);
+        List<Booking> bookedTrip = bookedTripPage .getContent();
         if (bookedTrip.isEmpty()){
             model.addAttribute("notFound", true);
         }else  model.addAttribute("notFound", false);
+
         model.addAttribute("bookings", bookedTrip);
         model.addAttribute("header", "Danh sách vé xe đã đặt");
         model.addAttribute("currentPage", "Vé của tôi");
 
+        model.addAttribute("currentPage1", pageNo);
+        model.addAttribute("totalPages", bookedTripPage.getTotalPages());
+        model.addAttribute("totalItems", bookedTripPage.getTotalElements());
+
         return "pages/show_receipts";
     }
 
+    @GetMapping("/manage-receipts")
+    public String viewPage(Model model, Principal principal){
+        return findPage(1, model,principal);
+    }
     @GetMapping("/basket")
-    private String showBill(Model model, Principal principal) {
+    public String showBill(Model model, Principal principal){
+        return findPageBill(1, model,principal);
+    }
+
+   @GetMapping("/bill-page/{pageNo}")
+    private String findPageBill(@PathVariable(value = "pageNo") int pageNo,Model model, Principal principal) {
+        int pageSize=5;
         String email = principal.getName();
         UserEntity user = userService.findbyEmail(email).get();
-        System.out.println(user.getEmail());
-        List<Booking> bookedTrip = bookingService.getBookedTripsByUserId(user.getId(), false);
+
+ Page<Booking> bookedTripPage  = bookingService.findPage(user.getId(), false,pageNo, pageSize);
+        List<Booking> bookedTrip = bookedTripPage .getContent();
         if (bookedTrip.isEmpty()){
             model.addAttribute("notFound", true);
         }else  model.addAttribute("notFound", false);
@@ -66,6 +85,10 @@ public class TicketsController {
         model.addAttribute("bookings", bookedTrip);
         model.addAttribute("header", "Thanh toán vé");
         model.addAttribute("currentPage", "Vé chưa thanh toán");
+
+          model.addAttribute("currentPage1", pageNo);
+        model.addAttribute("totalPages", bookedTripPage.getTotalPages());
+        model.addAttribute("totalItems", bookedTripPage.getTotalElements());
         return "pages/show_basket";
     }
 

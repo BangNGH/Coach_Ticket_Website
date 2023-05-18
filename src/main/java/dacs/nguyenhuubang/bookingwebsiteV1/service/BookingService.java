@@ -51,7 +51,12 @@ public class BookingService {
         return this.bookingRepository.findAll(pageable);
     }
 
-    public List<Booking> getBookedTripsByUserId(int id, Boolean isPaid) {
+/*    public List<Booking> getBookedTripsByUserId(int id, Boolean isPaid) {
         return bookingRepository.getBookedTripsByUserId(id, isPaid);
+    }*/
+
+    public Page<Booking> findPage(int id, Boolean isPaid,int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        return this.bookingRepository.getBookedTripsByUserId(id, isPaid,pageable);
     }
 }

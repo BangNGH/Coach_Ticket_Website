@@ -114,4 +114,12 @@ public class SeatReservationService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return this.seatReservationRepository.findAll(pageable);
     }
+
+    public int checkAvailableSeat(Trip trip, LocalDate startTime) {
+        return seatReservationRepository.checkAvailableSeat(trip, startTime);
+    }
+
+    public List<Seat> listAvailableSeat(Vehicle vehicle, Trip trip, LocalDate startTime) {
+        return seatReservationRepository.listAvailableSeat(vehicle,trip,startTime);
+    }
 }

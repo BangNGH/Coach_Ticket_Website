@@ -18,9 +18,13 @@
         <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title text-danger" th:text="'Tổng tiền: '+${#numbers.formatDecimal(totalBill, 0, 'COMMA', 0, 'POINT') + 'đ'}" ></h4>
+<!--                <h4 class="card-title text-danger" th:text="'Tổng tiền: '+${#numbers.formatDecimal(totalBill, 0, 'COMMA', 0, 'POINT') + 'đ'}" ></h4>
                 <div class="d-flex ">
-                    <a class="card-title btn btn-info" style="color: white">Thanh Toán</a>
+
+                </div>-->
+                <h4 class="card-title text-danger" >Hóa đơn chưa thanh toán</h4>
+                <div class="d-flex ">
+
                 </div>
             </div>
 
@@ -56,11 +60,35 @@
                             <td th:text="${booking.seatReservations.size()}"></td>
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                             <td>
-                                <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy</a>
+                                <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy</a> |
+                                <a th:href="@{'/users/payment-basket?bookingId=' + ${booking.id} + '&totalPrice=' + ${booking.bookingDetails.get(0).totalPrice}}">Thanh toán</a>
+
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                </div>
+                <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
+                                <a class="page-link" th:href="@{/users/tickets/page/1}">First</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
+                                <a class="page-link" th:href="@{/users/tickets/bill-page/{page}(page=${currentPage1 - 1})}">Previous</a>
+                            </li>
+                            <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+                                <a class="page-link" th:classappend="${page == currentPage1} ? activeCurrentPage1"
+                                   th:href="@{/users/tickets/bill-page/{page}(page=${page})}" th:text="${page}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
+                                <a class="page-link" th:href="@{/users/tickets/bill-page/{page}(page=${currentPage1 + 1})}">Next</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
+                                <a class="page-link" th:href="@{/users/tickets/bill-page/{page}(page=${totalPages})}">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>

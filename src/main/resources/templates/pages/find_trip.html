@@ -56,7 +56,7 @@
         </div>
         <div>
             <div class="seat-map-container">
-                <form th:action="@{/users/book}" method="post">
+                <form th:action="@{/users/booking-trip}" method="post">
                 <table class="table table-bordered">
                     <thead class="thead-dark">
                     <tr>
@@ -89,7 +89,6 @@
                                         </div>
                                     </th:block>
                                 </div>
-
                             </td>
                             <td>
                                 <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
@@ -101,6 +100,10 @@
                     <input type="hidden" id="selectedTripId" name="selectedTripId">
                     <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
                     <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
+                    <input type="hidden" name="endTime" th:value="${endTime}">
+                    <input type="hidden" name="startCity" th:value="${startCity}">
+                    <input type="hidden" name="endCity" th:value="${endCity}">
+                    <input type="hidden" name="bookedId" th:value="${bookedId}">
                     <button id="bookButton" class="btn btn-primary" style="margin-top: 10px;margin-bottom: 10px;">Tiếp tục</button>
                 </form>
             </div>
