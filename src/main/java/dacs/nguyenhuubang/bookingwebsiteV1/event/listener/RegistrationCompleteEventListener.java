@@ -2,7 +2,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.event.listener;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
-import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

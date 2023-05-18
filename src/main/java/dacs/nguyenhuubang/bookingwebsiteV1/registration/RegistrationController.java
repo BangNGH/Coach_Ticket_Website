@@ -5,7 +5,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationToken;
 import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationTokenRepository;
-import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

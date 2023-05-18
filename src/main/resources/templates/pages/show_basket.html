@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/sub_layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Hóa Đơn</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
+        <div th:if="${raMessage}" class="alert alert-success text-center">
+            [[${raMessage}]]
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+            [[${errorMessage}]]
+        </div>
+
+        <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title text-danger" th:text="'Tổng tiền: '+${#numbers.formatDecimal(totalBill, 0, 'COMMA', 0, 'POINT') + 'đ'}" ></h4>
+                <div class="d-flex ">
+                    <a class="card-title btn btn-info" style="color: white">Thanh Toán</a>
+                </div>
+            </div>
+
+            <div class="card-body px-0 pb-0">
+                <div class="table-responsive">
+                    <table class='table mb-0' id="table1">
+                        <thead>
+                        <tr>
+                            <th>Mã vé</th>
+                            <th>Tuyến đi</th>
+                            <th>Ngày đi</th>
+                            <th>Giờ khởi hành</th>
+                            <th>Loại xe</th>
+                            <th>Biển số</th>
+                            <th>Ghế đã chọn</th>
+                            <th>Số lượng vé</th>
+                            <th>Tổng tiền</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:if="${notFound}"><td colspan='11' class='text-center'>No results found</td></tr>
+                        <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
+                            <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
+                            <td th:text="${booking.trip.route.name}"></td>
+                            <td th:text="${#temporals.format(booking.booking_date, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${booking.trip.startTime}"></td>
+                            <td th:text="${booking.trip.vehicle.name}"></td>
+                            <td th:text="${booking.trip.vehicle.licensePlates}"></td>
+                            <td>
+                                <span th:each="sr : ${booking.seatReservations}" th:text="${sr.seat.name} + ', '"></span>
+                            </td>
+                            <td th:text="${booking.seatReservations.size()}"></td>
+                            <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
+                            <td>
+                                <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

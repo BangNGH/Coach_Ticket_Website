@@ -7,16 +7,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-
 import dacs.nguyenhuubang.bookingwebsiteV1.config.Config;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.PaymentRequest;
-import dacs.nguyenhuubang.bookingwebsiteV1.config.Result;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.security.MoMoSecurity;
-import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,21 +27,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @Controller
 public class UsersBookingController {
-
-    private final BookingService bookingService;
-    private final BookingDetailsService bookingDetailsService;
     private final UserService userService;
-    private final ApplicationEventPublisher publisher;
     private final TripService tripService;
     private final SeatService seatService;
+    private final BookingService bookingService;
+    private final BookingDetailsService bookingDetailsService;
     private final SeatReservationService seatReservationService;
+    private final ApplicationEventPublisher publisher;
 
     @PostMapping("/book")
     public String bookTrip(Model model, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
@@ -57,7 +53,11 @@ public class UsersBookingController {
             re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
             return "redirect:/home";
         }
-
+        System.out.println(userService);
+        System.out.println(tripService);
+        System.out.println(bookingDetailsService);
+        System.out.println(bookingService);
+        System.out.println(seatReservationService);
         try {
             LocalTime now = LocalTime.now();
             Trip trip = tripService.get(selectedTripId);
@@ -104,9 +104,15 @@ public class UsersBookingController {
         //Save booking
         Trip bookingTrip = trip;
         Booking booking = new Booking();
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         UserEntity user = userService.findbyEmail(email).get();
+
+        System.out.println(user.getEmail());
+        System.out.println(user);
+        System.out.println(userService);
+
         booking.setTrip(bookingTrip);
         booking.setBooking_date(date);
         booking.setIsPaid(false);
@@ -333,7 +339,6 @@ public class UsersBookingController {
         }
 
     }
-
     private void sendEmail(HttpServletRequest request, String totalPrice, Booking myBooking, List<Seat> reservedSeat) {
         List<String> ticketCodes = bookingDetailsService.getTicketCodes(myBooking);
         String send_ticketCodes = "";
@@ -351,14 +356,6 @@ public class UsersBookingController {
         }
         send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
         publisher.publishEvent(new BookingCompleteEvent(myBooking, totalPrice, send_reservedSeatNames, send_numberOfTicket, send_ticketCodes, applicationUrl(request)));
-    }
-
-
-    @GetMapping("/manage-receipts")
-    private String showReceipts(){
-
-
-        return "pages/show_recepts";
     }
 
 

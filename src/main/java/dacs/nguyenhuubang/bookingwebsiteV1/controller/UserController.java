@@ -3,7 +3,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 import java.util.List;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

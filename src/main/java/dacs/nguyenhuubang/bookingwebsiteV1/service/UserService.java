@@ -1,4 +1,4 @@
-package dacs.nguyenhuubang.bookingwebsiteV1.security;
+package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.config.IUserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;

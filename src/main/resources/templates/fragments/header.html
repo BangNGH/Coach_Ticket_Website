@@ -14,7 +14,7 @@
                         <li>
                             <a th:href="@{/logout}" style="color: snow" th:inline="text">Login/Logout</a>
                         </li>
-                        <li><a style="color: snow" th:inline="text">Hello <span th:remove="tag"
+                        <li><a style="color: snow" th:inline="text">Hello <span style="font-weight: bold" th:remove="tag"
                                                                                 sec:authentication="name"></span>!</a>
                         </li>
                     </ul>
@@ -40,10 +40,11 @@
                     <li><a th:href="@{/home}">Trang chủ</a></li>
                     <li><a th:href="@{/about}">Giới thệu</a></li>
                     <li><a th:href="@{/contact}">Liên hệ</a></li>
+                    <li><a th:href="@{/users/tickets/basket}">Hóa đơn</a></li>
+                    <li><a th:href="@{/users/tickets/manage-receipts}">Vé Của Tôi</a></li>
                     <li class="menu-has-children"><a href="">Hóa đơn</a>
                         <ul>
-                            <li><a th:href="@{/users/manage-receipts}">Vé đã thanh toán</a></li>
-                            <li><a th:href="@{/users/manage-bills}">Vé chưa thanh toán</a></li>
+                            <li><a th:href="@{/tickets/manage-receipts}">Vé</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -19,7 +19,6 @@ $(document).ready(function () {
             <td>${seat.name}</td>
             <td>${seat.vehicle.name}</td>
              <td>${seat.vehicle.licensePlates}</td>
-            <td>${seat.isReserved}</td>
         <td>
           <a href="/admin/seats/edit/${seat.id}">Edit</a> |
           <a href="/admin/seats/delete/${seat.id}">Delete</a>

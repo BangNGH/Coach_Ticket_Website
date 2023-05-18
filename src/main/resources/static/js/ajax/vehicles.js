@@ -19,7 +19,9 @@ $(document).ready(function () {
        <td>${vehicle.name}</td>
        <td>${vehicle.licensePlates}</td>
        <td>${vehicle.capacity}</td>
-      
+                         <td>
+                    <img alt="seat-map" style="max-width: 100%; max-height: 170px;" src="${vehicle.routeImagePath}">
+                  </td>
         <td>
           <a href="/admin/vehicles/edit/${vehicle.id}">Edit</a> |
           <a href="/admin/vehicles/delete/${vehicle.id}">Delete</a>

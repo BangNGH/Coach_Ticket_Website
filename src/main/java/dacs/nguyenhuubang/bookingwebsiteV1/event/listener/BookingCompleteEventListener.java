@@ -2,10 +2,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.event.listener;
 
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
-import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
-import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -17,7 +14,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 @Slf4j
 @Component

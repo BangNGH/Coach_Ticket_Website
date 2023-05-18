@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class HomeController {
     private final CityService cityService;
     private final TripRepository tripRepository;
     private final SeatReservationRepository seatReservationRepo;
+
 
 
     @RequestMapping(value = {"", "/"})

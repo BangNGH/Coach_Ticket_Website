@@ -9,11 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface BookingDetailsRepository extends JpaRepository<BookingDetails, BookingDetailsId> {
-    @Query("SELECT p FROM BookingDetails p WHERE CONCAT(p.booking.booking_date, ' ', p.totalPrice,' ', p.booking.id) LIKE %?1%")
+    @Query("SELECT p FROM BookingDetails p WHERE CONCAT(p.booking.booking_date, ' ', p.totalPrice,' ', p.booking.id,' ',p.totalPrice,' ', p.id.ticketCode) LIKE %?1%")
     List<BookingDetails> search(String keyword);
 
     BookingDetails findByIdTicketCode(String ticketCode);
 
     @Query("SELECT p.id.ticketCode FROM BookingDetails p WHERE p.booking = ?1 ")
     List<String> getTicketCode(Booking booking);
+
+    @Query("SELECT p FROM BookingDetails p WHERE p.booking.id = ?1 ")
+    BookingDetails getBookedTripDetailsByBooking(int id);
 }

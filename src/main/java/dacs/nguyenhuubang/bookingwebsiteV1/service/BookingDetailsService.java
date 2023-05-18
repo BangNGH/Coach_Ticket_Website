@@ -36,7 +36,7 @@ public class BookingDetailsService {
             bookingDetails.setBooking(foundBooking);
             Float totalPrice = bookingDetails.getNumberOfTickets() * foundBooking.getTrip().getPrice();
             bookingDetails.setTotalPrice(totalPrice);
-            String ticketCode = UUID.randomUUID().toString().substring(0, 8);
+            String ticketCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
             bookingDetails.getId().setTicketCode(ticketCode);
             bookingDetailsRepo.save(bookingDetails);
         } else {
@@ -76,5 +76,9 @@ public class BookingDetailsService {
     public Page<BookingDetails> findPaginated(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return bookingDetailsRepo.findAll(pageable);
+    }
+
+    public BookingDetails getBookedTripDetailsByBooking(int id) {
+        return bookingDetailsRepo.getBookedTripDetailsByBooking(id);
     }
 }

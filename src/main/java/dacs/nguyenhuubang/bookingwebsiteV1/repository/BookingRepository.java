@@ -9,7 +9,10 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     public Long countById(Integer id);
 
-    @Query("SELECT p FROM Booking p WHERE CONCAT(p.trip.route.name, ' ', p.user.fullname) LIKE %?1%")
+    @Query("SELECT p FROM Booking p WHERE CONCAT(p.trip.route.name, ' ', p.user.fullname,' ',p.booking_date,' ', p.trip.startTime,' ',p.isPaid, ' ', p.trip.vehicle.name) LIKE %?1%")
     List<Booking> search(String keyword);
+
+    @Query("SELECT p FROM Booking p WHERE p.user.id =?1 AND p.isPaid = ?2")
+    List<Booking> getBookedTripsByUserId(int id, Boolean isPaid);
 
 }

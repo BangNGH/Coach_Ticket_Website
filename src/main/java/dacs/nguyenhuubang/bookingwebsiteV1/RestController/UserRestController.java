@@ -1,7 +1,7 @@
 
 package dacs.nguyenhuubang.bookingwebsiteV1.RestController;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
-import dacs.nguyenhuubang.bookingwebsiteV1.security.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
