@@ -468,7 +468,6 @@ public class UsersBookingController {
             String[] parts = bookingId.split("_");
             String part1 = parts[0];
             String part2 = parts.length > 1 ? parts[1] : "";
-
             if (!part2.isBlank()) {
                 Booking booking = bookingService.get(Integer.parseInt(part2));
                 booking.setIsPaid(true);
@@ -485,7 +484,7 @@ public class UsersBookingController {
             booking2.setIsPaid(true);
             Booking myBooking2 = bookingService.save(booking2);
             List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(myBooking2);
-
+            System.out.println(part2);
             if (sentEmail==null) {
                 sendEmail(part2, request, amount, myBooking2, reservedSeat2);
                 model.addAttribute("bookingTransit", true);

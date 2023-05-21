@@ -2,6 +2,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.config.IUserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserAlreadyExistsException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserNotFoundException;
@@ -29,6 +30,16 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository tokenRepository;
+
+    public void createNewUserAfterOauthLoginSuccess(String email, String name, Provider provider){
+        UserEntity newUser = new UserEntity();
+        newUser.setFullname(name);
+        newUser.setEmail(email);
+        newUser.setEnabled(true);
+        newUser.setProvider(provider);
+        newUser.setRole("USER");
+         userRepository.save(newUser);
+    }
 
     @Override
     public List<UserEntity> getUsers() {
@@ -59,7 +70,12 @@ public class UserService implements IUserService {
 
     @Override
     public Optional<UserEntity> findbyEmail(String email) {
-        return userRepository.findByEmail(email);
+        Optional<UserEntity> result = userRepository.findByEmail(email);
+        if (result.isPresent()){
+            return result;
+        }
+        else return null;
+
     }
 
     @Override
@@ -128,6 +144,12 @@ public class UserService implements IUserService {
     public Page<UserEntity> findPaginated(int pageNo, int pageSize){
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return this.userRepository.findAll(pageable);
+    }
+
+    public void updateCustomerAfterOauthLoginSuccess(UserEntity userEntity, String fullName, Provider provider) {
+        userEntity.setProvider(provider);
+        userEntity.setFullname(fullName);
+        userRepository.save(userEntity);
     }
 }
 

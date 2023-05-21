@@ -36,13 +36,13 @@ public class UserEntity {
     @Column(name = "email", nullable = false, length = 50, unique = true)
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
-    @Column(name = "password", nullable = false)
+   // @NotBlank(message = "Password is required")
+ //   @Size(min = 6, message = "Password must be at least 6 characters")
+    @Column(name = "password", nullable = true)
     private String password;
 
-    @NotBlank(message = "Address is required")
-    @Column(name = "address", nullable = false)
+    //@NotBlank(message = "Address is required")
+    @Column(name = "address", nullable = true)
     private String address;
 
     @Column
@@ -51,6 +51,10 @@ public class UserEntity {
     @Column
     @JsonProperty("isEnabled")
     private boolean isEnabled = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Provider provider;
 
     @Override
     public String toString() {

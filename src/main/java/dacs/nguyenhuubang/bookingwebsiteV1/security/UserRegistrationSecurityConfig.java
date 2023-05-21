@@ -1,5 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.security;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.config.OAuth2LoginSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,8 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -23,20 +23,16 @@ public class UserRegistrationSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.cors().and().csrf().disable()
+        return http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/register/**", "/login/**", "/home/**","/resources/**", "/static/**", "/css/**", "/js/**", "/img/**").permitAll()
-                .and()
-                .authorizeHttpRequests()
+                .requestMatchers("/register/**", "/oauth/**","/login/**", "/home/**","/resources/**", "/static/**", "/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/users/**")
-                .hasAnyAuthority( "USER", "ROLE_USER","ADMIN", "ROLE_ADMIN")
-                .and()
-                .authorizeHttpRequests()
+                .hasAnyAuthority( "USER","ADMIN")
                 .requestMatchers("/home/**").permitAll()
-                .and()
-                .authorizeHttpRequests()
                 .requestMatchers("/admin/**")
-                .hasAnyAuthority( "ADMIN", "ROLE_ADMIN").anyRequest().permitAll()
+                .hasAnyAuthority( "ADMIN").anyRequest().permitAll()
+                .and()
+                .oauth2Login().loginPage("/oauth2/authorization/google").userInfoEndpoint().userService(oauthUserService).and().successHandler(oAuth2LoginSuccessHandler)
                 .and()
                 .formLogin().loginPage("/login").successHandler(successHandler()).failureUrl("/login?error=true")
                 .and()
@@ -50,6 +46,10 @@ public class UserRegistrationSecurityConfig {
                 .build();
     }
 
+    @Autowired
+    private CustomOAuth2UserService oauthUserService;
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {

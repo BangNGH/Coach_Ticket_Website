@@ -33,9 +33,6 @@ public class TicketsController {
         int pageSize=5;
         String email = principal.getName();
         UserEntity user = userService.findbyEmail(email).get();
-        //List<Booking> bookedTrip = bookingService.getBookedTripsByUserId(user.getId(), true);
-
-
         Page<Booking> bookedTripPage  = bookingService.findPage(user.getId(), true,pageNo, pageSize);
         List<Booking> bookedTrip = bookedTripPage .getContent();
         if (bookedTrip.isEmpty()){

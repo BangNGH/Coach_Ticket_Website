@@ -6,6 +6,12 @@ import dacs.nguyenhuubang.bookingwebsiteV1.repository.TripRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.security.Security;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +42,7 @@ public class HomeController {
     private final SeatReservationRepository seatReservationRepo;
 
     @RequestMapping(value = {"", "/"})
-    public String home(Model model) {
+    public String home(Model model){
         List<City> cities = cityService.getCities();
         model.addAttribute("cities", cities);
         return "pages/home_page";
