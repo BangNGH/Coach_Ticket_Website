@@ -2,6 +2,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.config;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import dacs.nguyenhuubang.bookingwebsiteV1.security.CustomOAuth2User;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,29 +27,67 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Autowired
     private UserService userService;
 
+    /*@Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)throws IOException, ServletException {
+        DefaultOidcUser oauthUser = (DefaultOidcUser) authentication.getPrincipal();
+
+        String email = oauthUser.getAttribute("email");
+        String fullName = oauthUser.getAttribute("name");
+        Optional<UserEntity> user = userService.findbyEmail(email);
+        System.out.println("Find user:"+user);
+        if (user==null){
+            System.out.println("Customer email:" + email);
+            System.out.println("Customer name:" + fullName);
+            userService.createNewUserAfterOauthLoginSuccess(email, fullName,Provider.GOOGLE);
+        } else {
+            userService.updateCustomerAfterOauthLoginSuccess(user.get(), fullName, Provider.GOOGLE);
+            System.out.println(user);
+        }
+
+        super.onAuthenticationSuccess(request, response,authentication);
+    }*/
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // Xác định thông tin người dùng từ authentication
+/*
         DefaultOidcUser oauthUser = (DefaultOidcUser) authentication.getPrincipal();
         String email = oauthUser.getAttribute("email");
         String fullName = oauthUser.getAttribute("name");
+*/
+        CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+        String email = oauthUser.getEmail();
+        String fullName = oauthUser.getName();
+        String loginName = oauthUser.getLogin();
+
 
         // Kiểm tra vai trò của người dùng và gán quyền tương ứng
         List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("USER"));
 
         // Tạo đối tượng Authentication mới với quyền đã được gán
-        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
+        Authentication newAuthentication;
+        if (email==null)
+            newAuthentication = new UsernamePasswordAuthenticationToken(loginName, null, authorities);
+       else  newAuthentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
 
         // Thiết lập Authentication mới cho SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+        Optional<UserEntity> user=null;
+        if (email==null)
+            user = userService.findbyEmail(loginName);
+        else
+        user = userService.findbyEmail(email);
 
-        Optional<UserEntity> user = userService.findbyEmail(email);
+
         //nếu user chưa tồn tại trước đó, thực hiện tạo mới, ngược lại thì update thông tin user
         if (user==null){
-            userService.createNewUserAfterOauthLoginSuccess(email, fullName,Provider.GOOGLE);
+            if (email==null)
+            userService.createNewUserAfterOauthLoginSuccess(loginName, fullName,Provider.GITHUB);
+            else userService.createNewUserAfterOauthLoginSuccess(email, fullName,Provider.GOOGLE);
         } else {
-            userService.updateCustomerAfterOauthLoginSuccess(user.get(), fullName, Provider.GOOGLE);
+            if (email==null)
+                userService.updateCustomerAfterOauthLoginSuccess(user.get(), fullName,Provider.GITHUB);
+            else userService.updateCustomerAfterOauthLoginSuccess(user.get(), fullName,Provider.GOOGLE);
         }
         // Tiếp tục xử lý thành công sau khi xác thực
         super.onAuthenticationSuccess(request, response, newAuthentication);

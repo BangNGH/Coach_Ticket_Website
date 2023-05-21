@@ -105,10 +105,14 @@
                     <input type="hidden" name="endCity" th:value="${endCity}">
                     <input type="hidden" name="bookedId" th:value="${bookedId}">
                     <button id="bookButton" class="btn btn-primary" style="margin-top: 10px;margin-bottom: 10px;">Tiếp tục</button>
+                    <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Trở về</button>
                 </form>
             </div>
         </div>
         <script>
+                         function cancelForm() {
+            window.location = "[[@{/home}]]";
+        }
             document.getElementById('bookButton').disabled = true;
             // Ẩn các cột "Chọn ghế" và "Sơ đồ ghế" ban đầu
             document.querySelectorAll(' th:nth-child(6), th:nth-child(7),td:nth-child(6), td:nth-child(7)').forEach(function(element) {
@@ -175,6 +179,7 @@
                     event.preventDefault();
                     return;
                 }
+
             });
         </script>
     </div>

@@ -24,11 +24,18 @@
         <p>Quý khánh vui lòng thanh toán chọn phương thức bên dưới để thanh toán và nhận vé</p>
           <a th:href="${vnpay}" style="background-color: #ffffff;" class="btn btn-outline-success"><span style="color: #e61b23; font-weight: bold;">VN</span><span style="color:#0058a5; font-weight: bold;">PAY</span></a>
           <a style="background-color: #ad006c;color: white" th:href="${momo}" class="btn btn-outline-light">MOMO</a>
+          <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Trả sau</button>
         </div>
       </div>
     </div>
   </div>
   </div>
+  <script>
+        function cancelForm() {
+            window.location = "[[@{/users/tickets/basket}]]";
+        }
+
+    </script>
 </div>
 </body>
 </html>

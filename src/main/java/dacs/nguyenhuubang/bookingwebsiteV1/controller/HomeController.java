@@ -6,7 +6,10 @@ import dacs.nguyenhuubang.bookingwebsiteV1.repository.TripRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -14,9 +17,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -26,17 +27,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping(value = {"", "/", "/home"})
 @Controller
 public class HomeController {
-
+    private final UserService userService;
     private final CityService cityService;
     private final TripService tripService;
     private final SeatReservationRepository seatReservationRepo;
@@ -47,7 +45,26 @@ public class HomeController {
         model.addAttribute("cities", cities);
         return "pages/home_page";
     }
+    @PostMapping("/save-email")
+    private String saveEmail(@ModelAttribute("user")UserEntity user, Model model){
+        Optional<UserEntity> existsUser = userService.findbyEmail(user.getEmail());
+        if (existsUser!=null)
+        {
+            model.addAttribute("errorMessage", "Email này đã đuợc đăng ký rồi");
+            return "pages/fill_out_email";
+        }
+        user.setProvider(Provider.GITHUB);
+        user.setRole("USER");
+        user.setEnabled(true);
+        userService.save(user);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("USER"));
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
 
+        // Thiết lập Authentication mới cho SecurityContextHolder
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+        return "success_message";
+    }
     @RequestMapping(value = {"/find"})
     public String getTrips(Model model, RedirectAttributes re, @RequestParam("startCity") City startCity,
                            @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,

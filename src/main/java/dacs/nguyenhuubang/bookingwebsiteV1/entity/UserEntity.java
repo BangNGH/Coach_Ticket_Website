@@ -31,7 +31,7 @@ public class UserEntity {
     private String fullname;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Email is not valid")
+  //  @Email(message = "Email is not valid")
     @NaturalId(mutable = true)
     @Column(name = "email", nullable = false, length = 50, unique = true)
     private String email;
@@ -51,7 +51,6 @@ public class UserEntity {
     @Column
     @JsonProperty("isEnabled")
     private boolean isEnabled = false;
-
     @Enumerated(EnumType.STRING)
     @Column
     private Provider provider;
