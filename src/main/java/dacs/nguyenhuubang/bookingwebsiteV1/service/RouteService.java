@@ -1,5 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Route;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.RouteNotFoundException;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -40,11 +42,19 @@ public class RouteService {
         }
         routeRepository.deleteById(id);
     }
+
     public List<Route> search(String keyword) {
         if (keyword != null) {
             return routeRepository.search(keyword);
         }
         return routeRepository.findAll();
+    }
+
+    public Page<Route> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.routeRepository.findAll(pageable);
     }
 
     public Page<Route> findPaginated(int pageNo, int pageSize) {

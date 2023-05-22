@@ -30,11 +30,23 @@
           <div class="table-responsive">
             <table class='table mb-0' id="table1">
               <thead>
-              <th>ID</th>
-              <th>Tuyến</th>
-              <th>Xe</th>
-              <th>Giờ đi</th>
-              <th>Giá</th>
+              <th>
+                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
+              </th>
+              <th>
+                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=route.name&sortDir='+${reserseSortDir}}">Tuyến</a>
+              </th>
+              <th>
+                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=vehicle.name&sortDir='+${reserseSortDir}}">Xe</a>
+              </th>
+              <th>
+                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=startTime&sortDir='+${reserseSortDir}}">Giờ
+                      khởi hành</a>
+              </th>
+              <th>
+                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=price&sortDir='+${reserseSortDir}}">Giá
+                      vé</a>
+              </th>
               <th></th>
               </thead>
               <tbody id="tbody">
@@ -60,20 +72,24 @@
         <nav aria-label="Page navigation">
           <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
-              <a class="page-link" th:href="@{/admin/trips/page/1}">First</a>
+                <a class="page-link" th:href="@{'/admin/trips/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
             </li>
             <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
-              <a class="page-link" th:href="@{/admin/trips/page/{page}(page=${currentPage - 1})}">Previous</a>
+                <a class="page-link"
+                   th:href="@{'/admin/trips/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
             </li>
             <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
-              <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
-                 th:href="@{/admin/trips/page/{page}(page=${page})}" th:text="${page}"></a>
+                <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                   th:href="@{'/admin/trips/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                   th:text="${page}"></a>
             </li>
             <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
-              <a class="page-link" th:href="@{/admin/trips/page/{page}(page=${currentPage + 1})}">Next</a>
+                <a class="page-link"
+                   th:href="@{'/admin/trips/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
             </li>
             <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
-              <a class="page-link" th:href="@{/admin/trips/page/{page}(page=${totalPages})}">Last</a>
+                <a class="page-link"
+                   th:href="@{'/admin/trips/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
             </li>
           </ul>
         </nav>

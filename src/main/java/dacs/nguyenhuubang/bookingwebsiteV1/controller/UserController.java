@@ -29,20 +29,24 @@ public class UserController {
 	private final PasswordEncoder passwordEncoder;
 
 	@GetMapping("/page/{pageNo}")
-	public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
-		int pageSize = 5;
-		Page<UserEntity> page = userService.findPaginated(pageNo, pageSize);
+	public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+		int pageSize = 6;
+		Page<UserEntity> page = userService.findPaginated(pageNo, pageSize, sortField, sortDir);
 		List<UserEntity> users = page.getContent();
 		model.addAttribute("currentPage", pageNo);
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("totalItems", page.getTotalElements());
+
+		model.addAttribute("sortDir", sortDir);
+		model.addAttribute("sortField", sortField);
+		model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 		model.addAttribute("users", users);
 		return "admin/pages/admin_crud_users";
 	}
 
 	@GetMapping("")
 	public String getUsers(Model model){
-		return findPaginated(1, model);
+		return findPaginated(1, model, "fullname", "asc");
 	}
 
 	@GetMapping("/new")
@@ -53,15 +57,17 @@ public class UserController {
 	}
 
 	@PostMapping("/save")
-	public String saveUser(@Valid @ModelAttribute("user") UserEntity user, BindingResult bindingResult, RedirectAttributes ra){
+	public String saveUser(@Valid @ModelAttribute("user") UserEntity user, @RequestParam(value = "sendedPassword", required = false) String sendedPassword, BindingResult bindingResult, RedirectAttributes ra) {
 		if (bindingResult.hasErrors()) {
 			return "admin/pages/user_form";
 		}
 		try {
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
+			if (sendedPassword == null)
+				user.setPassword(passwordEncoder.encode(user.getPassword()));
+			else user.setPassword(sendedPassword);
 			userService.save(user);
 			ra.addFlashAttribute("raMessage", "The user has been saved successfully.");
-		}catch (DataIntegrityViolationException e){
+		} catch (DataIntegrityViolationException e) {
 			ra.addFlashAttribute("errorMessage","User with email " + user.getEmail() + " already exists "+e.getMessage());
 		}
 		return "redirect:/admin/users";
@@ -72,8 +78,9 @@ public class UserController {
 		try{
 			UserEntity user = userService.get(id);
 			model.addAttribute("user", user);
-			model.addAttribute("pageTitle", "Edit User (ID: "+id+")");
-			System.out.println(user.getPassword());
+			model.addAttribute("sendedPassword", user.getPassword());
+			model.addAttribute("pageTitle", "Edit User (ID: " + id + ")");
+
 			return "admin/pages/user_form";
 		}catch (UserNotFoundException e){
 			ra.addFlashAttribute("errorMessage", e.getMessage());

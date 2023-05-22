@@ -27,25 +27,28 @@ public class SeatReservationController {
     private final BookingService bookingService;
     private final SeatService seatService;
     private final SeatReservationService seatReservationService;
-    private final SeatReservationRepository seatReservationRepo;
-    private final TripRepository tripRepository;
+
 
 
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
-        int pageSize = 5;
-        Page<SeatReservation> page = seatReservationService.findPaginated(pageNo, pageSize);
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+        int pageSize = 6;
+        Page<SeatReservation> page = seatReservationService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<SeatReservation> seatReservations = page.getContent();
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("seatReservations", seatReservations);
+
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/admin_crud_seat_reservations";
     }
 
     @GetMapping("")
     public String getSeatReservation(Model model){
-        return findPaginated(1, model);
+        return findPaginated(1, model, "id", "asc");
     }
 
     @GetMapping("/new")

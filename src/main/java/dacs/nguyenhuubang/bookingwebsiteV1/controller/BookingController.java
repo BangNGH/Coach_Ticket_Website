@@ -26,24 +26,25 @@ public class BookingController {
     private final TripService tripService;
 
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
-        int pageSize = 5;
-        Page<Booking> page = bookingService.findPaginated(pageNo, pageSize);
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+        int pageSize = 6;
+        Page<Booking> page = bookingService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Booking> bookings = page.getContent();
 
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("bookings", bookings);
+
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/admin_crud_bookings";
     }
 
     @GetMapping("")
     public String getBookings(Model model){
-/*        List<Booking> bookings = bookingService.getBookings();
-        model.addAttribute("bookings", bookings);*/
-
-        return findPaginated(1, model);
+        return findPaginated(1, model, "id", "asc");
     }
 
 

@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
@@ -29,24 +30,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/vehicles")
 public class VehiclesController {
-    private final VehicleRepository vehicleRepository;
     private final VehiclesService vehiclesService;
 
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
         int pageSize = 5;
-        Page<Vehicle> page = vehiclesService.findPaginated(pageNo, pageSize);
+        Page<Vehicle> page = vehiclesService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Vehicle> vehicles = page.getContent();
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("vehicles", vehicles);
+
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/admin_crud_vehicles";
     }
 
     @GetMapping("")
     public String getVehicles(Model model){
-        return findPaginated(1, model);
+        return findPaginated(1, model, "name", "asc");
     }
 
 

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -115,11 +116,18 @@ public class SeatReservationService {
         return this.seatReservationRepository.findAll(pageable);
     }
 
+    public Page<SeatReservation> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.seatReservationRepository.findAll(pageable);
+    }
+
     public int checkAvailableSeat(Trip trip, LocalDate startTime) {
         return seatReservationRepository.checkAvailableSeat(trip, startTime);
     }
 
     public List<Seat> listAvailableSeat(Vehicle vehicle, Trip trip, LocalDate startTime) {
-        return seatReservationRepository.listAvailableSeat(vehicle,trip,startTime);
+        return seatReservationRepository.listAvailableSeat(vehicle, trip, startTime);
     }
 }

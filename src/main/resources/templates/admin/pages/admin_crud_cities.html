@@ -30,8 +30,13 @@
                     <table class='table mb-0' id="table1">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
+                            <th>
+                                <a th:href="@{'/admin/cities/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/cities/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Tên
+                                    thành phố</a>
+                            </th>
                             <th></th>
                         </tr>
                         </thead>
@@ -56,25 +61,30 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
-                        <a class="page-link" th:href="@{/admin/cities/page/1}">First</a>
+                        <a class="page-link"
+                           th:href="@{'/admin/cities/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
                         <a class="page-link"
-                           th:href="@{/admin/cities/page/{page}(page=${currentPage - 1})}">Previous</a>
+                           th:href="@{'/admin/cities/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
                     </li>
                     <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
                         <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
-                           th:href="@{/admin/cities/page/{page}(page=${page})}" th:text="${page}"></a>
+                           th:href="@{'/admin/cities/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                           th:text="${page}"></a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
-                        <a class="page-link" th:href="@{/admin/cities/page/{page}(page=${currentPage + 1})}">Next</a>
+                        <a class="page-link"
+                           th:href="@{'/admin/cities/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
-                        <a class="page-link" th:href="@{/admin/cities/page/{page}(page=${totalPages})}">Last</a>
+                        <a class="page-link"
+                           th:href="@{'/admin/cities/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
                     </li>
                 </ul>
             </nav>
         </div>
+
         <a th:href="@{/admin/cities/new}" class="btn btn-info" style="float: right; margin: 10px">Create City</a>
 
     </div>

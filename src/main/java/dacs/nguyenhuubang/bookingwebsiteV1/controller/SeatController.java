@@ -2,6 +2,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import java.util.List;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
@@ -28,20 +29,24 @@ public class SeatController {
     private final VehiclesService vehiclesService;
 
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+
         int pageSize = 5;
-        Page<Seat> page = seatService.findPaginated(pageNo, pageSize);
+        Page<Seat> page = seatService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Seat> seats = page.getContent();
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("seats", seats);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/admin_crud_seats";
     }
 
     @GetMapping("")
     public String getSeats(Model model){
-        return findPaginated(1, model);
+        return findPaginated(1, model, "name", "asc");
     }
 
     @GetMapping("/new")

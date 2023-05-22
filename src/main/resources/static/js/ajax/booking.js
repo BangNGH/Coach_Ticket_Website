@@ -14,6 +14,7 @@ $(document).ready(function () {
                     // Loop through the search results and add each user to the table
                     data.forEach((booking) => {
                         const booking_date = new Date(booking.booking_date).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric'});
+                        const isPaid = booking.isPaid ?'Đã thanh toán':'Chưa thanh toán';
                         const userRow = `
       <tr>
        <td>${booking.id}</td>
@@ -21,6 +22,7 @@ $(document).ready(function () {
             <td>${booking.user.email}</td>
             <td>${booking_date}</td>
             <td>${booking.trip.startTime}</td>
+            <td>${isPaid}</td>
         <td>
           <a href="/admin/bookings/edit/${booking.id}">Edit</a> |
           <a href="/admin/bookings/delete/${booking.id}">Delete</a>

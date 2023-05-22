@@ -35,20 +35,24 @@ public class RouteController {
     private final CityService cityService;
 
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
-        int pageSize = 5;
-        Page<Route> page = routeService.findPaginated(pageNo, pageSize);
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+
+        int pageSize = 6;
+        Page<Route> page = routeService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Route> routes = page.getContent();
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("routes", routes);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/admin_crud_routes";
     }
 
     @GetMapping("")
     public String getRoutes(Model model){
-        return findPaginated(1, model);
+        return findPaginated(1, model, "name", "asc");
     }
 
     @GetMapping("/new")

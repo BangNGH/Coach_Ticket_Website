@@ -15,6 +15,7 @@ import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -141,8 +142,15 @@ public class UserService implements IUserService {
         userRepository.deleteById(id);
     }
 
-    public Page<UserEntity> findPaginated(int pageNo, int pageSize){
+    public Page<UserEntity> findPaginated(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        return this.userRepository.findAll(pageable);
+    }
+
+    public Page<UserEntity> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.userRepository.findAll(pageable);
     }
 
@@ -154,7 +162,7 @@ public class UserService implements IUserService {
 
     public Optional<UserEntity> findByGithubUserName(String loginName) {
         Optional<UserEntity> result = userRepository.findByGithubUserName(loginName);
-        if (result.isPresent()){
+        if (result.isPresent()) {
             return result;
         }
         else return null;

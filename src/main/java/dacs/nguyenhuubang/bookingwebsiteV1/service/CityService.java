@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -42,15 +43,22 @@ public class CityService {
 
     public List<City> search(String keyword) {
 
-            if (keyword != null) {
-                return cityRepository.search(keyword);
-            }
-            return cityRepository.findAll();
+        if (keyword != null) {
+            return cityRepository.search(keyword);
+        }
+        return cityRepository.findAll();
 
     }
 
     public Page<City> findPaginated(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        return this.cityRepository.findAll(pageable);
+    }
+
+    public Page<City> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.cityRepository.findAll(pageable);
     }
 }

@@ -3,6 +3,7 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetailsId;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
@@ -30,19 +31,22 @@ public class BookingDetailsController {
 
 
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model) {
-        int pageSize = 5;
-        Page<BookingDetails> page = bookingDetailsService.findPaginated(pageNo, pageSize);
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+        int pageSize = 6;
+        Page<BookingDetails> page = bookingDetailsService.findPaginated(pageNo, pageSize, sortField, sortDir);
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("bookingDetails", page.getContent());
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/admin_crud_booking_details";
     }
 
     @GetMapping("")
     public String getBookingDetails(Model model) {
-        return findPaginated(1, model);
+        return findPaginated(1, model, "id", "asc");
     }
 
     @GetMapping("/new")

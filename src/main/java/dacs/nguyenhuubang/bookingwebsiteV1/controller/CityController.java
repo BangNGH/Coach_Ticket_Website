@@ -27,22 +27,25 @@ public class CityController {
 	private final CityService cityService;
 
 	@GetMapping("/page/{pageNo}")
-	public String findPaginated(@PathVariable(value = "pageNo" )int pageNo, Model model){
-		int pageSize = 5;
-		Page<City> page = cityService.findPaginated(pageNo, pageSize);
+	public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+		int pageSize = 6;
+		Page<City> page = cityService.findPaginated(pageNo, pageSize, sortField, sortDir);
 		List<City> cities = page.getContent();
 		model.addAttribute("currentPage", pageNo);
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("cities", cities);
+
+		model.addAttribute("sortDir", sortDir);
+		model.addAttribute("sortField", sortField);
+		model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
 		return "admin/pages/admin_crud_cities";
 	}
 
 	@GetMapping("")
 	public String getCities(Model model){
-/*		List<City> cities = cityService.getCities();
-		model.addAttribute("cities", cities);*/
-		return findPaginated(1, model);
+		return findPaginated(1, model, "name", "asc");
 	}
 
 

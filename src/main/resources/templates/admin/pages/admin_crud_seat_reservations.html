@@ -30,13 +30,29 @@
                     <div class="table-responsive">
                         <table class='table mb-0' id="table1">
                             <thead>
-                            <th>ID</th>
-                            <th>User Booking</th>
-                            <th>Vehicle</th>
-                            <th>Seat-Reservation</th>
-                            <th>License-Plates</th>
-                            <th>Start Time</th>
-                            <th>Seat available</th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=booking.user.email&sortDir='+${reserseSortDir}}">Email</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=booking.trip.vehicle.name&sortDir='+${reserseSortDir}}">Tên
+                                    xe</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=seat.name&sortDir='+${reserseSortDir}}">Ghế
+                                    đặt</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=seat.vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
+                                    số xe</a>
+                            </th>
+                            <th>Giờ khởi hành</th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=seatsAvailable&sortDir='+${reserseSortDir}}">Ghế
+                                    còn trống</a>
+                            </th>
                             <th></th>
                             </thead>
                             <tbody>
@@ -64,20 +80,25 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
-                            <a class="page-link" th:href="@{/admin/seat-reservation/page/1}">First</a>
+                            <a class="page-link"
+                               th:href="@{'/admin/seat-reservation/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
-                            <a class="page-link" th:href="@{/admin/seat-reservation/page/{page}(page=${currentPage - 1})}">Previous</a>
+                            <a class="page-link"
+                               th:href="@{'/admin/seat-reservation/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
                         </li>
                         <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
                             <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
-                               th:href="@{/admin/seat-reservation/page/{page}(page=${page})}" th:text="${page}"></a>
+                               th:href="@{'/admin/seat-reservation/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                               th:text="${page}"></a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
-                            <a class="page-link" th:href="@{/admin/seat-reservation/page/{page}(page=${currentPage + 1})}">Next</a>
+                            <a class="page-link"
+                               th:href="@{'/admin/seat-reservation/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
-                            <a class="page-link" th:href="@{/admin/seat-reservation/page/{page}(page=${totalPages})}">Last</a>
+                            <a class="page-link"
+                               th:href="@{'/admin/seat-reservation/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
                         </li>
                     </ul>
                 </nav>
