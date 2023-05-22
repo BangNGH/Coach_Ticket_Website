@@ -151,5 +151,13 @@ public class UserService implements IUserService {
         userEntity.setFullname(fullName);
         userRepository.save(userEntity);
     }
+
+    public Optional<UserEntity> findByGithubUserName(String loginName) {
+        Optional<UserEntity> result = userRepository.findByGithubUserName(loginName);
+        if (result.isPresent()){
+            return result;
+        }
+        else return null;
+    }
 }
 

@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 	public List<UserEntity> search(String keyword);
 
 
+	@Query("SELECT u FROM UserEntity u WHERE u.address= :loginName")
+	Optional<UserEntity> findByGithubUserName(String loginName);
 }

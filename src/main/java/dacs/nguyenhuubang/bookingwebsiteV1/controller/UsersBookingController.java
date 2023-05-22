@@ -30,6 +30,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -57,17 +58,17 @@ public class UsersBookingController {
     }
 
     @PostMapping("/booking-trip")
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
     public String bookRoundTrip(Principal p, Model model, @RequestParam(value = "bookedId", required = false) Integer bookedId, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
                                 @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re, @RequestParam(value = "endTime", required = false) LocalDate endTime) {
         String validEmail = p.getName();
-        if (!isValidEmail(validEmail)) {
-            System.out.println(validEmail);
-            UserEntity user = userService.findbyEmail(validEmail).get();
-            model.addAttribute("user", user);
+        UserEntity checkUser = userService.findbyEmail(validEmail).get();
+        if (!isValidEmail(validEmail)&&!isValidEmail(checkUser.getAddress())) {
+            model.addAttribute("user", checkUser);
+            model.addAttribute("gbUserName", checkUser.getEmail());
 
             return "pages/fill_out_email";
-        } else {
+        }
 
 
             if (endTime != null) {
@@ -91,9 +92,12 @@ public class UsersBookingController {
                 Trip bookingTrip = trip;
                 Booking booking = new Booking();
 
+/*
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String email = authentication.getName();
-                UserEntity user = userService.findbyEmail(email).get();
+                UserEntity user = userService.findbyEmail(email).get();*/
+                UserEntity user = checkUser;
+
 
                 booking.setTrip(bookingTrip);
                 booking.setBooking_date(startTime);
@@ -153,7 +157,6 @@ public class UsersBookingController {
             } else {
                 return bookTrip(bookedId, model, startTime, selectedTripId, inputSelectedSeats, re);
             }
-        }
     }
 
     @PostMapping("/book")
@@ -215,7 +218,7 @@ public class UsersBookingController {
     }
 
     @PostMapping("/save")
-    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
     public String saveBooking(@RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws Exception {
 
         List<Seat> seatsReserved = new ArrayList<>();
@@ -266,13 +269,12 @@ public class UsersBookingController {
                     SeatReservation seatReservation = new SeatReservation();
                     seatReservation.setBooking(savedBooking);
                     seatReservation.setSeat(seat);
-                    System.out.println(seatReservation.getSeat().getName());
-                    System.out.println(savedBooking.getTrip().getRoute().getName());
                     seatReservationService.save(seatReservation, tempId);
                 }
             }
         } catch (SeatHasBeenReseredException e) {
             model.addAttribute("message", "Ghế này đã được đặt rồi!");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return "error_message";
         }
 

@@ -46,8 +46,8 @@ public class HomeController {
         return "pages/home_page";
     }
     @PostMapping("/save-email")
-    private String saveEmail(@ModelAttribute("user")UserEntity user, Model model){
-        Optional<UserEntity> existsUser = userService.findbyEmail(user.getEmail());
+    private String saveEmail(@ModelAttribute("user")UserEntity user,@RequestParam("gbUserName") String gbUserName, Model model){
+        Optional<UserEntity> existsUser = userService.findByGithubUserName(user.getAddress());
         if (existsUser!=null)
         {
             model.addAttribute("errorMessage", "Email này đã đuợc đăng ký rồi");
@@ -55,6 +55,7 @@ public class HomeController {
         }
         user.setProvider(Provider.GITHUB);
         user.setRole("USER");
+        System.out.println("GITHUB username:"+gbUserName);
         user.setEnabled(true);
         userService.save(user);
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -63,6 +64,7 @@ public class HomeController {
 
         // Thiết lập Authentication mới cho SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+        System.out.println("User github: "+user);
         return "success_message";
     }
     @RequestMapping(value = {"/find"})

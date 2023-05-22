@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -107,11 +109,21 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom("nghbang1909@gmail.com", senderName);
-        messageHelper.setTo(theBooking.getUser().getEmail());
+        String sendEmail="";
+        if (!isValidEmail(theBooking.getUser().getEmail()))
+            sendEmail=theBooking.getUser().getAddress();
+        else sendEmail=theBooking.getUser().getEmail();
+        messageHelper.setTo(sendEmail);
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);
         mailSender.send(message);
     }
-
+    public boolean isValidEmail(String email) {
+        // Regex pattern để kiểm tra định dạng email
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 
 }

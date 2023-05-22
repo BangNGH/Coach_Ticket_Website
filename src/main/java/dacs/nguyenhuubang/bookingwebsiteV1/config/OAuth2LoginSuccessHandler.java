@@ -49,16 +49,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // Xác định thông tin người dùng từ authentication
-/*
-        DefaultOidcUser oauthUser = (DefaultOidcUser) authentication.getPrincipal();
-        String email = oauthUser.getAttribute("email");
-        String fullName = oauthUser.getAttribute("name");
-*/
-        CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+ CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
         String email = oauthUser.getEmail();
         String fullName = oauthUser.getName();
         String loginName = oauthUser.getLogin();
-
+        Optional<UserEntity> user=null;
+        //Trường hợp đăng nhập bằng github
+        if (email==null)
+            user = userService.findbyEmail(loginName);
+        else //Trường hợp đăng nhập bằng google
+            user = userService.findbyEmail(email);
 
         // Kiểm tra vai trò của người dùng và gán quyền tương ứng
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -66,18 +66,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         // Tạo đối tượng Authentication mới với quyền đã được gán
         Authentication newAuthentication;
-        if (email==null)
+        if (email==null) //Trường hợp đăng nhập bằng github{
             newAuthentication = new UsernamePasswordAuthenticationToken(loginName, null, authorities);
        else  newAuthentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
 
         // Thiết lập Authentication mới cho SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-        Optional<UserEntity> user=null;
-        if (email==null)
-            user = userService.findbyEmail(loginName);
-        else
-        user = userService.findbyEmail(email);
-
 
         //nếu user chưa tồn tại trước đó, thực hiện tạo mới, ngược lại thì update thông tin user
         if (user==null){
