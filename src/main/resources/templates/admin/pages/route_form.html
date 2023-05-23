@@ -62,8 +62,9 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Time-trip<strong>(/h)</strong></label>
                     <div class="col-sm-8">
-                        <input type="number" th:field="*{time_trip}" class="form-control" min="1" required th:classappend="${#fields.hasErrors('time_trip')} ? 'is-invalid' : ''">
-                        <div class="invalid-feedback" th:errors="*{time_trip}"></div>
+                        <input type="number" th:field="*{timeTrip}" class="form-control" min="1" required
+                               th:classappend="${#fields.hasErrors('timeTrip')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:errors="*{timeTrip}"></div>
                     </div>
                 </div>
 

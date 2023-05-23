@@ -1,12 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
@@ -32,7 +27,6 @@ public class TripController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-
         int pageSize = 6;
         Page<Trip> page = tripService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Trip> trips = page.getContent();
@@ -77,7 +71,7 @@ public class TripController {
 
 
         tripService.save(trip);
-        re.addFlashAttribute("raMessage", "The trip has been saved successfully.");
+        re.addFlashAttribute("raMessage", "Lưu thành công chuyến đi.");
         return "redirect:/admin/trips";
     }
 

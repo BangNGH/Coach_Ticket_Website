@@ -2,14 +2,22 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingDetailsService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -25,9 +33,49 @@ public class AdminController {
     private final BookingService bookingService;
 
     @GetMapping("/bill")
-    public String adminBillPage(Model model) {
+    public String showBill(Model model) {
+        return findPageBill(1, model);
+    }
 
-        return "admin/pages/manage_bill";
+    @GetMapping("/bill-page/page/{pageNo}")
+    private String findPageBill(@PathVariable(value = "pageNo") int pageNo, Model model) {
+        int pageSize = 6;
+
+        Page<Booking> bookedTripPage = bookingService.findPage(false, pageNo, pageSize);
+        List<Booking> bookedTrip = bookedTripPage.getContent();
+        if (bookedTrip.isEmpty()) {
+            model.addAttribute("notFound", true);
+        } else model.addAttribute("notFound", false);
+
+// Tính tổng tiền từ các đối tượng BookingDetails
+        Float totalBill = (float) 0;
+        for (Booking booking : bookedTrip) {
+            for (BookingDetails bookingDetails : booking.getBookingDetails()) {
+                totalBill += bookingDetails.getTotalPrice();
+            }
+        }
+        model.addAttribute("totalBill", totalBill);
+        model.addAttribute("bookings", bookedTrip);
+        model.addAttribute("header", "Thanh toán vé");
+        model.addAttribute("currentPage", "Vé chưa thanh toán");
+
+        model.addAttribute("currentPage1", pageNo);
+        model.addAttribute("totalPages", bookedTripPage.getTotalPages());
+        model.addAttribute("totalItems", bookedTripPage.getTotalElements());
+        return "admin/pages/show_bill";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
+        try {
+            bookingService.delete(id);
+            ra.addFlashAttribute("raMessage", "Bạn đã hủy thành công vé (ID: " + id + ")");
+        } catch (VehicleNotFoundException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (CannotDeleteException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/bill";
     }
 
     @RequestMapping(value = {"", "/", "/home"})
@@ -44,7 +92,7 @@ public class AdminController {
         //Chart doanh thu theo tháng
         Map<YearMonth, Double> revenueByMonth = bookingDetailsList.stream()
                 .collect(Collectors.groupingBy(
-                        bookingDetails -> YearMonth.from(bookingDetails.getBooking().getBooking_date()),
+                        bookingDetails -> YearMonth.from(bookingDetails.getBooking().getBookingDate()),
                         Collectors.summingDouble(BookingDetails::getTotalPrice)
                 ));
 
@@ -64,7 +112,7 @@ public class AdminController {
         LocalDate currentDate = LocalDate.now();
         Float revenueToday = 0.0F;
         revenueToday = (float) bookingDetailsList.stream()
-                .filter(bookingDetails -> bookingDetails.getBooking().getBooking_date().equals(currentDate))
+                .filter(bookingDetails -> bookingDetails.getBooking().getBookingDate().equals(currentDate))
                 .mapToDouble(BookingDetails::getTotalPrice)
                 .sum();
 

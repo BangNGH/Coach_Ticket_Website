@@ -24,7 +24,7 @@
                 </div>-->
                 <h4 class="card-title text-danger" >Hóa đơn chưa thanh toán</h4>
                 <div class="d-flex ">
-
+                    <a class="card-title btn btn-info" th:href="@{/home}" style="color: white">Trờ lại</a>
                 </div>
             </div>
 
@@ -33,12 +33,30 @@
                     <table class='table mb-0' id="table1">
                         <thead>
                         <tr>
-                            <th>Mã vé</th>
-                            <th>Tuyến đi</th>
-                            <th>Ngày đi</th>
-                            <th>Giờ khởi hành</th>
-                            <th>Loại xe</th>
-                            <th>Biển số</th>
+                            <th>
+                                <a th:href="@{'/users/tickets/bill-page/page/'+${currentPage1}+'?sortField=id&sortDir='+${reserseSortDir}}">Mã
+                                    vé</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/users/tickets/bill-page/page/'+${currentPage1}+'?sortField=trip.route.name&sortDir='+${reserseSortDir}}">Tuyến
+                                    đi</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/users/tickets/bill-page/page/'+${currentPage1}+'?sortField=bookingDate&sortDir='+${reserseSortDir}}">Ngày
+                                    đi</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/users/tickets/bill-page/page/'+${currentPage1}+'?sortField=trip.startTime&sortDir='+${reserseSortDir}}">Giờ
+                                    khởi hành</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/users/tickets/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.name&sortDir='+${reserseSortDir}}">Loại
+                                    xe</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/users/tickets/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
+                                    số</a>
+                            </th>
                             <th>Ghế đã chọn</th>
                             <th>Số lượng vé</th>
                             <th>Tổng tiền</th>
@@ -50,7 +68,7 @@
                         <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
                             <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
                             <td th:text="${booking.trip.route.name}"></td>
-                            <td th:text="${#temporals.format(booking.booking_date, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
                             <td th:text="${booking.trip.startTime}"></td>
                             <td th:text="${booking.trip.vehicle.name}"></td>
                             <td th:text="${booking.trip.vehicle.licensePlates}"></td>
@@ -72,20 +90,25 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
-                                <a class="page-link" th:href="@{/users/tickets/bill-page/page/1}">First</a>
+                                <a class="page-link"
+                                   th:href="@{'/users/tickets/bill-page/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
-                                <a class="page-link" th:href="@{/users/tickets/bill-page/{page}(page=${currentPage1 - 1})}">Previous</a>
+                                <a class="page-link"
+                                   th:href="@{'/users/tickets/bill-page/page/'+${currentPage1 - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
                             </li>
                             <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
                                 <a class="page-link" th:classappend="${page == currentPage1} ? activeCurrentPage1"
-                                   th:href="@{/users/tickets/bill-page/{page}(page=${page})}" th:text="${page}"></a>
+                                   th:href="@{'/users/tickets/bill-page/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                                   th:text="${page}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
-                                <a class="page-link" th:href="@{/users/tickets/bill-page/{page}(page=${currentPage1 + 1})}">Next</a>
+                                <a class="page-link"
+                                   th:href="@{'/users/tickets/bill-page/page/'+${currentPage1 + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
-                                <a class="page-link" th:href="@{/users/tickets/bill-page/{page}(page=${totalPages})}">Last</a>
+                                <a class="page-link"
+                                   th:href="@{'/users/tickets/bill-page/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
                             </li>
                         </ul>
                     </nav>

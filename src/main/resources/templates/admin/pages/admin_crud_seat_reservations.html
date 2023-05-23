@@ -48,7 +48,9 @@
                                 <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=seat.vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
                                     số xe</a>
                             </th>
-                            <th>Giờ khởi hành</th>
+                            <th>
+                                <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=booking.trip.startTime&sortDir='+${reserseSortDir}}">Giờ
+                                    khởi hành</a></th>
                             <th>
                                 <a th:href="@{'/admin/seat-reservation/page/'+${currentPage}+'?sortField=seatsAvailable&sortDir='+${reserseSortDir}}">Ghế
                                     còn trống</a>
@@ -63,7 +65,9 @@
                                     <td>[[${seatReservation.seat.vehicle.name}]]</td>
                                     <td>[[${seatReservation.seat.name}]]</td>
                                     <td>[[${seatReservation.seat.vehicle.licensePlates}]]</td>
-                                    <td>[[${seatReservation.booking.trip.startTime}]] [[${#temporals.format(seatReservation.booking.booking_date, 'dd/MM/yyyy')}]]</td>
+                                    <td>[[${seatReservation.booking.trip.startTime}]]
+                                        [[${#temporals.format(seatReservation.booking.bookingDate, 'dd/MM/yyyy')}]]
+                                    </td>
                                     <td>[[${seatReservation.seatsAvailable}]]</td>
                                     <td>
                                         <a th:href="@{'/admin/seat-reservation/edit/' + ${seatReservation.id}}">Edit</a> |

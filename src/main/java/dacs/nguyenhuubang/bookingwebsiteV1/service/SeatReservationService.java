@@ -34,17 +34,17 @@ public class SeatReservationService {
             SeatReservation updatedReservation = get(Long.valueOf(id));
             if (updatedReservation.getBooking() != seatReservation.getBooking()){
                 int totalSeat = seatReservation.getBooking().getTrip().getVehicle().getCapacity();
-                int availableSeat = seatReservationRepository.checkAvailableSeat(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBooking_date());
+                int availableSeat = seatReservationRepository.checkAvailableSeat(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate());
                 if (totalSeat == availableSeat) {
                     throw new SeatHasBeenReseredException("Chuyến xe này đã hết ghế!Vui lòng tìm chuyến khác");
                 }
-                if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBooking_date(), seatReservation.getSeat())) {
+                if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate(), seatReservation.getSeat())) {
                     throw new SeatHasBeenReseredException("Seat " + seatReservation.getSeat().getName() + " Has Been Reserved");
                 } else {
                     if (availableSeat == 0) {
                         availableSeat = totalSeat - 1;
                     } else {
-                        availableSeat = totalSeat - availableSeat-1;
+                        availableSeat = totalSeat - availableSeat - 1;
                     }
                     updatedReservation.setSeatsAvailable(availableSeat);
                     updatedReservation.setBooking(seatReservation.getBooking());
@@ -57,7 +57,7 @@ public class SeatReservationService {
                 if (updatedReservation.getSeat()==seatReservation.getSeat()) {
                     seatReservationRepository.save(updatedReservation);
                 } else {
-                    if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBooking_date(), seatReservation.getSeat())) {
+                    if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate(), seatReservation.getSeat())) {
                         throw new SeatHasBeenReseredException("Seat " + seatReservation.getSeat().getName() + " Has Been Reserved");
                     } else {
                         updatedReservation.setSeat(seatReservation.getSeat());
@@ -68,17 +68,17 @@ public class SeatReservationService {
         } else {
 
             int totalSeat = seatReservation.getBooking().getTrip().getVehicle().getCapacity();
-            int availableSeat = seatReservationRepository.checkAvailableSeat(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBooking_date());
+            int availableSeat = seatReservationRepository.checkAvailableSeat(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate());
             if (totalSeat == availableSeat) {
                 throw new SeatHasBeenReseredException("Chuyến xe này đã hết ghế!Vui lòng tìm chuyến khác");
             }
-            if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBooking_date(), seatReservation.getSeat())) {
+            if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate(), seatReservation.getSeat())) {
                 throw new SeatHasBeenReseredException("Seat " + seatReservation.getSeat().getName() + " Has Been Reserved");
             } else {
                 if (availableSeat == 0) {
                     availableSeat = totalSeat - 1;
                 } else {
-                    availableSeat = totalSeat - availableSeat -1;
+                    availableSeat = totalSeat - availableSeat - 1;
                 }
                 seatReservation.setSeatsAvailable(availableSeat);
                 seatReservationRepository.save(seatReservation);

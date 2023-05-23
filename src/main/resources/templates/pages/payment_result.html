@@ -55,7 +55,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Ngày về:</label>
                                     <span class="form-control"
-                                          th:text="${#temporals.format(myBooking.booking_date, 'dd/MM/yyyy')}"></span>
+                                          th:text="${#temporals.format(myBooking.bookingDate, 'dd/MM/yyyy')}"></span>
 
                                 </div>
                             </div>
@@ -101,9 +101,16 @@
                                 <span class="form-control" th:text="${myBooking.user.email}"></span>
                             </div>
                             <div th:if="!${hasRoundTrip}" class="form-group">
-                                <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và lưu trữ nó, khi lên xe quý khách vui lòng xuất trình email đã gửi cho nhân viên soát vé.</p>
-                                <p th:if="${bookingTransit}">Đối với quý khách có nhu cầu đi xe trung chuyển vui lòng điền thông tin vào đường dẫn bên dưới.</p>
-                                <a th:if="${bookingTransit}" th:href="@{/form-transit}" class="btn btn-info">Đặt xe trung chuyển</a>
+                                <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và
+                                    lưu trữ nó, khi lên xe quý khách vui lòng xuất trình email đã gửi cho nhân viên soát
+                                    vé.</p>
+                                <div th:if="${bookingTransit}">
+                                    <p>Đối với quý khách có nhu cầu đi xe trung chuyển vui lòng điền thông tin vào đường
+                                        dẫn bên dưới.</p>
+                                    <a th:href="@{'/users/tickets/transit-form/'+ ${myBooking.id}}"
+                                       class="btn btn-info">Đặt xe trung chuyển</a>
+                                    <a th:href="@{/home}" class="btn btn-secondary m-2">Trở về</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -135,7 +142,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Ngày đi:</label>
                                     <span class="form-control"
-                                          th:text="${#temporals.format(myBooking2.booking_date, 'dd/MM/yyyy')}"></span>
+                                          th:text="${#temporals.format(myBooking2.bookingDate, 'dd/MM/yyyy')}"></span>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -161,9 +168,16 @@
                                        th:text="${seat.name} + ', '"></label>
                             </div>
                             <div th:if="${hasRoundTrip}" class="form-group">
-                                <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và lưu trữ nó, khi lên xe quý khách vui lòng xuất trình email đã gửi cho nhân viên soát vé.</p>
-                                <p th:if="${bookingTransit}">Đối với quý khách có nhu cầu đi xe trung chuyển vui lòng điền thông tin vào đường dẫn bên dưới.</p>
-                                <a th:if="${bookingTransit}" th:href="@{/form-transit}" class="btn btn-info">Đặt xe trung chuyển</a>
+                                <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và
+                                    lưu trữ nó, khi lên xe quý khách vui lòng xuất trình email đã gửi cho nhân viên soát
+                                    vé.</p>
+                                <div th:if="${bookingTransit}">
+                                    <p>Đối với quý khách có nhu cầu đi xe trung chuyển vui lòng điền thông tin vào đường
+                                        dẫn bên dưới.</p>
+                                    <a th:href="@{'/users/tickets/transit-form/'+ ${myBooking.id}}"
+                                       class="btn btn-info">Đặt xe trung chuyển</a>
+                                    <a th:href="@{/home}" class="btn btn-secondary m-2">Trở về</a>
+                                </div>
                             </div>
                         </div>
                     </div>

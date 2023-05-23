@@ -43,7 +43,7 @@ public class Booking {
 
     @NotNull
     @Column(name = "booking_date", nullable = false)
-    private LocalDate booking_date;
+    private LocalDate bookingDate;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -52,6 +52,10 @@ public class Booking {
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<BookingDetails> bookingDetails;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private ShuttleBus shuttleBus;
 
 /*
     @PreRemove

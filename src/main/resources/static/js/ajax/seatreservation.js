@@ -13,7 +13,7 @@ $(document).ready(function () {
                 if (data.length > 0) {
                     // Loop through the search results and add each user to the table
                     data.forEach((seatReservation) => {
-                        const booking_date = new Date(seatReservation.booking.booking_date).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric'});
+                        const booking_date = new Date(seatReservation.booking.bookingDate).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric'});
                         const userRow = `
       <tr>
          <td>${seatReservation.id}</td>

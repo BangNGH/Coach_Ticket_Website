@@ -21,7 +21,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 	@Query("SELECT p FROM UserEntity p WHERE CONCAT(p.fullname, ' ', p.email) LIKE %?1%")
 	public List<UserEntity> search(String keyword);
 
-
 	@Query("SELECT u FROM UserEntity u WHERE u.address= :loginName")
 	Optional<UserEntity> findByGithubUserName(String loginName);
 }

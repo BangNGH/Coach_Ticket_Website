@@ -38,8 +38,9 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Booking-Date:</label>
                     <div class="col-sm-8">
-                        <input type="date" th:field="*{booking_date}" class="form-control" required th:classappend="${#fields.hasErrors('booking_date')} ? 'is-invalid' : ''">
-                        <div class="invalid-feedback" th:errors="*{booking_date}"></div>
+                        <input type="date" th:field="*{bookingDate}" class="form-control" required
+                               th:classappend="${#fields.hasErrors('bookingDate')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:errors="*{bookingDate}"></div>
                     </div>
                 </div>
 

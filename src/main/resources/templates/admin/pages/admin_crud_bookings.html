@@ -3,13 +3,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
 <head>
   <meta charset="UTF-8">
-  <title>Manage Booking</title>
+  <title>Quản lý vé đặt</title>
 </head>
 <body>
 <div layout:fragment="content">
 
   <div class="container-fluid text-center">
-      <div><h2>Manage Booking</h2></div>
       <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
       <hr/>
       <div th:if="${raMessage}" class="alert alert-success text-center">
@@ -20,7 +19,7 @@
       </div>
       <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-              <h4 class="card-title">Manage Bookings</h4>
+              <h4 class="card-title">Quản lý vé đặt</h4>
               <div class="d-flex ">
                   <i data-feather="download"></i>
               </div>
@@ -40,9 +39,13 @@
                               <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=user.email&sortDir='+${reserseSortDir}}">Người
                                   đặt</a>
                           </th>
-                          <th>Booking-date</th>
                           <th>
-                              Giờ khởi hành
+                              <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=bookingDate&sortDir='+${reserseSortDir}}">Ngày
+                                  đặt</a></th>
+                          </th>
+                          <th>
+                              <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=trip.startTime&sortDir='+${reserseSortDir}}">Giờ
+                                  đi</a>
                           </th>
                           <th>
                               <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=isPaid&sortDir='+${reserseSortDir}}">Trạng
@@ -57,7 +60,7 @@
             <td>[[${booking.id}]]</td>
             <td>[[${booking.trip.route.name}]]</td>
             <td>[[${booking.user.email}]]</td>
-            <td th:text="${#temporals.format(booking.booking_date, 'dd/MM/yyyy')}"></td>
+              <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
             <td>[[${booking.trip.startTime}]]</td>
               <td th:text="${booking.isPaid}?'Đã thanh toán':'Chưa thanh toán'"></td>
             <td>

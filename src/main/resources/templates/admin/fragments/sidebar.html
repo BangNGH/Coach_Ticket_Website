@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Trang Admin</title>
 </head>
 <body>
 <div id="sidebar" class='active' th:fragment="sidebar"><!--sidebar-->
@@ -13,51 +13,46 @@
     </div>
     <div class="sidebar-menu">
       <ul class="menu">
-
-
-        <li class='sidebar-title'>Main Menu</li>
-
-
-
+        <li class='sidebar-title'>Quản lý dữ liệu</li>
         <li class="sidebar-item active ">
           <a th:href="@{/admin/users}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Users</span>
+            <span>Người dùng</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/cities}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage City</span>
+            <span>Thành phố</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/vehicles}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Vehicles</span>
+            <span>Phương tiện</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/seats}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Seats</span>
+            <span>Ghế ngồi</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/routes}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Routes</span>
+            <span>Tuyến đi</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/trips}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Trips</span>
+            <span>Chuyến xe</span>
           </a>
         </li>
 
@@ -65,21 +60,28 @@
         <li class="sidebar-item active ">
           <a th:href="@{/admin/bookings}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Booking</span>
+            <span>Booking</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/booking-details}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Booking-Details</span>
+            <span>Booking-Details</span>
           </a>
         </li>
 
         <li class="sidebar-item active ">
           <a th:href="@{/admin/seat-reservation}" class='sidebar-link'>
             <i data-feather="home" width="20"></i>
-            <span>Manage Seat-Reservation</span>
+            <span>Ghế đặt trước</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item active ">
+          <a th:href="@{/admin/transit}" class='sidebar-link'>
+            <i data-feather="home" width="20"></i>
+            <span>Xe trung chuyển</span>
           </a>
         </li>
 

@@ -65,8 +65,22 @@ public class BookingService {
         return bookingRepository.getBookedTripsByUserId(id, isPaid);
     }*/
 
-    public Page<Booking> findPage(int id, Boolean isPaid,int pageNo, int pageSize){
+    public Page<Booking> findPage(int id, Boolean isPaid, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        return this.bookingRepository.getBookedTripsByUserId(id, isPaid,pageable);
+        return this.bookingRepository.getBookedTripsByUserId(id, isPaid, pageable);
+    }
+
+    //phân trang show bill
+    public Page<Booking> findPage(int id, Boolean isPaid, int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.bookingRepository.getBookedTripsByUserId(id, isPaid, pageable);
+    }
+
+
+    public Page<Booking> findPage(Boolean isPaid, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        return this.bookingRepository.getBills(isPaid, pageable);
     }
 }

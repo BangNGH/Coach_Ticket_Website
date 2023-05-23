@@ -70,10 +70,9 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         mailContentBuilder.append("</head>");
         mailContentBuilder.append("<body>");
         mailContentBuilder.append("<div class=\"container\">");
-        mailContentBuilder.append("<h2>Hi, " + theBooking.getUser().getFullname() + "</h2>");
-        mailContentBuilder.append("<p>Cảm ơn bạn đã tin tưởng và đặt vé tại Voley Booking, dưới đây là thông tin vé của bạn</p>");
-        mailContentBuilder.append("<p><strong>Thông tin vé lượt đi</strong></p>");
-        mailContentBuilder.append("<p><strong>Tuyến:</strong> " + theBooking.getTrip().getRoute().getName() + "</p>");
+        mailContentBuilder.append("<h2>Chào, " + theBooking.getUser().getFullname() + "</h2>");
+        mailContentBuilder.append("<p>Cám ơn bạn đã chọn nhà xe của chúng tôi, dưới đây là thông tin vé của bạn</p>");
+        mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> Tuyến " + theBooking.getTrip().getRoute().getName() + ", ngày " + theBooking.getBookingDate() + ", lúc " + theBooking.getTrip().getStartTime() + "</p>");
         mailContentBuilder.append("<p><strong>Số lượng vé lượt đi:</strong> " + numberOfTicket + "</p>");
         mailContentBuilder.append("<p><strong>Chỗ ngồi lượt đi:</strong> " + reservedSeats + "</p>");
         mailContentBuilder.append("<p><strong>Mã vé lượt đi:</strong> " + ticketCode + "</p>");
@@ -86,7 +85,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
                 send_reservedSeatNames += seatName + ", "; // Thêm tên của ghế vào chuỗi
             }
             send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
-            mailContentBuilder.append("<p><strong>Thông tin vé lượt về</strong></p>");
+            mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> Tuyến" + booking.getTrip().getRoute().getName() + ", ngày" + booking.getBookingDate() + ", lúc" + booking.getTrip().getStartTime() + "</p>");
             mailContentBuilder.append("<p><strong>Số lượng vé lượt về:</strong> " + booking.getBookingDetails().get(0).getNumberOfTickets() + "</p>");
             mailContentBuilder.append("<p><strong>Chỗ ngồi lượt về:</strong> " + send_reservedSeatNames + "</p>");
             mailContentBuilder.append("<p><strong>Mã vé lượt về:</strong> " + booking.getBookingDetails().get(0).getId().getTicketCode() + "</p>");
@@ -98,8 +97,8 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         NumberFormat vn = NumberFormat.getInstance(localeVN);
         String str2 = vn.format(Double.parseDouble(totalPrice));
         mailContentBuilder.append("<p><strong>Tổng tiền:</strong> " + str2 + "đ</p>");
-        mailContentBuilder.append("<p>Vui lòng đến nhà xe trước thời gian khởi hành <strong>15 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình email này cho nhân viên soát vé.</p>");
-        mailContentBuilder.append("<p><strong>Địa chỉ:</strong> Hutech, khu công nghệ cao, Quận 9, TP.HCM</p>");
+        mailContentBuilder.append("<p>Vui lòng đến nhà xe trước thời gian khởi hành <strong>20 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình email này cho nhân viên soát vé.</p>");
+        mailContentBuilder.append("<p><strong>Địa chỉ nhà xe:</strong> Hutech, khu công nghệ cao, Quận 9, TP.HCM</p>");
         mailContentBuilder.append("<p><a href=\"" + url + "\">Xem chi tiết vé</a></p>");
         mailContentBuilder.append("</div>");
         mailContentBuilder.append("</body>");
@@ -109,7 +108,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom("nghbang1909@gmail.com", senderName);
-        String sendEmail="";
+        String sendEmail = "";
         if (!isValidEmail(theBooking.getUser().getEmail()))
             sendEmail=theBooking.getUser().getAddress();
         else sendEmail=theBooking.getUser().getEmail();

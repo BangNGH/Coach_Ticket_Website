@@ -47,7 +47,7 @@ public class Route {
     @NotNull(message = "Thời gian chuyến đi không được để trống")
     @Min(value = 1, message = "Thời gian chuyến đi phải lớn hơn 0")
     @Column(name = "time_trip", nullable = false)
-    private Integer time_trip;
+    private Integer timeTrip;
 
     @Column(name = "image_path", nullable = true)
     private String image_path;

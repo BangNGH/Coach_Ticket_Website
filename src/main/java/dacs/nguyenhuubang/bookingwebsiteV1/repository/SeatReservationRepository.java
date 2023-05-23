@@ -13,17 +13,17 @@ import java.util.List;
 public interface SeatReservationRepository extends JpaRepository<SeatReservation, Long> {
     public Long countById(Long id);
 
-    @Query("SELECT p FROM SeatReservation p WHERE CONCAT( p.booking.user.email, ' ', p.seat.name, ' ', p.booking.trip.vehicle.licensePlates, ' ',p.booking.trip.vehicle.name, ' ',p.booking.trip.startTime, ' ',p.booking.booking_date) LIKE %?1%")
+    @Query("SELECT p FROM SeatReservation p WHERE CONCAT( p.booking.user.email, ' ', p.seat.name, ' ', p.booking.trip.vehicle.licensePlates, ' ',p.booking.trip.vehicle.name, ' ',p.booking.trip.startTime, ' ',p.booking.bookingDate) LIKE %?1%")
     List<SeatReservation> search(String keyword);
 
-    @Query("SELECT COUNT(sr) FROM SeatReservation sr WHERE sr.booking.trip = ?1 AND sr.booking.booking_date = ?2")
+    @Query("SELECT COUNT(sr) FROM SeatReservation sr WHERE sr.booking.trip = ?1 AND sr.booking.bookingDate = ?2")
     Integer checkAvailableSeat(Trip trip, LocalDate bookingDate);
 
-    @Query("SELECT CASE WHEN COUNT(sr) > 0 THEN TRUE ELSE FALSE END FROM SeatReservation sr WHERE sr.booking.trip = ?1 AND sr.booking.booking_date = ?2 AND sr.seat = ?3")
+    @Query("SELECT CASE WHEN COUNT(sr) > 0 THEN TRUE ELSE FALSE END FROM SeatReservation sr WHERE sr.booking.trip = ?1 AND sr.booking.bookingDate = ?2 AND sr.seat = ?3")
     Boolean seatIsReserved(Trip trip, LocalDate bookingDate, Seat seat);
 
     @Query("SELECT s FROM Seat s WHERE s.vehicle = ?1 AND s NOT IN " +
-            "(SELECT sr.seat FROM SeatReservation sr WHERE sr.booking.trip = ?2 AND sr.booking.booking_date = ?3)")
+            "(SELECT sr.seat FROM SeatReservation sr WHERE sr.booking.trip = ?2 AND sr.booking.bookingDate = ?3)")
     List<Seat> listAvailableSeat(Vehicle vehicle, Trip trip, LocalDate bookingDate);
 
 

@@ -72,6 +72,9 @@
                         <div th:if="${errorMessage}" class="alert alert-danger text-center">
                             [[${errorMessage}]]
                         </div>
+                        <div th:if="${successMessage}" class="alert alert-success text-center">
+                            [[${successMessage}]]
+                        </div>
                         <form class="form-wrap" th:action="@{/home/find}" method="post" id="tripForm">
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-3">Loại vé:</label>

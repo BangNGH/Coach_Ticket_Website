@@ -57,17 +57,17 @@ public class UserController {
 	}
 
 	@PostMapping("/save")
-	public String saveUser(@Valid @ModelAttribute("user") UserEntity user, @RequestParam(value = "sendedPassword", required = false) String sendedPassword, BindingResult bindingResult, RedirectAttributes ra) {
-		if (bindingResult.hasErrors()) {
-			return "admin/pages/user_form";
-		}
-		try {
-			if (sendedPassword == null)
-				user.setPassword(passwordEncoder.encode(user.getPassword()));
-			else user.setPassword(sendedPassword);
-			userService.save(user);
-			ra.addFlashAttribute("raMessage", "The user has been saved successfully.");
-		} catch (DataIntegrityViolationException e) {
+    public String saveUser(@Valid @ModelAttribute("user") UserEntity user, BindingResult bindingResult, @RequestParam(value = "sendedPassword", required = false) String sendedPassword, RedirectAttributes ra) {
+        if (bindingResult.hasErrors()) {
+            return "admin/pages/user_form";
+        }
+        try {
+            if (sendedPassword == null)
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            else user.setPassword(sendedPassword);
+            userService.save(user);
+            ra.addFlashAttribute("raMessage", "The user has been saved successfully.");
+        } catch (DataIntegrityViolationException e) {
 			ra.addFlashAttribute("errorMessage","User with email " + user.getEmail() + " already exists "+e.getMessage());
 		}
 		return "redirect:/admin/users";

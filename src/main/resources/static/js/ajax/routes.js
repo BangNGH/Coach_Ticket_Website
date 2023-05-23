@@ -20,7 +20,7 @@ $(document).ready(function () {
                         <td>${route.startCity.name}</td>
                         <td>${route.endCity.name}</td>
                         <td>${route.distance}km</td>
-                        <td>${route.time_trip}h</td>
+                        <td>${route.timeTrip}h</td>
                         <td>
                             <img alt="hình tuyến đi" style="max-width: 100%; max-height: 170px;" src="${route.routeImagePath}">
                         </td>

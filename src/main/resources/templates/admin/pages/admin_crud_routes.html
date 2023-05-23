@@ -50,7 +50,8 @@
                                     cách</a>
                             </th>
                             <th>
-                                Thời gian
+                                <a th:href="@{'/admin/routes/page/'+${currentPage}+'?sortField=timeTrip&sortDir='+${reserseSortDir}}">Thời
+                                    gian di chuyển</a>
                             </th>
                             <th>Image</th>
                             <th></th>
@@ -63,7 +64,7 @@
                                     <td>[[${route.getStartCity().getName()}]]</td>
                                     <td>[[${route.getEndCity().getName()}]]</td>
                                     <td>[[${route.getDistance()}]].km</td>
-                                    <td>[[${route.getTime_trip()}]].h</td>
+                                    <td>[[${route.timeTrip}]] tiếng</td>
                                     <td>
                                         <img alt="hình tuyến đi" style="max-width: 100%; max-height: 170px;"
                                              th:src="@{${route.routeImagePath}}">

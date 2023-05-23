@@ -100,7 +100,7 @@ public class UsersBookingController {
 
 
                 booking.setTrip(bookingTrip);
-                booking.setBooking_date(startTime);
+                booking.setBookingDate(startTime);
                 booking.setIsPaid(false);
                 booking.setUser(user);
 
@@ -242,7 +242,7 @@ public class UsersBookingController {
         UserEntity user = userService.findbyEmail(email).get();
 
         booking.setTrip(bookingTrip);
-        booking.setBooking_date(date);
+        booking.setBookingDate(date);
         booking.setIsPaid(false);
         booking.setUser(user);
         Booking savedBooking = bookingService.save(booking);
@@ -300,7 +300,7 @@ public class UsersBookingController {
 
         model.addAttribute("momo", momoPaymentUrl);
         model.addAttribute("vnpay", vnpayPaymentUrl);
-        model.addAttribute("startTime", savedBooking.getBooking_date());
+        model.addAttribute("startTime", savedBooking.getBookingDate());
         model.addAttribute("currentPage", "thanh toán");
         return "pages/payment_methods";
     }
@@ -385,12 +385,11 @@ public class UsersBookingController {
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_BankCode", "NCB");
+        // vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", bookingId);
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", Config.vnp_Returnurl);
-        //  vnp_Params.put("vnp_bookingId", );
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");

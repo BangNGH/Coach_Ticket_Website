@@ -72,7 +72,7 @@
                     <tbody id="tbody">
                     <th:block th:each="trip: ${foundTrips}">
                         <tr>
-                            <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.time_trip)}"></td>
+                            <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
                             <td>[[${trip.vehicle.name}]]</td>
                             <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                             <td th:text="${availableSeatsMap.get(trip.id)}"></td>
