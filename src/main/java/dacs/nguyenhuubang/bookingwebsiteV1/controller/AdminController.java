@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
-
+//new commit
     private final BookingDetailsService bookingDetailsService;
     private final BookingService bookingService;
     private final CityService cityService;
