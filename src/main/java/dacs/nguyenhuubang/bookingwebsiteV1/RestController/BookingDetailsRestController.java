@@ -3,13 +3,13 @@ package dacs.nguyenhuubang.bookingwebsiteV1.RestController;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.BookingDetailsRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -23,6 +23,7 @@ public class BookingDetailsRestController {
     @ResponseBody
     public List<BookingDetails> searchUsers(@RequestParam("q") String q) {
         List<BookingDetails> bookings = bookingDetailsRepository.search(q);
+        System.out.println(bookings);
         return bookings;
     }
 

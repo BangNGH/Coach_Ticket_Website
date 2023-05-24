@@ -1,16 +1,5 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import dacs.nguyenhuubang.bookingwebsiteV1.config.Config;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
@@ -18,11 +7,9 @@ import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.security.MoMoSecurity;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.json.JSONObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +21,17 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -91,13 +89,7 @@ public class UsersBookingController {
                 //Save booking
                 Trip bookingTrip = trip;
                 Booking booking = new Booking();
-
-/*
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                String email = authentication.getName();
-                UserEntity user = userService.findbyEmail(email).get();*/
                 UserEntity user = checkUser;
-
 
                 booking.setTrip(bookingTrip);
                 booking.setBookingDate(startTime);
@@ -115,6 +107,10 @@ public class UsersBookingController {
                 bookingDetails.setNumberOfTickets(seatsReserved.size());
                 BookingDetails savedBookingDetails = bookingDetailsService.save(bookingDetails, " ");
 
+                List<BookingDetails> list = new ArrayList<>();
+                list.add(savedBookingDetails);
+                savedBooking.setBookingDetails(list);
+                bookingService.save(savedBooking);
                 //Save seat reservation
                 Integer tempId = null;
                 if (seatsReserved.size() == 1) {
@@ -256,6 +252,10 @@ public class UsersBookingController {
         bookingDetails.setNumberOfTickets(seatsReserved.size());
         BookingDetails savedBookingDetails = bookingDetailsService.save(bookingDetails, " ");
 
+        List<BookingDetails> list = new ArrayList<>();
+        list.add(savedBookingDetails);
+        savedBooking.setBookingDetails(list);
+        bookingService.save(savedBooking);
         try {
             //Save seat reservation
             Integer tempId = null;
@@ -287,7 +287,7 @@ public class UsersBookingController {
             roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
         }
 
-        String bookingId = String.valueOf(savedBooking.getId()) + "_" + roundTripId;
+        String bookingId = String.valueOf(savedBooking.getId()) + "_" + roundTripId;//nối chuỗi id gửi mail
         // lấy url thanh toán VNPAY
 
         long vnpay_Amount = (long) ((savedBookingDetails.getTotalPrice() + roundTripPrice) * 100);

@@ -4,7 +4,6 @@ import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +73,7 @@ public class SeatReservationService {
                 throw new SeatHasBeenReseredException("Chuyến xe này đã hết ghế!Vui lòng tìm chuyến khác");
             }
             if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate(), seatReservation.getSeat())) {
-                throw new SeatHasBeenReseredException("Seat " + seatReservation.getSeat().getName() + " Has Been Reserved");
+                throw new SeatHasBeenReseredException("Ghế " + seatReservation.getSeat().getName() + " đã được đặt rồi!");
             } else {
                 if (availableSeat == 0) {
                     availableSeat = totalSeat - 1;

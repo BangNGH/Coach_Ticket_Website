@@ -2,28 +2,27 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingDetailsService;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.CityService;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.TripService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -35,10 +34,19 @@ public class AdminController {
     private final CityService cityService;
     private final TripService tripService;
     private final SeatReservationRepository seatReservationRepo;
+    private final UserService userService;
+    private final SeatService seatService;
+    private final SeatReservationService seatReservationService;
 
     @GetMapping("/bill")
     public String showBill(Model model) {
         return findPageBill(1, model, "id", "asc");
+    }
+
+    @GetMapping("/print-tickets/{id}")
+    public String printTicket(@PathVariable("id") Integer id, RedirectAttributes ra) {
+        ra.addFlashAttribute("successMessage", "Thành công vé ID:" + id);
+        return "redirect:/admin";
     }
 
     @GetMapping("/bill-page/page/{pageNo}")
@@ -176,6 +184,262 @@ public class AdminController {
             return "admin/pages/find_trip";
         } catch (RuntimeException e) {
             re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+            return "redirect:/admin";
+        }
+    }
+
+    public boolean isValidEmail(String email) {
+        // Regex pattern để kiểm tra định dạng email
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    @PostMapping("/booking-trip")
+    @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
+    public String bookRoundTrip(Principal p, Model model, @RequestParam(value = "bookedId", required = false) Integer bookedId, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
+                                @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re, @RequestParam(value = "endTime", required = false) LocalDate endTime) {
+
+        try {
+            String validEmail = p.getName();
+            UserEntity checkUser = userService.findbyEmail(validEmail).get();
+            if (!isValidEmail(validEmail) && !isValidEmail(checkUser.getAddress())) {
+                model.addAttribute("user", checkUser);
+                model.addAttribute("gbUserName", checkUser.getEmail());
+
+                return "pages/fill_out_email";
+            }
+            System.out.println("User" + checkUser);
+            System.out.println("endTime" + endTime);
+            if (endTime != null) {
+                List<Long> seatIds = new ArrayList<>();
+                String[] seatIdArray = inputSelectedSeats.split(",");
+                for (String seatId : seatIdArray) {
+                    seatIds.add(Long.valueOf(seatId));
+                }
+                LocalTime now = LocalTime.now();
+                Trip trip = tripService.get(selectedTripId);
+                if (trip.getStartTime().compareTo(now) <= 0) {
+                    re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
+                    return "redirect:/admin";
+                }
+                List<Seat> seatsReserved = new ArrayList<>();
+                for (Long seatId : seatIds) {
+                    Seat seat = seatService.get(seatId);
+                    seatsReserved.add(seat);
+                }
+                //Save booking
+                Trip bookingTrip = trip;
+                Booking booking = new Booking();
+                UserEntity user = checkUser;
+
+                booking.setTrip(bookingTrip);
+                booking.setBookingDate(startTime);
+                booking.setIsPaid(true); //thanh toán tiền mặt
+                booking.setUser(user);
+
+                Booking savedBooking = bookingService.save(booking);
+
+                //Save booking details
+                BookingDetails bookingDetails = new BookingDetails();
+                BookingDetailsId bookingDetailsId = new BookingDetailsId();
+                bookingDetailsId.setBookingId(savedBooking.getId());
+
+                bookingDetails.setId(bookingDetailsId);
+                bookingDetails.setNumberOfTickets(seatsReserved.size());
+                BookingDetails savedBookingDetails = bookingDetailsService.save(bookingDetails, " ");
+
+                List<BookingDetails> list = new ArrayList<>();
+                list.add(savedBookingDetails);
+                savedBooking.setBookingDetails(list);
+                bookingService.save(savedBooking);
+
+                //Save seat reservation
+                Integer tempId = null;
+                if (seatsReserved.size() == 1) {
+                    SeatReservation seatReservation = new SeatReservation();
+                    seatReservation.setBooking(savedBooking);
+                    seatReservation.setSeat(seatsReserved.get(0));
+                    seatReservationService.save(seatReservation, tempId);
+                } else {
+                    for (Seat seat : seatsReserved) {
+                        SeatReservation seatReservation = new SeatReservation();
+                        seatReservation.setBooking(savedBooking);
+                        seatReservation.setSeat(seat);
+                        seatReservationService.save(seatReservation, tempId);
+                    }
+                }
+
+                List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(trip.getRoute().getEndCity(), trip.getRoute().getStartCity());
+                Map<Integer, Integer> availableSeatsMap = new HashMap<>();
+                Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+                for (Trip trip2 : foundTrips) {
+                    int totalSeat = trip2.getVehicle().getCapacity();
+                    int seatReserved = seatReservationService.checkAvailableSeat(trip2, endTime);
+                    List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip2.getVehicle(), trip2, endTime);
+                    int availableSeats = totalSeat - seatReserved;
+
+                    loadAvailableSeatsMap.put(trip2.getId(), seatsAvailable);
+                    availableSeatsMap.put(trip2.getId(), availableSeats);
+                }
+
+                model.addAttribute("foundTrips", foundTrips);
+                model.addAttribute("bookedId", savedBooking.getId());
+                model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+                model.addAttribute("availableSeatsMap", availableSeatsMap);
+                model.addAttribute("header", "Tìm chuyến về");
+                model.addAttribute("currentPage", "Tìm chuyến");
+                model.addAttribute("startCity", trip.getRoute().getEndCity().getName());
+                model.addAttribute("endCity", trip.getRoute().getStartCity().getName());
+                model.addAttribute("startTime", endTime);
+                return "admin/pages/find_trip";
+            } else {
+                return bookTrip(p, bookedId, model, startTime, selectedTripId, inputSelectedSeats, re);
+            }
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin";
+        }
+    }
+
+    @PostMapping("/book")
+    @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
+    public String bookTrip(Principal p, Integer bookedId, Model model, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
+                           @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re) {
+        System.out.println("Booked" + bookedId);
+        String validEmail = p.getName();
+        UserEntity checkUser = userService.findbyEmail(validEmail).get();
+        if (!isValidEmail(validEmail) && !isValidEmail(checkUser.getAddress())) {
+            model.addAttribute("user", checkUser);
+            model.addAttribute("gbUserName", checkUser.getEmail());
+            return "pages/fill_out_email";
+        }
+        System.out.println("Check2" + checkUser);
+        List<Long> seatIds = new ArrayList<>();
+        String[] seatIdArray = inputSelectedSeats.split(",");
+        for (String seatId : seatIdArray) {
+            seatIds.add(Long.valueOf(seatId));
+        }
+
+        if (seatIds.isEmpty()) {
+            re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            if (bookedId != null)
+                bookingService.delete(bookedId);
+            return "redirect:/admin";
+        }
+        try {
+            LocalTime now = LocalTime.now();
+            Trip trip = tripService.get(selectedTripId);
+            if (trip.getStartTime().compareTo(now) <= 0) {
+                re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                if (bookedId != null)
+                    bookingService.delete(bookedId);
+                return "redirect:/admin";
+            }
+            List<Seat> seatsReserved = new ArrayList<>();
+            for (Long seatId : seatIds) {
+                Seat seat = seatService.get(seatId);
+                seatsReserved.add(seat);
+            }
+
+            if (bookedId != null) {
+                Booking roundTrip = bookingService.get(bookedId);
+                model.addAttribute("roundTrip", roundTrip);
+                model.addAttribute("hasRoundTrip", true);
+            }
+
+
+            if (!seatsReserved.isEmpty()) {
+
+                //Save booking
+                Trip bookingTrip = trip;
+                Booking booking = new Booking();
+                UserEntity user = checkUser;
+
+                booking.setTrip(bookingTrip);
+                booking.setBookingDate(startTime);
+                booking.setIsPaid(true); //thanh toán tiền mặt
+                booking.setUser(user);
+
+                Booking savedBooking = bookingService.save(booking);
+
+                //Save booking details
+                BookingDetails bookingDetails = new BookingDetails();
+                BookingDetailsId bookingDetailsId = new BookingDetailsId();
+                bookingDetailsId.setBookingId(savedBooking.getId());
+
+                bookingDetails.setId(bookingDetailsId);
+                bookingDetails.setNumberOfTickets(seatsReserved.size());
+                BookingDetails savedBookingDetails = bookingDetailsService.save(bookingDetails, " ");
+
+                List<BookingDetails> list = new ArrayList<>();
+                list.add(savedBookingDetails);
+                savedBooking.setBookingDetails(list);
+                bookingService.save(savedBooking);
+
+                //Save seat reservation
+                Integer tempId = null;
+                if (seatsReserved.size() == 1) {
+                    SeatReservation seatReservation = new SeatReservation();
+                    seatReservation.setBooking(savedBooking);
+                    seatReservation.setSeat(seatsReserved.get(0));
+                    seatReservationService.save(seatReservation, tempId);
+                } else {
+                    for (Seat seat : seatsReserved) {
+                        SeatReservation seatReservation = new SeatReservation();
+                        seatReservation.setBooking(savedBooking);
+                        seatReservation.setSeat(seat);
+                        seatReservationService.save(seatReservation, tempId);
+                    }
+                }
+                Float roundTripPrice = 0.0F;
+                if (bookedId != null) {
+                    System.out.println("Có vô");
+                    Booking roundTrip = bookingService.get(bookedId);
+                    roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
+                }
+                String totalPrice = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
+                String sub_totalPrice = totalPrice.substring(0, totalPrice.length() - 2);
+
+                model.addAttribute("bookingTransit", true);
+                String paymentMethod = "Thanh toán tiền mặt ID: " + savedBooking.getId();
+                model.addAttribute("paymentMethod", paymentMethod);
+                model.addAttribute("totalPrice", sub_totalPrice);
+                Booking myBooking = bookingService.get(savedBooking.getId());
+                model.addAttribute("myBooking", myBooking);
+                model.addAttribute("seatsReserved", seatsReserved);
+                System.out.println("My booking" + myBooking);
+                if (bookedId != null) {
+                    Booking booking2 = bookingService.get(bookedId);
+                    List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(booking2);
+                    model.addAttribute("myBooking2", booking2);
+                    model.addAttribute("seatsReserved2", reservedSeat2);
+                    model.addAttribute("hasRoundTrip", true);
+                    model.addAttribute("bookingTransit", false);
+                }
+                return "admin/pages/booking_info";
+            } else {
+                re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                if (bookedId != null)
+                    bookingService.delete(bookedId);
+                return "redirect:/admin";
+            }
+        } catch (ResourceNotFoundException e) {
+            re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            if (bookedId != null)
+                bookingService.delete(bookedId);
+            return "redirect:/admin";
+        } catch (SeatHasBeenReseredException e) {
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            if (bookedId != null)
+                bookingService.delete(bookedId);
             return "redirect:/admin";
         }
     }

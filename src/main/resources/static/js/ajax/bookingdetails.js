@@ -12,14 +12,14 @@ $(document).ready(function () {
 
                 if (data.length > 0) {
                     // Loop through the search results and add each user to the table
-                    const price = new Intl.NumberFormat('vi-VN').format(bookingDetail.totalPrice);
-                    data.forEach((booking) => {
 
+                    data.forEach((booking) => {
+                        const price = new Intl.NumberFormat('vi-VN').format(booking.totalPrice);
                         const userRow = `
       <tr>
-                   <td>${bookingDetail.id}</td>
-                        <td>${bookingDetail.booking.id}</td>
-                        <td>${bookingDetail.numberOfTickets}</td>
+                   <td>${booking.id.ticketCode}</td>
+                   <td>${booking.id.bookingId}</td>
+                        <td>${booking.numberOfTickets}</td>
                         <td>${price}</td>
         <td>
           <a href="/admin/booking-details/edit/${booking.id}">Edit</a> |
