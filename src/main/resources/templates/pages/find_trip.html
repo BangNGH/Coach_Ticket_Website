@@ -49,13 +49,14 @@
     <div class="container-fluid text-center">
         <hr/>
         <div>
-            <h2><span th:text="${startCity}"></span> ➝ <span th:text="${endCity}"></span></h2>
+            <h2><span th:text="'Chuyến ' + ${startCity}"></span> ➝ <span th:text="${endCity}"></span></h2>
         </div>
         <div>
-            <h3><span th:text="${#temporals.format(startTime, 'dd/MM/yyyy')}"></span></h3>
+            <h3><span th:text="'Ngày '+${#temporals.format(startTime, 'dd/MM/yyyy')}"></span></h3>
         </div>
         <div>
             <div class="seat-map-container">
+                <input type="text" class="input-group-text" placeholder="search by name, capacity" id="q" size="50">
                 <form th:action="@{/users/booking-trip}" method="post">
                 <table class="table table-bordered">
                     <thead class="thead-dark">
@@ -100,89 +101,20 @@
                     <input type="hidden" id="selectedTripId" name="selectedTripId">
                     <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
                     <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
-                    <input type="hidden" name="endTime" th:value="${endTime}">
-                    <input type="hidden" name="startCity" th:value="${startCity}">
-                    <input type="hidden" name="endCity" th:value="${endCity}">
+                    <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
+                    <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
+                    <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
                     <input type="hidden" name="bookedId" th:value="${bookedId}">
-                    <button id="bookButton" class="btn btn-primary" style="margin-top: 10px;margin-bottom: 10px;">Tiếp tục</button>
+                    <button id="bookButton" class="btn btn-primary" style="margin-top: 10px;margin-bottom: 10px;">Tiếp
+                        tục
+                    </button>
                     <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Trở về</button>
                 </form>
             </div>
         </div>
-        <script>
-                         function cancelForm() {
-            window.location = "[[@{/home}]]";
-        }
-            document.getElementById('bookButton').disabled = true;
-            // Ẩn các cột "Chọn ghế" và "Sơ đồ ghế" ban đầu
-            document.querySelectorAll(' th:nth-child(6), th:nth-child(7),td:nth-child(6), td:nth-child(7)').forEach(function(element) {
-                element.style.display = 'none';
-            });
-
-            // Lắng nghe sự kiện khi người dùng chọn radio button "selectedTrip"
-            document.querySelectorAll('input[name="selectedTrip"]').forEach(function(radio) {
-                radio.addEventListener('click', function() {
-                    // Ẩn các cột "Chọn ghế" và "Sơ đồ ghế" của các hàng khác
-                    document.querySelectorAll('td:nth-child(6), td:nth-child(7)').forEach(function(element) {
-                        // Xóa tất cả các checkbox đã chọn
-                        document.querySelectorAll('input[name="selectedSeats"]:checked').forEach(function(checkbox) {
-                            checkbox.checked = false;
-                            checkbox.nextElementSibling.classList.remove('checked');
-                        });
-                        element.style.display = 'none';
-
-                    });
-                    // Hiển thị các cột "Chọn ghế" và "Sơ đồ ghế" của hàng tương ứng
-                    this.closest('tr').querySelectorAll('td:nth-child(6), td:nth-child(7)').forEach(function(element) {
-                        element.style.display = '';
-                        document.getElementById('bookButton').disabled = false;
-                    });
-                    document.querySelectorAll(' th:nth-child(6), th:nth-child(7)').forEach(function(element) {
-                        element.style.display = '';
-                        document.getElementById('bookButton').disabled = false;
-                    });
-                });
-            });
-
-            document.getElementById('bookButton').addEventListener('click', function() {
-                // Lấy giá trị của radio button "selectedTrip"
-                var selectedTrip = document.querySelector('input[name="selectedTrip"]:checked');
-                if (selectedTrip) {
-                    // Lấy giá trị của ghế đã chọn
-                    var selectedSeats = [];
-                    var selectedSeatsElements = selectedTrip.closest('tr').querySelectorAll('input[name="selectedSeats"]:checked');
-                    selectedSeatsElements.forEach(function(seatElement) {
-                        selectedSeats.push(seatElement.value);
-                    });
-
-                    if (selectedSeats.length > 0) {
-                        if (selectedSeats.length >5) {
-                            alert('Chỉ đặt tối đa 5 vé cho 1 lần thanh toán!');
-                            event.preventDefault();
-                            return;
-                        }
-
-                        //Đặt vé
-
-                        document.getElementById('selectedTripId').value = selectedTrip.value;
-                        document.getElementById('inputSelectedSeats').value = selectedSeats.join(',');
-                        document.getElementById('bookingForm').submit();
-                        // Xóa bỏ các giá trị đã chọn trong mảng selectedSeats
-                        selectedSeats.length = 0;
-                    } else {
-                        alert('Vui lòng chọn ít nhất một ghế.');
-                        event.preventDefault();
-                        return;
-                    }
-                } else {
-                    alert('Vui lòng chọn chuyến đi.');
-                    event.preventDefault();
-                    return;
-                }
-
-            });
-        </script>
+        <script th:src="@{/js/ajax/home.js}"></script>
     </div>
+    <script th:src="@{/js/ajax/findTrip.js}"></script>
 </div>
 </body>
 </html>

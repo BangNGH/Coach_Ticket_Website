@@ -19,6 +19,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT p FROM Booking p WHERE p.user.id = ?1 AND p.isPaid = ?2")
     Page<Booking> getBookedTripsByUserId(int id, Boolean isPaid, Pageable pageable);
 
+
     @Query("SELECT p FROM Booking p WHERE p.isPaid = ?1")
     Page<Booking> getBills(Boolean isPaid, Pageable pageable);
 }

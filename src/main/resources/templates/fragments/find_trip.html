@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<tbody th:fragment="tripList">
+<th:block th:each="trip: ${foundTrips}">
+  <tr>
+    <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
+    <td>[[${trip.vehicle.name}]]</td>
+    <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
+    <td th:text="${availableSeatsMap.get(trip.id)}"></td>
+    <td>
+      <input required type="radio" name="selectedTrip" th:value="${trip.id}">
+      Chọn
+    </td>
+    <td>
+      <div class="seat-map">
+        <th:block th:each="seat : ${loadAvailableSeatsMap.get(trip.id)}">
+          <div class="seat-item">
+            <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}" id="seat-${seat.getId()}">
+            <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                   onclick="toggleCheckbox(this.previousElementSibling)"></label>
+          </div>
+        </th:block>
+      </div>
+    </td>
+    <td>
+      <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
+    </td>
+  </tr>
+</th:block>
+</tbody>
+</body>
+</html>

@@ -1,13 +1,13 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
+import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingDetailsService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.CityService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.TripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -15,13 +15,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -31,30 +33,25 @@ public class AdminController {
 
     private final BookingDetailsService bookingDetailsService;
     private final BookingService bookingService;
+    private final CityService cityService;
+    private final TripService tripService;
+    private final SeatReservationRepository seatReservationRepo;
 
     @GetMapping("/bill")
     public String showBill(Model model) {
-        return findPageBill(1, model);
+        return findPageBill(1, model, "id", "asc");
     }
 
     @GetMapping("/bill-page/page/{pageNo}")
-    private String findPageBill(@PathVariable(value = "pageNo") int pageNo, Model model) {
+    public String findPageBill(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
         int pageSize = 6;
 
-        Page<Booking> bookedTripPage = bookingService.findPage(false, pageNo, pageSize);
+        Page<Booking> bookedTripPage = bookingService.findPage(false, pageNo, pageSize, sortField, sortDir);
         List<Booking> bookedTrip = bookedTripPage.getContent();
         if (bookedTrip.isEmpty()) {
             model.addAttribute("notFound", true);
         } else model.addAttribute("notFound", false);
 
-// Tính tổng tiền từ các đối tượng BookingDetails
-        Float totalBill = (float) 0;
-        for (Booking booking : bookedTrip) {
-            for (BookingDetails bookingDetails : booking.getBookingDetails()) {
-                totalBill += bookingDetails.getTotalPrice();
-            }
-        }
-        model.addAttribute("totalBill", totalBill);
         model.addAttribute("bookings", bookedTrip);
         model.addAttribute("header", "Thanh toán vé");
         model.addAttribute("currentPage", "Vé chưa thanh toán");
@@ -62,8 +59,13 @@ public class AdminController {
         model.addAttribute("currentPage1", pageNo);
         model.addAttribute("totalPages", bookedTripPage.getTotalPages());
         model.addAttribute("totalItems", bookedTripPage.getTotalElements());
+
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "admin/pages/show_bill";
     }
+
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
@@ -82,7 +84,8 @@ public class AdminController {
     public String adminHomePage(Model model) {
         List<BookingDetails> bookingDetailsList = bookingDetailsService.getBookings();
         List<Booking> bookings = bookingService.getBookings();
-
+        List<City> cities = cityService.getCities();
+        model.addAttribute("cities", cities);
         Float revenue = 0.0F;
         revenue = bookingDetailsList
                 .stream()
@@ -93,8 +96,10 @@ public class AdminController {
         Map<YearMonth, Double> revenueByMonth = bookingDetailsList.stream()
                 .collect(Collectors.groupingBy(
                         bookingDetails -> YearMonth.from(bookingDetails.getBooking().getBookingDate()),
+                        TreeMap::new, // tự động sắp xếp các entry theo thứ tự của khóa (YearMonth).
                         Collectors.summingDouble(BookingDetails::getTotalPrice)
                 ));
+        System.out.println(revenueByMonth);
 
         //Doanh thu tháng này
         YearMonth currentMonth = YearMonth.now();
@@ -137,4 +142,42 @@ public class AdminController {
     }
 
 
+    @RequestMapping(value = {"/find-trip"})
+    public String getTrips(Model model, RedirectAttributes re, @RequestParam("startCity") City startCity,
+                           @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
+                           @RequestParam(value = "endTime", required = false) LocalDate endTime) {
+        if (startCity == endCity) {
+            re.addFlashAttribute("errorMessage", "Vui lòng chọn thành phố khác nhau");
+            return "redirect:/admin";
+        }
+        try {
+            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            Map<Integer, Integer> availableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            for (Trip trip : foundTrips) {
+                int totalSeat = trip.getVehicle().getCapacity();
+                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, startTime);
+                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, startTime);
+                int availableSeats = totalSeat - seatReserved;
+
+                loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                availableSeatsMap.put(trip.getId(), availableSeats);
+            }
+
+            model.addAttribute("foundTrips", foundTrips);
+            model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+            model.addAttribute("availableSeatsMap", availableSeatsMap);
+            model.addAttribute("header", "Tìm chuyến");
+            model.addAttribute("currentPage", "Tìm chuyến");
+            model.addAttribute("startCity", startCity.getName());
+            model.addAttribute("endCity", endCity.getName());
+            model.addAttribute("startTime", startTime);
+            model.addAttribute("endTime", endTime);
+
+            return "admin/pages/find_trip";
+        } catch (RuntimeException e) {
+            re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+            return "redirect:/admin";
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +61,9 @@ public class CityService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.cityRepository.findAll(pageable);
+    }
+
+    public City findCityByName(String cityName) {
+        return this.cityRepository.findCityByName(cityName);
     }
 }

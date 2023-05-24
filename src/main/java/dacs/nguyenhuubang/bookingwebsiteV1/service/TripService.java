@@ -1,6 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
+
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.TripRepository;
@@ -10,7 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -66,4 +68,5 @@ public class TripService {
     public List<Trip> findTripsByCitiesAndStartTime(City startCity, City endCity) {
         return tripRepository.findTripsByCitiesAndStartTime(startCity, endCity);
     }
+
 }

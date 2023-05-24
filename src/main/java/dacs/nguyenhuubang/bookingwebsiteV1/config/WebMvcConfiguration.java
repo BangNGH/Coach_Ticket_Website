@@ -1,7 +1,5 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.config;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -26,5 +24,4 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         String routeUploadPath1 = routeUploadDir1.toFile().getAbsolutePath();
         registry.addResourceHandler("/vehicle-images/**").addResourceLocations("file:/"+routeUploadPath1+"/");
     }
-
 }

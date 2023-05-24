@@ -1,6 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
+
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -78,9 +80,10 @@ public class BookingService {
         return this.bookingRepository.getBookedTripsByUserId(id, isPaid, pageable);
     }
 
+    public Page<Booking> findPage(Boolean isPaid, int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-    public Page<Booking> findPage(Boolean isPaid, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.bookingRepository.getBills(isPaid, pageable);
     }
 }
