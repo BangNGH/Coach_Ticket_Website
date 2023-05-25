@@ -66,4 +66,9 @@ public class CityService {
     public City findCityByName(String cityName) {
         return this.cityRepository.findCityByName(cityName);
     }
+
+    public City getCityByName(String cityName) {
+
+        return this.cityRepository.findCityByName(cityName);
+    }
 }

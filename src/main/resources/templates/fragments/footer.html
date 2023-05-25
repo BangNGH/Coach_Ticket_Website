@@ -1,91 +1,112 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
 </head>
 <body>
-<footer class="footer-area section-gap" th:fragment="footer">
-				<div class="container">
+<footer th:fragment="footer">
 
-					<div class="row">
-						<div class="col-lg-3  col-md-6 col-sm-6">
-							<div class="single-footer-widget">
-								<h6>About Agency</h6>
-								<p>
-									The world has become so fast paced that people don’t want to stand by reading a page of information, they would much rather look at a presentation and understand the message. It has come to a point 
-								</p>
-							</div>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-6">
-							<div class="single-footer-widget">
-								<h6>Navigation Links</h6>
-								<div class="row">
-									<div class="col">
-										<ul>
-											<li><a href="#">Home</a></li>
-											<li><a href="#">Feature</a></li>
-											<li><a href="#">Services</a></li>
-											<li><a href="#">Portfolio</a></li>
-										</ul>
-									</div>
-									<div class="col">
-										<ul>
-											<li><a href="#">Team</a></li>
-											<li><a href="#">Pricing</a></li>
-											<li><a href="#">Blog</a></li>
-											<li><a href="#">Contact</a></li>
-										</ul>
-									</div>										
-								</div>							
-							</div>
-						</div>							
-						<div class="col-lg-3  col-md-6 col-sm-6">
-							<div class="single-footer-widget">
-								<h6>Newsletter</h6>
-								<p>
-									For business professionals caught between high OEM price and mediocre print and graphic output.									
-								</p>								
-								<div id="mc_embed_signup">
-									<form target="_blank" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01" method="get" class="subscription relative">
-										<div class="input-group d-flex flex-row">
-											<input name="EMAIL" placeholder="Email Address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email Address '" required="" type="email">
-											<button class="btn bb-btn"><span class="lnr lnr-location"></span></button>		
-										</div>									
-										<div class="mt-10 info"></div>
-									</form>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-3  col-md-6 col-sm-6">
-							<div class="single-footer-widget mail-chimp">
-								<h6 class="mb-20">InstaFeed</h6>
-								<ul class="instafeed d-flex flex-wrap">
-									<li><img src="img/i1.jpg" alt=""></li>
-									<li><img src="img/i2.jpg" alt=""></li>
-									<li><img src="img/i3.jpg" alt=""></li>
-									<li><img src="img/i4.jpg" alt=""></li>
-									<li><img src="img/i5.jpg" alt=""></li>
-									<li><img src="img/i6.jpg" alt=""></li>
-									<li><img src="img/i7.jpg" alt=""></li>
-									<li><img src="img/i8.jpg" alt=""></li>
-								</ul>
-							</div>
-						</div>						
-					</div>
+    <!-- Remove the container if you want to extend the Footer to full width. -->
+    <div class=" my-5">
 
-					<div class="row footer-bottom d-flex justify-content-between align-items-center">
-						<p class="col-lg-8 col-sm-12 footer-text m-0"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-						<div class="col-lg-4 col-sm-12 footer-social">
-							<a href="#"><i class="fa fa-facebook"></i></a>
-							<a href="#"><i class="fa fa-twitter"></i></a>
-							<a href="#"><i class="fa fa-dribbble"></i></a>
-							<a href="#"><i class="fa fa-behance"></i></a>
-						</div>
-					</div>
-				</div>
-			</footer>
+        <footer class="text-white text-center text-lg-start" style="background-color: #23242a;">
+            <!-- Grid container -->
+            <div class="container p-4">
+                <!--Grid row-->
+                <div class="row mt-4">
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                        <h5 style="color:white;" class="text-uppercase mb-4">Về Chúng Tôi</h5>
+                        <div>
+                            <h6><a style="text-decoration: none; color: white" href="">Giới thiệu</a></h6>
+                            <br/>
+                            <h6><a style="text-decoration: none; color: white" href="">Liên hệ</a></h6>
+                            <br/>
+                            <h6><a style="text-decoration: none; color: white" href="">Cách đặt chổ</a></h6>
+                            <br/>
+                            <h6><a style="text-decoration: none; color: white" href="">Trợ giúp</a></h6>
+
+                        </div>
+
+                        <div class="mt-4">
+                            <!-- Facebook -->
+                            <a href="https://www.facebook.com/profile.php?id=100092738989085" type="button"
+                               class="btn btn-floating btn-outline-light btn-lg"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a href="https://github.com/nghbang1909" type="button"
+                               class="btn btn-floating btn-outline-light btn-lg"><i
+                                    class="fa-brands fa-github"></i></a>
+                            <!-- Google + -->
+                            <a href="/home" type="button" class="btn btn-floating btn-outline-light btn-lg"><i
+                                    class="fab fa-google-plus-g"></i></a>
+
+                            <img src="https://play-lh.googleusercontent.com/jjp2E1WZrnx_l7rTI9zebazVt2wk_7OkZKcqwFE5k9_87QcJce8_zriAurvCbYQSqXJ7"
+                                 width="59" height="49">
+                            <img src="https://developers.momo.vn/v3/vi/assets/images/square-8c08a00f550e40a2efafea4a005b1232.png"
+                                 width="59" height="49">
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <h5 style="color:white;" class="text-uppercase mb-4 pb-1">Thông tin nhà xe</h5>
+
+                        <div class="form-outline form-white mb-4">
+
+                            <div class="form-notch">
+                                <div class="form-notch-leading" style="width: 9px;"></div>
+                                <div class="form-notch-middle" style="width: 48.8px;"></div>
+                                <div class="form-notch-trailing"></div>
+                            </div>
+                        </div>
+
+                        <ul class="fa-ul" style="margin-left: 1.65em;">
+                            <li class="mb-3">
+                                <span class="fa-li"><i class="fas fa-home"></i></span><span class="ms-2">Khu công nghệ cao Quận 9, Hutech, Thủ Đức</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fa-li"><i class="fas fa-envelope"></i></span><span class="ms-2">nghbang1909@gmail.com</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fa-li"><i class="fas fa-phone"></i></span><span
+                                    class="ms-2">+84 345712873</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <h5 style="color:white;" class="text-uppercase mb-4">Giờ mở bán vé</h5>
+
+                        <table class="table text-center text-white">
+                            <tbody class="font-weight-normal">
+                            <tr>
+                                <td>Thứ 2 - Thứ 5:</td>
+                                <td>3am - 9pm</td>
+                            </tr>
+                            <tr>
+                                <td>Thứ 6 - Thứ 7:</td>
+                                <td>3am - 10am</td>
+                            </tr>
+                            <tr>
+                                <td>Chủ nhật:</td>
+                                <td>2am - 9pm</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </div>
+        </footer>
+
+    </div>
+    <!-- End of .container -->
+
+</footer>
 </body>
 </html>

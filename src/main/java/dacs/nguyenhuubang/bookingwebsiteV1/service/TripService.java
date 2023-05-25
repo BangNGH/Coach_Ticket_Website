@@ -69,4 +69,11 @@ public class TripService {
         return tripRepository.findTripsByCitiesAndStartTime(startCity, endCity);
     }
 
+    public List<Trip> findTripsByDestination(City endCity) {
+        return tripRepository.findTripsByDestination(endCity);
+    }
+
+    public Trip getTripByRouteName(String routeName) {
+        return tripRepository.getTripByRouteName(routeName);
+    }
 }

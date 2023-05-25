@@ -12,4 +12,7 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
 
     @Query("SELECT p FROM Route p WHERE CONCAT(p.name, ' ', p.startCity.name, ' ', p.endCity.name, ' ', p.distance) LIKE %?1%")
     List<Route> search(String keyword);
+
+    @Query("SELECT p FROM Route p WHERE p.name = :routeName")
+    Route getRouteByName(String routeName);
 }

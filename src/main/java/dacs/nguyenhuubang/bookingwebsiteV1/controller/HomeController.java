@@ -1,34 +1,22 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.TripRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.security.Security;
-import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping(value = {"", "/", "/home"})
@@ -37,25 +25,107 @@ public class HomeController {
     private final UserService userService;
     private final CityService cityService;
     private final TripService tripService;
+    private final BookingService bookingService;
+    private final RouteService routeService;
     private final SeatReservationRepository seatReservationRepo;
 
     @RequestMapping(value = {"", "/"})
-    public String home(Model model){
+    public String home(Model model) {
         List<City> cities = cityService.getCities();
         model.addAttribute("cities", cities);
+        List<Booking> bookingList = bookingService.getBookings();
+/*        List<String> topDestinations = bookingList.stream()
+                .map(booking -> booking.getTrip().getRoute().getEndCity().getName())
+                .collect(Collectors.groupingBy(
+                        destination -> destination,
+                        Collectors.counting()
+                ))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());*/
+        List<String> topDestinations = new ArrayList<>();
+        Map<String, Long> destinationCountMap = new HashMap<>();
+
+        for (Booking booking : bookingList) {
+            String destination = booking.getTrip().getRoute().getEndCity().getName();
+            destinationCountMap.put(destination, destinationCountMap.getOrDefault(destination, 0L) + 1);
+        }
+
+        // Map.Entry là một interface cung cấp các phương thức để truy cập và thao tác với các cặp khóa-giá trị trong một Map.
+        //, sau khi sử dụng entrySet() để lấy tập hợp các cặp khóa-giá trị từ Map, chúng ta sử dụng Map.Entry để lưu trữ và thao tác với các cặp này
+        List<Map.Entry<String, Long>> sortedEntries = new ArrayList<>(destinationCountMap.entrySet());
+        //sắp xếp danh sách theo giá trị giảm dần của các cặp khóa-giá trị.
+        sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+        //được sử dụng để lấy giá trị nhỏ nhất giữa hai số.
+        int count = Math.min(3, sortedEntries.size());
+        for (int i = 0; i < count; i++) {
+            String destination = sortedEntries.get(i).getKey();
+            topDestinations.add(destination);
+        }
+        List<City> topDestinationCities = new ArrayList<>();
+        for (String cityName : topDestinations
+        ) {
+            topDestinationCities.add(cityService.getCityByName(cityName));
+        }
+
+
+        //Chuyến đi phổ biến
+        List<String> topTrips = new ArrayList<>();
+        Map<String, Long> topTripsCountMap = new HashMap<>();
+
+        for (Booking booking : bookingList) {
+            String destination = booking.getTrip().getRoute().getName();
+            topTripsCountMap.put(destination, topTripsCountMap.getOrDefault(destination, 0L) + 1);
+        }
+
+        // Map.Entry là một interface cung cấp các phương thức để truy cập và thao tác với các cặp khóa-giá trị trong một Map.
+        //, sau khi sử dụng entrySet() để lấy tập hợp các cặp khóa-giá trị từ Map, chúng ta sử dụng Map.Entry để lưu trữ và thao tác với các cặp này
+        List<Map.Entry<String, Long>> topTripsSortedEntries = new ArrayList<>(topTripsCountMap.entrySet());
+        //sắp xếp danh sách theo giá trị giảm dần của các cặp khóa-giá trị.
+        topTripsSortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+        //được sử dụng để lấy giá trị nhỏ nhất giữa hai số.
+        int topTripsCount = Math.min(4, topTripsSortedEntries.size());
+        for (int i = 0; i < count; i++) {
+            String destination = topTripsSortedEntries.get(i).getKey();
+            topTrips.add(destination);
+        }
+        List<Trip> topTripList = new ArrayList<>();
+        for (String routeName : topTrips
+        ) {
+            Trip trip = tripService.getTripByRouteName(routeName);
+            Boolean isExists = topTripList.stream().anyMatch(i -> i != trip);
+            topTripList.add(trip);
+        }
+        System.out.println(topTripList.size());
+        System.out.println(topTripList.get(0).getRoute().getName());
+        model.addAttribute("topDestinationCities", topDestinationCities);
+        model.addAttribute("topTripList", topTripList);
+
         return "pages/home_page";
     }
+
+    @RequestMapping(value = {"/about"})
+    public String aboutMe(Model model) {
+        model.addAttribute("header", "Về chúng tôi");
+        model.addAttribute("currentPage", "Giới thiêu");
+        return "about";
+    }
+
     @PostMapping("/save-email")
-    private String saveEmail(@ModelAttribute("user")UserEntity user,@RequestParam("gbUserName") String gbUserName, Model model){
+    private String saveEmail(@ModelAttribute("user") UserEntity user, @RequestParam("gbUserName") String gbUserName, Model model) {
         Optional<UserEntity> existsUser = userService.findByGithubUserName(user.getAddress());
-        if (existsUser!=null)
-        {
+        if (existsUser != null) {
             model.addAttribute("errorMessage", "Email này đã đuợc đăng ký rồi");
             return "pages/fill_out_email";
         }
         user.setProvider(Provider.GITHUB);
         user.setRole("USER");
-        System.out.println("GITHUB username:"+gbUserName);
+        System.out.println("GITHUB username:" + gbUserName);
         user.setEnabled(true);
         userService.save(user);
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -64,14 +134,15 @@ public class HomeController {
 
         // Thiết lập Authentication mới cho SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-        System.out.println("User github: "+user);
+        System.out.println("User github: " + user);
         return "success_message";
     }
+
     @RequestMapping(value = {"/find"})
     public String getTrips(Model model, RedirectAttributes re, @RequestParam("startCity") City startCity,
                            @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
                            @RequestParam(value = "endTime", required = false) LocalDate endTime) {
-        if (startCity==endCity){
+        if (startCity == endCity) {
             re.addFlashAttribute("errorMessage", "Vui lòng chọn thành phố khác nhau");
             return "redirect:/";
         }
@@ -101,10 +172,79 @@ public class HomeController {
 
             return "pages/find_trip";
         } catch (RuntimeException e) {
-            re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
+            re.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/";
         }
     }
 
+    @GetMapping("/find-destination-city/{id}")
+    private String findDestination(@PathVariable("id") Integer cityId, RedirectAttributes re, Model model) {
+        try {
+            City endCity = cityService.get(cityId);
+            List<Trip> foundTrips = tripService.findTripsByDestination(endCity);
+            Map<Integer, Integer> availableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            for (Trip trip : foundTrips) {
+                int totalSeat = trip.getVehicle().getCapacity();
+                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, LocalDate.now());
+                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, LocalDate.now());
+                int availableSeats = totalSeat - seatReserved;
 
+                loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                availableSeatsMap.put(trip.getId(), availableSeats);
+            }
+
+            model.addAttribute("foundTrips", foundTrips);
+            model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+            model.addAttribute("availableSeatsMap", availableSeatsMap);
+            model.addAttribute("header", "Tất cả chuyến đến " + endCity.getName());
+            model.addAttribute("currentPage", "Tìm chuyến");
+            model.addAttribute("startTime", LocalDate.now());
+            model.addAttribute("startCity", " ");
+            model.addAttribute("endCity", endCity.getName());
+            model.addAttribute("endTime", "");
+
+            return "pages/find_trip";
+        } catch (CityNotFoundException e) {
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/booking-popular-trip/{id}")
+    private String findPopularTrip(@PathVariable("id") Integer tripId, RedirectAttributes re, Model model) {
+        try {
+            Trip foundTrip = tripService.get(tripId);
+            City startCity = foundTrip.getRoute().getStartCity();
+            City endCity = foundTrip.getRoute().getEndCity();
+
+            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            Map<Integer, Integer> availableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            for (Trip trip : foundTrips) {
+                int totalSeat = trip.getVehicle().getCapacity();
+                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, LocalDate.now());
+                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, LocalDate.now());
+                int availableSeats = totalSeat - seatReserved;
+
+                loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                availableSeatsMap.put(trip.getId(), availableSeats);
+            }
+
+            model.addAttribute("foundTrips", foundTrips);
+            model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+            model.addAttribute("availableSeatsMap", availableSeatsMap);
+            model.addAttribute("header", "Tìm chuyến");
+            model.addAttribute("currentPage", "Tìm chuyến");
+            model.addAttribute("startCity", startCity.getName());
+            model.addAttribute("endCity", endCity.getName());
+            model.addAttribute("startTime", LocalDate.now());
+            model.addAttribute("endTime", "");
+
+            return "pages/find_trip";
+        } catch (CityNotFoundException e) {
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/";
+        }
+    }
 }
