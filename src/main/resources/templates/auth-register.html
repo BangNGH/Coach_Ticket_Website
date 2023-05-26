@@ -10,19 +10,20 @@
 <link rel="shortcut icon" th:href="@{/img/favicon.svg}"
 	type="image/x-icon">
 <link rel="stylesheet" th:href="@{/css/app.css}">
+
 </head>
 
-<body>
-	<div id="auth">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-7 col-sm-12 mx-auto">
-					<div class="card pt-4">
-						<div class="card-body">
-							<div class="text-center mb-5">
-								<img th:src="@{/img/favicon.svg}" height="48" class='mb-4'>
-								<h3>Đăng Ký</h3>
-								<p>Vui lòng điền Thông tin vào mẫu bên dưới.</p>
+<body onload="getCurrentLocation()">
+<div id="auth">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-sm-12 mx-auto">
+				<div class="card pt-4">
+					<div class="card-body">
+						<div class="text-center mb-5">
+							<img th:src="@{/img/favicon.svg}" height="48" class='mb-4'>
+							<h3>Đăng Ký</h3>
+							<p>Vui lòng điền Thông tin vào mẫu bên dưới.</p>
 							</div>
 							<form th:action="@{/register/process_register}" th:object="${registrationRequest}" method="post">
 								<div th:if="${errorMessage}" class="alert alert-danger">
@@ -48,8 +49,10 @@
 									</div>
 									<div class="col-md-6 col-12">
 										<div class="form-group">
-											<label for="country-floating">Địa chỉ</label>
-											<input type="text" id="country-floating" required class="form-control" th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''" th:field="*{address}">
+											<label for="address">Địa chỉ</label>
+											<input type="text" id="address" name="address" required class="form-control"
+												   th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''"
+												   th:field="*{address}">
 											<div class="invalid-feedback" th:errors="*{address}"></div>
 										</div>
 									</div>
@@ -86,16 +89,47 @@
 									</button>
 								</div>
 							</div>
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
+	<script type="text/javascript">
+		function getCurrentLocation() {
+			if (navigator.geolocation) {
+				//Nếu hàm getCurrentPosition() chạy thành công, thì nó trả về cho người dùng tọa độ vị trí thông qua hàm truyền tham số (showPosition)
+				navigator.geolocation.getCurrentPosition(showPosition);
+			} else {
+				alert("Trình duyệt của bạn không hỗ trợ định vị");
+			}
+		}
 
+		function showPosition(position) {
+			var latitude = position.coords.latitude;
+			var longitude = position.coords.longitude;
+			var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
+
+			$.ajax({
+				url: nominatimApiUrl,
+				type: "GET",
+				dataType: "json",
+				success: function (response) {
+					// Lấy thông tin địa chỉ từ response và gán vào ô input "address"
+					var address = response.display_name;
+					document.getElementById("address").value = address;
+				},
+				error: function (xhr, status, error) {
+					console.log("Error: " + error);
+				}
+			});
+
+		}
+	</script>
 	</div>
     <script th:src="@{/js/feather.min.js}"></script>
     <script th:src="@{/js/app.js}"></script>
     <script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/vendor/jquery-2.2.4.min.js}"></script>
 </body>
 
 </html>

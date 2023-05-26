@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý thành phố</title>
+    <title>Quản lý trung chuyển</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -20,7 +20,7 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title">Quản lý thành phố</h4>
+                <h4 class="card-title">Quản lý trung chuyển</h4>
                 <div class="d-flex ">
                     <i data-feather="download"></i>
                 </div>
@@ -31,11 +31,25 @@
                         <thead>
                         <tr>
                             <th>
-                                <a th:href="@{'/admin/cities/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=booking.trip.route.name&sortDir='+${reserseSortDir}}">Chuyến</a>
                             </th>
                             <th>
-                                <a th:href="@{'/admin/cities/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Tên
-                                    thành phố</a>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=booking.bookingDate&sortDir='+${reserseSortDir}}">Ngày</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=booking.trip.startTime&sortDir='+${reserseSortDir}}">Lúc</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Tên
+                                    liên hệ</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=address&sortDir='+${reserseSortDir}}">Địa
+                                    chỉ đón</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=phone&sortDir='+${reserseSortDir}}">Điện
+                                    thoại</a>
                             </th>
                             <th></th>
                         </tr>
@@ -43,11 +57,15 @@
                         <tbody>
                         <th:block th:each="city : ${cities}">
                             <tr>
-                                <td>[[${city.id}]]</td>
+                                <td>[[${city.booking.trip.route.name}]]</td>
+                                <td>[[${city.booking.bookingDate}]]</td>
+                                <td>[[${city.booking.trip.startTime}]]</td>
                                 <td>[[${city.name}]]</td>
+                                <td>[[${city.address}]]</td>
+                                <td>[[${city.phone}]]</td>
                                 <td>
-                                    <a th:href="@{'/admin/cities/edit/' + ${city.getId()}}">Edit</a> |
-                                    <a th:href="@{'/admin/cities/delete/' + ${city.getId()}}">Delete</a>
+                                    <a th:href="@{'/admin/transit/edit/' + ${city.getId()}}">Edit</a> |
+                                    <a th:href="@{'/admin/transit/delete/' + ${city.getId()}}">Delete</a>
                                 </td>
                             </tr>
                         </th:block>
@@ -62,33 +80,33 @@
                 <ul class="pagination">
                     <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
                         <a class="page-link"
-                           th:href="@{'/admin/cities/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
+                           th:href="@{'/admin/transit/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
                         <a class="page-link"
-                           th:href="@{'/admin/cities/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
+                           th:href="@{'/admin/transit/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
                     </li>
                     <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
                         <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
-                           th:href="@{'/admin/cities/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                           th:href="@{'/admin/transit/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
                            th:text="${page}"></a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
                         <a class="page-link"
-                           th:href="@{'/admin/cities/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
+                           th:href="@{'/admin/transit/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
                         <a class="page-link"
-                           th:href="@{'/admin/cities/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
+                           th:href="@{'/admin/transit/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
                     </li>
                 </ul>
             </nav>
         </div>
 
-        <a th:href="@{/admin/cities/new}" class="btn btn-info" style="float: right; margin: 10px">Create City</a>
+        <a th:href="@{/admin/transit/new}" class="btn btn-info" style="float: right; margin: 10px">Tạo mới</a>
 
     </div>
-    <script th:src="@{/js/ajax/cities.js}"></script>
+    <script th:src="@{/js/ajax/transit.js}"></script>
 </div>
 </body>
 </html>

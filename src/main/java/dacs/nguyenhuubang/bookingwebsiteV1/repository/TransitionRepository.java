@@ -1,14 +1,13 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.repository;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.ShuttleBus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
+@Repository
 public interface TransitionRepository extends JpaRepository<ShuttleBus, Integer> {
     public Integer countById(Integer id);
 

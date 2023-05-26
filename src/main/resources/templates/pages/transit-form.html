@@ -37,7 +37,7 @@
 
     </style>
 </head>
-<body>
+<body onload="getCurrentLocation()">
 <div layout:fragment="content">
     <div class="row-container">
         <div class="container-fluid">
@@ -58,7 +58,8 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Nơi đón:</label>
                         <div class="col-sm-8">
-                            <input type="text" th:field="*{address}" class="form-control" required
+                            <input type="text" id="address" name="address" th:field="*{address}" class="form-control"
+                                   required
                                    th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''">
                             <div class="invalid-feedback" th:errors="*{address}"></div>
                         </div>
@@ -104,8 +105,39 @@
         function cancelForm() {
             window.location = "[[@{/home}]]";
         }
-
     </script>
+    <script type="text/javascript">
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                //Nếu hàm getCurrentPosition() chạy thành công, thì nó trả về cho người dùng tọa độ vị trí thông qua hàm truyền tham số (showPosition)
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Trình duyệt của bạn không hỗ trợ định vị");
+            }
+        }
+
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
+
+            $.ajax({
+                url: nominatimApiUrl,
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    // Lấy thông tin địa chỉ từ response và gán vào ô input "address"
+                    var address = response.display_name;
+                    document.getElementById("address").value = address;
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+
+        }
+    </script>
+
 </div>
 </div>
 </body>

@@ -15,15 +15,18 @@
         </div>
         <section class="section">
             <div class="row mb-2">
-                <a href="/admin/booking-ticket" style="text-decoration: none;" class="col-12 col-md-3 text-center">
+                <a href="/admin/transit/transit-today" style="text-decoration: none;" class="col-12 col-md-3">
                     <div class="card card-statistic">
                         <div class="card-body p-0">
                             <div class="d-flex flex-column">
                                 <div class='px-3 py-3 d-flex justify-content-between'>
-                                    <h3 class='card-title'>Đặt vé</h3>
+                                    <h5 class='card-title'>Hôm nay</h5>
+                                    <div class="card-right d-flex align-items-center">
+                                        <p th:text="${#numbers.formatDecimal(revenueToday, 0, 'COMMA', 0, 'POINT') + 'đ'}"></p>
+                                    </div>
                                 </div>
                                 <div class="chart-wrapper">
-                                    <canvas id="canvas1" style="height:100px !important"></canvas>
+                                    <canvas id="canvas4" style="height:100px !important"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -33,10 +36,15 @@
                     <div class="card card-statistic">
                         <div class="card-body p-0">
                             <div class="d-flex flex-column">
-                                <div style="max-height:70px" class='px-3 py-3 d-flex justify-content-between'>
-                                    <h3 class='card-title'>Doanh thu</h3>
-                                    <div class="card-right d-flex align-items-center">
-                                        <p th:text="${#numbers.formatDecimal(revenue, 0, 'COMMA', 0, 'POINT') + 'đ'}"></p>
+                                <div style="align-items: center;flex-direction:column;max-height:70px;margin: 0 20px;"
+                                     class='px-3 py-3 d-flex justify-content-between'>
+                                    <div>
+                                        <h3 class='card-title'>Doanh thu</h3>
+                                    </div>
+                                    <div>
+                                        <div class="card-right d-flex align-items-center">
+                                            <p th:text="${#numbers.formatDecimal(revenue, 0, 'COMMA', 0, 'POINT') + 'đ'}"></p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="chart-wrapper">
@@ -74,23 +82,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-3">
+                <a href="/admin/contacts" style="text-decoration: none;" class="col-12 col-md-3">
                     <div class="card card-statistic">
                         <div class="card-body p-0">
                             <div class="d-flex flex-column">
                                 <div class='px-3 py-3 d-flex justify-content-between'>
-                                    <h5 class='card-title'>Hôm nay</h5>
-                                    <div class="card-right d-flex align-items-center">
-                                        <p th:text="${#numbers.formatDecimal(revenueToday, 0, 'COMMA', 0, 'POINT') + 'đ'}"></p>
-                                    </div>
+                                    <h3 class='card-title'>Liên hệ</h3>
                                 </div>
                                 <div class="chart-wrapper">
-                                    <canvas id="canvas4" style="height:100px !important"></canvas>
+                                    <canvas id="canvas1" style="height:100px !important"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="row mb-4">
                 <div class="container-fluid">

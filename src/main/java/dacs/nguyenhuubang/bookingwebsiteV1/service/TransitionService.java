@@ -1,10 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.ShuttleBus;
-import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.CityRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.TransitionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -53,10 +50,13 @@ public class TransitionService {
 
     public void delete(Integer id) {
         Integer count = transitionRepository.countById(id);
+        System.out.println(count);
         if (count == null || count == 0) {
+            System.out.println("ERROR");
             throw new ResourceNotFoundException("Không tìm thấy bất kỳ chuyến trung chuyển nào với ID " + id);
         }
-        transitionRepository.deleteById(id);
+
+        transitionRepository.delete(get(id));
     }
 
     public List<ShuttleBus> search(String keyword) {

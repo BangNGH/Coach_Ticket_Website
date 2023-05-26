@@ -1,5 +1,5 @@
               function cancelForm() {
-            window.location = "[[@{/home}]]";
+            window.location = "/home";
         }
             document.getElementById('bookButton').disabled = true;
             // Ẩn các cột "Chọn ghế" và "Sơ đồ ghế" ban đầu
