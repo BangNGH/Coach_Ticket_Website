@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Cities</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="container-fluid text-center">
+        <input type="text" class="input-group-text" placeholder="search by name" id="q" size="50">
+        <hr/>
+        <div th:if="${raMessage}" class="alert alert-success text-center">
+            [[${raMessage}]]
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+            [[${errorMessage}]]
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title">Quản lý Liên hệ</h4>
+                <div class="d-flex ">
+                    <i data-feather="download"></i>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-0">
+                <div class="table-responsive">
+                    <table class='table mb-0' id="table1">
+                        <thead>
+                        <tr>
+                            <th>
+                                <a th:href="@{'/admin/contacts/page/'+${currentPage}+'?sortField=email&sortDir='+${reserseSortDir}}">Email</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/contacts/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Tên
+                                    liên hệ</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/contacts/page/'+${currentPage}+'?sortField=content&sortDir='+${reserseSortDir}}">Tiêu
+                                    Đề</a>
+                            </th>
+                            <th>Nội dung</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="city : ${cities}">
+                            <tr>
+                                <td>[[${city.email}]]</td>
+                                <td>[[${city.name}]]</td>
+                                <td>[[${city.title}]]</td>
+                                <td>[[${city.content}]]</td>
+                                <td>
+                                    <a th:href="@{'/admin/contacts/delete/' + ${city.getId()}}">Delete</a>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+                        <a class="page-link"
+                           th:href="@{'/admin/contacts/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+                        <a class="page-link"
+                           th:href="@{'/admin/contacts/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+                        <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                           th:href="@{'/admin/contacts/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+                        <a class="page-link"
+                           th:href="@{'/admin/contacts/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+                        <a class="page-link"
+                           th:href="@{'/admin/contacts/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+    <script th:src="@{/js/ajax/contacts.js}"></script>
+</div>
+</body>
+</html>

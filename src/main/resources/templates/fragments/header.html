@@ -30,8 +30,7 @@
             <nav id="nav-menu-container">
                 <ul class="nav-menu">
                     <li><a th:href="@{/home}">Trang chủ</a></li>
-                    <li><a th:href="@{/about}">Giới thệu</a></li>
-                    <li><a th:href="@{/contact}">Liên hệ</a></li>
+                    <li><a th:href="@{/about}">Về chúng tôi</a></li>
                     <li><a th:href="@{/users/tickets/basket}">Hóa đơn</a></li>
                     <li><a th:href="@{/users/tickets/manage-receipts}">Vé Của Tôi</a></li>
                     <li class="menu-has-children"><a href="">Hóa đơn</a>
@@ -60,7 +59,8 @@
             </div>
             <div class="col-lg-4 col-md-6 banner-right">
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="flight" role="tabpanel" aria-labelledby="flight-tab">
+                    <div style="margin-top: 70px;" class="tab-pane fade show active" id="flight" role="tabpanel"
+                         aria-labelledby="flight-tab">
                         <div th:if="${errorMessage}" class="alert alert-danger text-center">
                             [[${errorMessage}]]
                         </div>

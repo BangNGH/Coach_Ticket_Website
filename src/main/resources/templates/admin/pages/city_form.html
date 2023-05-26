@@ -18,7 +18,8 @@
         <div class="form-group row">
           <label class="col-sm-4 col-form-label">City Name:</label>
           <div class="col-sm-8">
-            <input type="text"  th:field="*{name}" class="form-control" required maxlength="25" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+            <input type="text" th:field="*{name}" class="form-control" required maxlength="25"
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
             <div class="invalid-feedback" th:errors="*{name}"></div>
           </div>
         </div>

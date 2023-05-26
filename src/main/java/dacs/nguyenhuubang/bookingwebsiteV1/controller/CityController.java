@@ -1,11 +1,9 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import java.util.List;
-
-
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
+import dacs.nguyenhuubang.bookingwebsiteV1.repository.CityRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.CityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.CityRepository;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -100,14 +98,4 @@ public class CityController {
 		}
 		return "redirect:/admin/cities";
 	}
-
-
-/*	@GetMapping("/search-city")
-	public String search(Model model) {
-		List<City> cites = cityRepository.findAll();
-		model.addAttribute("cites", cites);
-		return "city/SearchCity";
-	}*/
-
-
 }

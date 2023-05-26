@@ -4,6 +4,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,7 +28,7 @@ public class HomeController {
     private final CityService cityService;
     private final TripService tripService;
     private final BookingService bookingService;
-    private final RouteService routeService;
+    private final ContactService contactService;
     private final SeatReservationRepository seatReservationRepo;
 
     @RequestMapping(value = {"", "/"})
@@ -113,7 +115,24 @@ public class HomeController {
     public String aboutMe(Model model) {
         model.addAttribute("header", "Về chúng tôi");
         model.addAttribute("currentPage", "Giới thiêu");
+        model.addAttribute("contact", new Contact());
         return "about";
+    }
+
+    @PostMapping("/submit_contact")
+    public String save(@Valid @ModelAttribute("contact") Contact city, BindingResult bindingResult, RedirectAttributes re, Model model) {
+        try {
+            if (bindingResult.hasErrors()) {
+                re.addFlashAttribute("errorMessage", "Vui lòng điền các dữ liệu hợp lệ");
+                return "redirect:/home";
+            }
+            contactService.save(city);
+            re.addFlashAttribute("successMessage", "Thư của bạn đã được gửi. Chúng tôi sẽ liên hệ sớm nhất");
+            return "redirect:/home";
+        } catch (Exception e) {
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/home";
+        }
     }
 
     @PostMapping("/save-email")
