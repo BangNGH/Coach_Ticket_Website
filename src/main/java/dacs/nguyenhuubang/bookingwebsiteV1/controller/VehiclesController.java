@@ -1,17 +1,8 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.VehicleRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.VehiclesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +13,16 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -50,7 +48,7 @@ public class VehiclesController {
 
     @GetMapping("")
     public String getVehicles(Model model){
-        return findPaginated(1, model, "name", "asc");
+        return findPaginated(1, model, "id", "asc");
     }
 
 

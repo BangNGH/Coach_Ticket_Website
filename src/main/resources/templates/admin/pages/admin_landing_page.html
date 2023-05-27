@@ -19,10 +19,15 @@
                     <div class="card card-statistic">
                         <div class="card-body p-0">
                             <div class="d-flex flex-column">
-                                <div class='px-3 py-3 d-flex justify-content-between'>
-                                    <h5 class='card-title'>Hôm nay</h5>
-                                    <div class="card-right d-flex align-items-center">
-                                        <p th:text="${#numbers.formatDecimal(revenueToday, 0, 'COMMA', 0, 'POINT') + 'đ'}"></p>
+                                <div style="align-items: center;flex-direction:column;max-height:70px;margin: 0 20px;"
+                                     class='px-3 py-3 d-flex justify-content-between'>
+                                    <div>
+                                        <h5 class='card-title'>Hôm nay</h5>
+                                    </div>
+                                    <div>
+                                        <div class="card-right d-flex align-items-center">
+                                            <p th:text="${#numbers.formatDecimal(revenueToday, 0, 'COMMA', 0, 'POINT') + 'đ'}"></p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="chart-wrapper">
@@ -109,17 +114,15 @@
                                     <div class="pl-3">
                                         <h1 class='mt-5'
                                             th:text="${#numbers.formatDecimal(currentMonthRevenue, 0, 'COMMA', 0, 'POINT') + 'đ'}"></h1>
-                                        <p class='text-xs'><span class="text-green"><i data-feather="bar-chart"
-                                                                                       width="15"></i> +19%</span> than
-                                            last month</p>
+                                        <p th:if="!${invalidPercentageOfSales}" class='text-xs'><span
+                                                th:if="!${warnning}" class="text-green"><i data-feather="bar-chart"
+                                                                                           width="15"></i>[[${sign}]] [[${percentageOfSales}]]%</span><span
+                                                th:if="${warnning}" class="text-red"><i data-feather="bar-chart"
+                                                                                        width="15"></i>[[${sign}]] [[${percentageOfSales}]] %</span>
+                                            so với tháng trước</p>
                                         <div class="legends">
                                             <div class="legend d-flex flex-row align-items-center">
-                                                <div class='w-3 h-3 rounded-full bg-info me-2'></div>
-                                                <span class='text-xs'>Tháng trước</span>
-                                            </div>
-                                            <div class="legend d-flex flex-row align-items-center">
-                                                <div class='w-3 h-3 rounded-full bg-blue me-2'></div>
-                                                <span class='text-xs'>Tháng này</span>
+                                                <span class='text-xs'>Doanh thu tháng này</span>
                                             </div>
                                         </div>
                                     </div>
@@ -208,45 +211,51 @@
                     </div>
 
                     <script>
-                            // Lấy ngày hiện tại
-                            var now = new Date();
-                            var dateString02 = now.toISOString().slice(0,10);
+                        // Lấy ngày hiện tại
+                        var now = new Date();
+                        var dateString02 = now.toISOString().slice(0, 10);
 
-                            // Chuyển đổi thành chuỗi định dạng yyyy-mm-dd để có thể sử dụng cho input date
-                            // Đặt giá trị của input "start-time" là thời gian hiện tại
-                            document.getElementById('startTime').setAttribute('min', dateString02);
-                            document.getElementById("startTime").value = dateString02;
+                        // Chuyển đổi thành chuỗi định dạng yyyy-mm-dd để có thể sử dụng cho input date
+                        // Đặt giá trị của input "start-time" là thời gian hiện tại
+                        document.getElementById('startTime').setAttribute('min', dateString02);
+                        document.getElementById("startTime").value = dateString02;
 
-                            const roundTrip = document.querySelector('#round-trip');
-                            const oneWay = document.querySelector('#one-way');
-                            const endTimeInput = document.querySelector('#endTime');
+                        const roundTrip = document.querySelector('#round-trip');
+                        const oneWay = document.querySelector('#one-way');
+                        const endTimeInput = document.querySelector('#endTime');
 
-                            roundTrip.addEventListener('change', () => {
-                                if (roundTrip.checked) {
-                                    endTimeInput.style.display = 'block';
-                                    endTimeInput.removeAttribute('disabled');
-                                    document.getElementById('endTime').setAttribute('min', dateString02);
-                                    document.getElementById("endTime").value = dateString02;
+                        function updateEndTime() {
+                            const startTimeValue = document.getElementById("startTime").value;
+                            document.getElementById('endTime').setAttribute('min', startTimeValue);
+                            document.getElementById("endTime").value = startTimeValue;
+                        }
 
-                                } else {
-                                    endTimeInput.style.display = 'none';
-                                    endTimeInput.setAttribute('disabled', 'disabled');
-                                }
-                            });
+                        roundTrip.addEventListener('change', () => {
+                            if (roundTrip.checked) {
+                                endTimeInput.style.display = 'block';
+                                endTimeInput.removeAttribute('disabled');
+                                updateEndTime();
+                            } else {
+                                endTimeInput.style.display = 'none';
+                                endTimeInput.setAttribute('disabled', 'disabled');
+                            }
+                        });
 
-                            oneWay.addEventListener('change', () => {
-                                if (oneWay.checked) {
-                                    endTimeInput.style.display = 'none';
-                                    endTimeInput.setAttribute('disabled', 'disabled');
-                                } else {
-                                    endTimeInput.style.display = 'block';
-                                    endTimeInput.removeAttribute('disabled');
-                                    document.getElementById('endTime').setAttribute('min', dateString02);
-                                    document.getElementById("endTime").value = dateString02;
-                                }
-                            });
+                        oneWay.addEventListener('change', () => {
+                            if (oneWay.checked) {
+                                endTimeInput.style.display = 'none';
+                                endTimeInput.setAttribute('disabled', 'disabled');
+                            } else {
+                                endTimeInput.style.display = 'block';
+                                endTimeInput.removeAttribute('disabled');
+                                updateEndTime();
+                            }
+                        });
+                        const startTimeInput = document.querySelector('#startTime');
 
-
+                        startTimeInput.onchange = () => {
+                            updateEndTime();
+                        }
                     </script>
                 </div>
             </div>

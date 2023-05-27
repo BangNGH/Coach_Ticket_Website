@@ -76,11 +76,14 @@ public class UsersBookingController {
                     seatIds.add(Long.valueOf(seatId));
                 }
                 LocalTime now = LocalTime.now();
+                LocalDate today = LocalDate.now();
                 Trip trip = tripService.get(selectedTripId);
-                if (trip.getStartTime().compareTo(now) <= 0) {
+
+                if (startTime.isEqual(today) && trip.getStartTime().compareTo(now) <= 0) {
                     re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
                     return "redirect:/home";
                 }
+
                 List<Seat> seatsReserved = new ArrayList<>();
                 for (Long seatId : seatIds) {
                     Seat seat = seatService.get(seatId);
@@ -171,8 +174,9 @@ public class UsersBookingController {
         }
         try {
             LocalTime now = LocalTime.now();
+            LocalDate today = LocalDate.now();
             Trip trip = tripService.get(selectedTripId);
-            if (trip.getStartTime().compareTo(now) <= 0) {
+            if (today.isEqual(startTime) && trip.getStartTime().compareTo(now) <= 0) {
                 re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
                 if (bookedId != null)
                     bookingService.delete(bookedId);

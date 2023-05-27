@@ -1,14 +1,9 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import java.util.List;
-
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.SeatService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.VehiclesService;
 import jakarta.validation.Valid;
@@ -20,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -46,7 +43,7 @@ public class SeatController {
 
     @GetMapping("")
     public String getSeats(Model model){
-        return findPaginated(1, model, "name", "asc");
+        return findPaginated(1, model, "id", "asc");
     }
 
     @GetMapping("/new")

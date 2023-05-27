@@ -1,7 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.config.IUserService;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserAlreadyExistsException;
@@ -11,19 +10,19 @@ import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationToken;
 import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationTokenRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.dao.DataIntegrityViolationException;
+
 import java.sql.SQLIntegrityConstraintViolationException;
-
-
-import javax.swing.text.html.Option;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -57,8 +56,8 @@ public class UserService implements IUserService {
     @Override
     public UserEntity registerUser(RegistrationRequest request) {
         Optional<UserEntity> user = this.findbyEmail(request.email());
-        if (user.isPresent()){
-            throw new UserAlreadyExistsException("User with email "+request.email() +" already exists!");
+        if (user != null) {
+            throw new UserAlreadyExistsException("User với email " + request.email() + " đã tồn tại!");
         }
         var newUser = new UserEntity();
         newUser.setFullname(request.fullname());
@@ -131,13 +130,13 @@ public class UserService implements IUserService {
             return result.get();
         }
         else
-            throw new UserNotFoundException("Not found user with ID: "+id+"!");
+            throw new UserNotFoundException("Không tìm thấy người dùng với ID: " + id + "!");
     }
 
     public void delete(Integer id) {
         Long count = userRepository.countById(id);
         if (count == null || count == 0) {
-            throw new UserNotFoundException("Could not find any users with ID " + id);
+            throw new UserNotFoundException("Không tìm thấy người dùng với ID " + id);
         }
         userRepository.deleteById(id);
     }

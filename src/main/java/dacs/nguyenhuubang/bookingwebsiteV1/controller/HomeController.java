@@ -103,8 +103,6 @@ public class HomeController {
             Boolean isExists = topTripList.stream().anyMatch(i -> i != trip);
             topTripList.add(trip);
         }
-        System.out.println(topTripList.size());
-        System.out.println(topTripList.get(0).getRoute().getName());
         model.addAttribute("topDestinationCities", topDestinationCities);
         model.addAttribute("topTripList", topTripList);
 
@@ -167,6 +165,11 @@ public class HomeController {
         }
         try {
             List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            if (foundTrips.isEmpty()) {
+                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
+                return "redirect:/";
+            }
+
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             for (Trip trip : foundTrips) {

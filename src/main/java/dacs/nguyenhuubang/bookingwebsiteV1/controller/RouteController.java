@@ -1,19 +1,9 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
-
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Route;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.RouteNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.RouteRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.CityService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.RouteService;
 import jakarta.validation.Valid;
@@ -26,6 +16,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin/routes")
@@ -52,7 +50,7 @@ public class RouteController {
 
     @GetMapping("")
     public String getRoutes(Model model){
-        return findPaginated(1, model, "name", "asc");
+        return findPaginated(1, model, "id", "asc");
     }
 
     @GetMapping("/new")

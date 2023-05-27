@@ -38,7 +38,8 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Booking-Date:</label>
                     <div class="col-sm-8">
-                        <input type="date" th:field="*{bookingDate}" class="form-control" required
+                        <input type="date" name="bookingDate" id="bookingDate" th:field="*{bookingDate}"
+                               class="form-control" required
                                th:classappend="${#fields.hasErrors('bookingDate')} ? 'is-invalid' : ''">
                         <div class="invalid-feedback" th:errors="*{bookingDate}"></div>
                     </div>
@@ -94,6 +95,15 @@
             </div>
 
         </form>
+        <script>
+            // Lấy ngày hiện tại
+            var now = new Date();
+            var dateString02 = now.toISOString().slice(0, 10);
+            // Chuyển đổi thành chuỗi định dạng yyyy-mm-dd để có thể sử dụng cho input date
+            // Đặt giá trị của input "start-time" là thời gian hiện tại
+            document.getElementById('bookingDate').setAttribute('min', dateString02);
+            document.getElementById("bookingDate").value = dateString02;
+        </script>
         <script th:inline="javascript">
             function loadTrips() {
                 var tripId = $("select[name='trip']").val();

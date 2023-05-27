@@ -129,13 +129,18 @@
                             const oneWay = document.querySelector('#one-way');
                             const endTimeInput = document.querySelector('#endTime');
 
+                            function updateEndTime() {
+                                const startTimeValue = document.getElementById("startTime").value;
+                                document.getElementById('endTime').setAttribute('min', startTimeValue);
+                                document.getElementById("endTime").value = startTimeValue;
+                            }
+
+
                             roundTrip.addEventListener('change', () => {
                                 if (roundTrip.checked) {
                                     endTimeInput.style.display = 'block';
                                     endTimeInput.removeAttribute('disabled');
-                                    document.getElementById('endTime').setAttribute('min', dateString02);
-                                    document.getElementById("endTime").value = dateString02;
-
+                                    updateEndTime();
                                 } else {
                                     endTimeInput.style.display = 'none';
                                     endTimeInput.setAttribute('disabled', 'disabled');
@@ -149,12 +154,15 @@
                                 } else {
                                     endTimeInput.style.display = 'block';
                                     endTimeInput.removeAttribute('disabled');
-                                    document.getElementById('endTime').setAttribute('min', dateString02);
-                                    document.getElementById("endTime").value = dateString02;
+                                    updateEndTime();
                                 }
                             });
-                        </script>
+                            const startTimeInput = document.querySelector('#startTime');
 
+                            startTimeInput.onchange = () => {
+                                updateEndTime();
+                            }
+                        </script>
                     </div>
                 </div>
             </div>

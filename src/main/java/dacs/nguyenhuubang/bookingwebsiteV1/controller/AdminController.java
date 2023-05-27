@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -24,6 +25,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.codehaus.groovy.runtime.typehandling.NumberMath.abs;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin")
@@ -88,10 +91,22 @@ public class AdminController {
     }
 
     @RequestMapping(value = {"", "/", "/home"})
-    public String adminHomePage(Model model) {
+    public String adminHomePage(Model model, RedirectAttributes re) {
         List<BookingDetails> bookingDetailsList = bookingDetailsService.getBookings();
         List<Booking> bookings = bookingService.getBookings();
         List<City> cities = cityService.getCities();
+        if (bookings.isEmpty()) {
+            re.addFlashAttribute("errorMessage", "Hãy thêm dữ liệu cho bảng này.");
+            return "redirect:/admin/bookings";
+        }
+        if (cities.isEmpty()) {
+            re.addFlashAttribute("errorMessage", "Thêm dữ liệu cho bảng này");
+            return "redirect:/admin/cities";
+        }
+        if (bookingDetailsList.isEmpty()) {
+            re.addFlashAttribute("errorMessage", "Thêm dữ liệu cho bảng này");
+            return "redirect:/admin/booking-details";
+        }
         model.addAttribute("cities", cities);
         Float revenue = 0.0F;
         revenue = bookingDetailsList
@@ -106,7 +121,6 @@ public class AdminController {
                         TreeMap::new, // tự động sắp xếp các entry theo thứ tự của khóa (YearMonth).
                         Collectors.summingDouble(BookingDetails::getTotalPrice)
                 ));
-        System.out.println(revenueByMonth);
 
         //Doanh thu tháng này
         YearMonth currentMonth = YearMonth.now();
@@ -119,6 +133,33 @@ public class AdminController {
             // Tháng hiện tại chưa có doanh số
             model.addAttribute("currentMonthRevenue", "Tháng này chưa có doanh thu");
         }
+
+        //% doanh thu so với tháng trước
+        YearMonth lastMonth = YearMonth.now().minusMonths(1);
+        Double lastMonthRevenue = revenueByMonth.get(lastMonth);
+        if (lastMonthRevenue == null) {
+            model.addAttribute("invalidPercentageOfSales", true);
+        } else {
+            //Độ chênh lệhc
+            Double deviation = 0.0;
+            if (currentMonthRevenue > lastMonthRevenue) {
+                deviation = currentMonthRevenue - lastMonthRevenue;
+                model.addAttribute("sign", "+");
+                System.out.println("dương" + deviation);
+            } else {
+                deviation = (Double) abs(currentMonthRevenue - lastMonthRevenue);
+                model.addAttribute("sign", "-");
+                model.addAttribute("warnning", "true");
+                System.out.println("âm" + deviation);
+            }
+            //% chênh lệch
+            Double percentageOfSales = (deviation / lastMonthRevenue) * 100;
+            System.out.println(percentageOfSales);
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            String roundedNumber = decimalFormat.format(percentageOfSales);
+            model.addAttribute("percentageOfSales", roundedNumber);
+        }
+
 
         //Tính doanh thu ngày hôm nay
         LocalDate currentDate = LocalDate.now();
@@ -159,6 +200,10 @@ public class AdminController {
         }
         try {
             List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            if (foundTrips.isEmpty()) {
+                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
+                return "redirect:/admin";
+            }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             for (Trip trip : foundTrips) {
@@ -210,8 +255,6 @@ public class AdminController {
 
                 return "pages/fill_out_email";
             }
-            System.out.println("User" + checkUser);
-            System.out.println("endTime" + endTime);
             if (endTime != null) {
                 List<Long> seatIds = new ArrayList<>();
                 String[] seatIdArray = inputSelectedSeats.split(",");
@@ -219,8 +262,9 @@ public class AdminController {
                     seatIds.add(Long.valueOf(seatId));
                 }
                 LocalTime now = LocalTime.now();
+                LocalDate today = LocalDate.now();
                 Trip trip = tripService.get(selectedTripId);
-                if (trip.getStartTime().compareTo(now) <= 0) {
+                if (today.isEqual(startTime) && trip.getStartTime().compareTo(now) <= 0) {
                     re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
                     return "redirect:/admin";
                 }
@@ -332,8 +376,9 @@ public class AdminController {
         }
         try {
             LocalTime now = LocalTime.now();
+            LocalDate today = LocalDate.now();
             Trip trip = tripService.get(selectedTripId);
-            if (trip.getStartTime().compareTo(now) <= 0) {
+            if (today.isEqual(startTime) && trip.getStartTime().compareTo(now) <= 0) {
                 re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 if (bookedId != null)
@@ -350,7 +395,7 @@ public class AdminController {
                 Booking roundTrip = bookingService.get(bookedId);
                 model.addAttribute("roundTrip", roundTrip);
                 model.addAttribute("hasRoundTrip", true);
-            }
+            } else model.addAttribute("hasRoundTrip", false);
 
 
             if (!seatsReserved.isEmpty()) {
@@ -405,7 +450,6 @@ public class AdminController {
                 String totalPrice = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
                 String sub_totalPrice = totalPrice.substring(0, totalPrice.length() - 2);
 
-                model.addAttribute("bookingTransit", true);
                 String paymentMethod = "Thanh toán tiền mặt ID: " + savedBooking.getId();
                 model.addAttribute("paymentMethod", paymentMethod);
                 model.addAttribute("totalPrice", sub_totalPrice);
@@ -418,8 +462,6 @@ public class AdminController {
                     List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(booking2);
                     model.addAttribute("myBooking2", booking2);
                     model.addAttribute("seatsReserved2", reservedSeat2);
-                    model.addAttribute("hasRoundTrip", true);
-                    model.addAttribute("bookingTransit", false);
                 }
                 return "admin/pages/booking_info";
             } else {

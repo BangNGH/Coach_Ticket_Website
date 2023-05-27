@@ -101,7 +101,7 @@
                 <span class="form-control" th:text="${myBooking.user.email}"></span>
               </div>
               <div th:if="!${hasRoundTrip}" class="form-group">
-                <div th:if="${bookingTransit}">
+                <div>
                   <a th:href="@{'/admin/print-tickets/'+ ${myBooking.id}}"
                      class="btn btn-info">In vé</a>
                   <a th:href="@{/admin}" class="btn btn-secondary m-2">Trở về</a>
@@ -162,9 +162,9 @@
                 <label style="font-weight: bold" th:each="seat : ${seatsReserved2}"
                        th:text="${seat.name} + ', '"></label>
               </div>
-              <div th:if="${hasRoundTrip}" class="form-group">
-                <div th:if="${bookingTransit}">
-                  <a th:href="@{'/admin/print'+ ${myBooking.id}}"
+              <div class="form-group">
+                <div>
+                  <a th:href="@{'/admin/print-tickets/'+ ${myBooking.id}}"
                      class="btn btn-info">In vé</a>
                   <a th:href="@{/admin}" class="btn btn-secondary m-2">Trở về</a>
                 </div>

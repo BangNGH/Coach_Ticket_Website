@@ -2,8 +2,6 @@ package dacs.nguyenhuubang.bookingwebsiteV1.event.listener;
 
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.SeatReservation;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
@@ -72,7 +70,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         mailContentBuilder.append("<div class=\"container\">");
         mailContentBuilder.append("<h2>Chào, " + theBooking.getUser().getFullname() + "</h2>");
         mailContentBuilder.append("<p>Cám ơn bạn đã chọn nhà xe của chúng tôi, dưới đây là thông tin vé của bạn</p>");
-        mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> Tuyến " + theBooking.getTrip().getRoute().getName() + ", ngày " + theBooking.getBookingDate() + ", lúc " + theBooking.getTrip().getStartTime() + "</p>");
+        mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> Tuyến: " + theBooking.getTrip().getRoute().getName() + ", ngày:" + theBooking.getBookingDate() + ", lúc: " + theBooking.getTrip().getStartTime() + "</p>");
         mailContentBuilder.append("<p><strong>Số lượng vé lượt đi:</strong> " + numberOfTicket + "</p>");
         mailContentBuilder.append("<p><strong>Chỗ ngồi lượt đi:</strong> " + reservedSeats + "</p>");
         mailContentBuilder.append("<p><strong>Mã vé lượt đi:</strong> " + ticketCode + "</p>");

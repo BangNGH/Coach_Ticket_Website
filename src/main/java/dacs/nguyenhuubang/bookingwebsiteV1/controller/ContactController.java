@@ -43,7 +43,7 @@ public class ContactController {
 
     @GetMapping("")
     public String getCities(Model model) {
-        return findPaginated(1, model, "name", "asc");
+        return findPaginated(1, model, "id", "asc");
     }
 
     @GetMapping("/delete/{id}")
