@@ -35,11 +35,11 @@
 
 
 <body>
-	 <div th:replace="fragments/header">		 
-	</div>
+	 <div th:replace="~{fragments/header :: header}">
+	 </div>
 	<div layout:fragment="content"></div>
-	<div th:replace="fragments/footer :: footer">		
-	</div>
+	 <div th:replace="~{fragments/footer :: footer}">
+	 </div>
 
 	<script th:src="@{/js/vendor/jquery-2.2.4.min.js}"></script>
 	<script th:src="@{/js/popper.min.js}"></script>

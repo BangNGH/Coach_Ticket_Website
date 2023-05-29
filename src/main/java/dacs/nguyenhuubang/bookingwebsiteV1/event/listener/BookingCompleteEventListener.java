@@ -83,7 +83,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
                 send_reservedSeatNames += seatName + ", "; // Thêm tên của ghế vào chuỗi
             }
             send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
-            mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> Tuyến" + booking.getTrip().getRoute().getName() + ", ngày" + booking.getBookingDate() + ", lúc" + booking.getTrip().getStartTime() + "</p>");
+            mailContentBuilder.append("<p><strong>Thông tin vé lượt về:</strong> Tuyến" + booking.getTrip().getRoute().getName() + ", ngày" + booking.getBookingDate() + ", lúc" + booking.getTrip().getStartTime() + "</p>");
             mailContentBuilder.append("<p><strong>Số lượng vé lượt về:</strong> " + booking.getBookingDetails().get(0).getNumberOfTickets() + "</p>");
             mailContentBuilder.append("<p><strong>Chỗ ngồi lượt về:</strong> " + send_reservedSeatNames + "</p>");
             mailContentBuilder.append("<p><strong>Mã vé lượt về:</strong> " + booking.getBookingDetails().get(0).getId().getTicketCode() + "</p>");

@@ -6,19 +6,27 @@
 
 </head>
 <body>
-<header id="header" th:fragment="subheader">
-    <div class="header-top">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 col-sm-6 col-6 header-top-left">
-                    <ul>
-                        <li>
-                            <a th:href="@{/logout}" style="color: snow" th:inline="text">Login/Logout</a>
-                        </li>
-                        <li><a style="color: snow" th:inline="text">Hello <span style="font-weight: bold" th:remove="tag"
-                                                                                sec:authentication="name"></span>!</a>
-                        </li>
-                    </ul>
+<div th:fragment="subheader">
+    <header id="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-sm-6 col-6 header-top-left">
+                        <ul>
+                            <li sec:authorize="isAuthenticated()">
+                                <a class="btn btn-outline-danger" style="color: white;" href="/logout">Đăng xuất</a>
+                                <a style="color: snow" th:inline="text">User: <span style="font-weight: bold"
+                                                                                    th:remove="tag"
+                                                                                    sec:authentication="name"></span></a>
+                            </li>
+                            <li sec:authorize="!isAuthenticated()">
+                                <a class="btn btn-outline-primary" style="color: white;" href="/login">Đăng nhập</a>
+                                <a style="color: snow" th:inline="text">Xin chào, người dùng ẩn danh</span>!</a>
+                            </li>
+                            <li>
+                            </li>
+
+                        </ul>
                 </div>
             </div>
         </div>
@@ -34,11 +42,7 @@
                     <li><a th:href="@{/about}">Về chúng tôi</a></li>
                     <li><a th:href="@{/users/tickets/basket}">Hóa đơn</a></li>
                     <li><a th:href="@{/users/tickets/manage-receipts}">Vé Của Tôi</a></li>
-                    <li class="menu-has-children"><a href="">Hóa đơn</a>
-                        <ul>
-                            <li><a th:href="@{/users/tickets/manage-receipts}">Xem vé đã đặt</a></li>
-                        </ul>
-                    </li>
+                    <li><a th:href="@{/home/instruct}">Cách đặt vé</a></li>
                 </ul>
             </nav>
             <!-- #nav-menu-container -->
@@ -56,10 +60,13 @@
                 <h1 class="text-white" th:text="${header}">
 
                 </h1>
-                <p class="text-white link-nav"><a th:href="@{/home}">Trang chủ </a>  <span> ➨</span>  <a th:text="${currentPage}"></a> </p>
+                <p class="text-white link-nav"><a th:href="@{/home}">Trang chủ </a> <span> ➨</span> <a
+                        th:text="${currentPage}"></a></p>
             </div>
         </div>
     </div>
 </section>
+</div>
 </body>
+
 </html>

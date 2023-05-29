@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/sub_layout">
+<head>
+  <meta charset="UTF-8">
+  <title>Hướng dẫn đặt vé</title>
+  <!-- Bootstrap CSS -->
+  <link rel="shortcut icon" th:href="@{img/fav.png}">
+  <style>
+    /* Định dạng vùng chứa hình ảnh */
+    .image-container {
+      text-align: center;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    p {
+      font-size: 20px;
+      color: black;
+    }
+
+    /* Định dạng hướng dẫn chi tiết */
+    .instruction {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container">
+    <div class="image-container">
+      <img src="/img/instruction/dang-nhap.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 1: Đăng nhập</h2>
+      <p>
+        Để đặt vé, bạn cần đăng nhập vào tài khoản của mình. Nếu bạn chưa có tài khoản, hãy <a href="/register">đăng
+        ký</a> trước.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/tim-chuyen.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 2: Chọn tuyến đi và ngày khởi hành</h2>
+      <p>
+        Điền thông tin chuyến đi mà bạn mong muốn vào đây và ấn vào nút <a href="/home">Tìm chuyến xe</a>.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/chon-chuyen.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 3: Chọn số lượng vé và ghế</h2>
+      <p>
+        Ở đây bạn có thể xem chuyến mong muốn hoặc nhập vào ô tìm kiếm chuyến cũng như là ghế ngồi mong muốn để đặt vé.
+        Lưu ý là mỗi lần thanh toán đặt vé chỉ cho phép đặt trước tối đa là 5 chỗ.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/xac-nhan.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 4: Xác nhận đặt vé</h2>
+      <p>
+        Sau khi chọn được vé mong muốn, bạn cần xác nhận một lần nữa thông tin chuyến của mình.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/chon-phuong-thuc.png" alt="Hình ảnh hướng dẫn"
+           style="max-height: 400px; max-width: 680px" class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 5: Chọn hình thức thanh toán</h2>
+      <p>
+        Website hỗ trợ 2 hình thức thanh toán là <a style="color: #d82d8b" href="https://momo.vn/">MOMO</a> và <a
+              href="https://vnpay.vn/">Vnpay</a>. Bạn có thể chọn phương thức phù hợp với mình và tiến hành thanh toán.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/nhan-ve.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 6: Nhận vé</h2>
+      <p>
+        Sau khi thanh toán thành công, trang web sẽ trả về thông tin vé xe của bạn kèm theo một email được gửi qua tài
+        khoản mà bạn đã <a href="/register">đăng ký</a>. Bạn cần lưu trữ email này cho quá trình soát vé.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/dat-xe-tc.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 7: Đặt xe trung chuyển</h2>
+      <p>
+        Sau khi mua vé thành công, nếu bạn có nhu cầu đặt xe trung chuyển, hãy ấn vào nút "Đặt xe trung chuyển" và điền
+        thông tin vào form bên trên.
+      </p>
+    </div>
+    <div class="image-container">
+      <img src="/img/instruction/hoan-tat.png" alt="Hình ảnh hướng dẫn" style="max-height: 400px; max-width: 680px"
+           class="img-fluid">
+    </div>
+    <div class="instruction">
+      <h2>Bước 8: Hoàn tất</h2>
+      <p>
+        Vậy là đã hoàn thành quá trình đặt vé. Hi vọng hướng dẫn này sẽ giúp bạn. Cám ơn đã chọn dịch vụ của chúng tôi.
+      </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

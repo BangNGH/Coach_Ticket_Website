@@ -21,13 +21,13 @@
 </head>
 <body>
 <div id="app"><!--Main content-->
-  <span th:replace="admin/fragments/sidebar :: sidebar"></span>
+  <span th:replace="~{admin/fragments/sidebar :: sidebar}"></span>
   <div id="main"><!--Content id-->
-    <span th:replace="admin/fragments/header :: header"></span>
+    <span th:replace="~{admin/fragments/header :: header}"></span>
     <div layout:fragment="content"><!--dynamic content-->
 
     </div>
-    <span th:replace="admin/fragments/footer :: footer"></span>
+    <span th:replace="~{admin/fragments/footer :: footer}"></span>
   </div>
 </div>
 <script th:src="@{/js/perfect-scrollbar.min.js}"></script>

@@ -31,6 +31,19 @@ public class HomeController {
     private final ContactService contactService;
     private final SeatReservationRepository seatReservationRepo;
 
+    @GetMapping("/book-now")
+    public String bookNow(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("successMessage", "Chọn chuyến đi phù hợp với bạn ở đây");
+        return "redirect:/home";
+    }
+
+    @GetMapping("/instruct")
+    public String instruct(Model model) {
+        model.addAttribute("header", "Hướng dẫn đặt vé");
+        model.addAttribute("currentPage", "Cách đặt vé");
+        return "pages/instruction";
+    }
+
     @RequestMapping(value = {"", "/"})
     public String home(Model model) {
         List<City> cities = cityService.getCities();

@@ -34,10 +34,10 @@
 
 
 <body>
-<div th:replace="fragments/sub_header">
+<div th:replace="~{fragments/sub_header::subheader}">
 </div>
 <div layout:fragment="content"></div>
-<div th:replace="fragments/footer :: footer">
+<div th:replace="~{fragments/footer :: footer}">
 </div>
 
 <script th:src="@{/js/vendor/jquery-2.2.4.min.js}"></script>

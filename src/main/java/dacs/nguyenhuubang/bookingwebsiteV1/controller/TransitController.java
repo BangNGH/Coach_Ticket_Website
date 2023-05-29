@@ -79,7 +79,7 @@ public class TransitController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         List<Booking> bookings = bookingService.getBookings();
-        model.addAttribute("pageTitle", "Create New City");
+        model.addAttribute("pageTitle", "Tạo Chuyến Mới");
         model.addAttribute("city", new ShuttleBus());
         model.addAttribute("bookings", bookings);
 

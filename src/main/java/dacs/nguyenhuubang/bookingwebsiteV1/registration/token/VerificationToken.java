@@ -2,12 +2,10 @@ package dacs.nguyenhuubang.bookingwebsiteV1.registration.token;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -46,10 +44,11 @@ public class VerificationToken {
         this.expirationTime = this.getTokenExpirationTime();
     }
 
+    // tính toán và trả về thời gian hết hạn của token
     public Date getTokenExpirationTime() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(new Date().getTime());
-        calendar.add(Calendar.MINUTE, EXPIRATION_TIME);
+        calendar.add(Calendar.MINUTE, EXPIRATION_TIME);//để thêm một khoảng thời gian (EXPIRATION_TIME) vào thời gian hiện tại.
         return new Date(calendar.getTime().getTime());
     }
 }

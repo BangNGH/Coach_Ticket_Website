@@ -39,7 +39,7 @@ public class UserRegistrationSecurityConfig {
                 .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400)
                 .and()
                 .logout()
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/login?logout=true")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .and()
