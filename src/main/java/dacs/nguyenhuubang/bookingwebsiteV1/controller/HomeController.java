@@ -118,7 +118,7 @@ public class HomeController {
         }
         model.addAttribute("topDestinationCities", topDestinationCities);
         model.addAttribute("topTripList", topTripList);
-
+        model.addAttribute("contact", new Contact());
         return "pages/home_page";
     }
 
@@ -126,7 +126,6 @@ public class HomeController {
     public String aboutMe(Model model) {
         model.addAttribute("header", "Về chúng tôi");
         model.addAttribute("currentPage", "Giới thiêu");
-        model.addAttribute("contact", new Contact());
         return "about";
     }
 

@@ -6,8 +6,6 @@
 </head>
 <body>
 <div th:fragment="header">
-
-
     <header id="header">
         <div class="header-top">
             <div class="container">
@@ -43,6 +41,8 @@
                     <li><a th:href="@{/about}">Về chúng tôi</a></li>
                     <li><a th:href="@{/users/tickets/basket}">Hóa đơn</a></li>
                     <li><a th:href="@{/users/tickets/manage-receipts}">Vé Của Tôi</a></li>
+                    <li><a th:href="@{'/users/manage-account/edit/' + ${#authentication.name}}">Chỉnh sửa tài khoản</a>
+                    </li>
                     <li><a th:href="@{/home/instruct}">Cách đặt vé</a></li>
                 </ul>
             </nav>

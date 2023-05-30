@@ -1,10 +1,10 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.dto.RegistrationRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.listener.RegistrationCompleteEventListener;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserAlreadyExistsException;
-import dacs.nguyenhuubang.bookingwebsiteV1.registration.RegistrationRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationToken;
 import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationTokenRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;

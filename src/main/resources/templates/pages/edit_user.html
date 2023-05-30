@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/sub_layout">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý tài khoản</title>
+  <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
+  <style>
+    .square-container {
+      width: 620px; /* Điều chỉnh theo kích thước mong muốn */
+      height: fit-content;
+      margin: 50px auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid">
+    <div th:if="${errorMessage}" class="alert alert-danger text-center">
+      [[${errorMessage}]]
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success text-center">
+      [[${successMessage}]]
+    </div>
+    <form onsubmit="return checkPasswords();" th:action="@{/users/manage-account/save-user}" method="post"
+          th:object="${userInfoRequest}"
+          style="max-width: 500px; margin: 0 auto;">
+      <div class="border border-secondary rounded p-3 square-container">
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Full Name:</label>
+          <div class="col-sm-8">
+            <input type="text" th:field="*{fullname}" class="form-control" required maxlength="45"
+                   th:classappend="${#fields.hasErrors('fullname')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:errors="*{fullname}"></div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">E-mail:</label>
+          <div class="col-sm-8">
+            <input readonly type="email" th:field="*{email}" class="form-control" required minlength="8" maxlength="45"
+                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:errors="*{email}"></div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Điện thoại</label>
+          <div class="col-sm-8">
+            <input type="text" pattern="(\+84|0)\d{9,10}" th:field="*{address}" class="form-control"
+                   required th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:errors="*{address}"></div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Mật khẩu:</label>
+          <div class="col-sm-8">
+            <input type="password" th:field="*{oldPassword}" name="oldPassword" id="oldPassword" class="form-control"
+                   required minlength="6"
+                   maxlength="20" th:classappend="${#fields.hasErrors('oldPassword')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:errors="*{oldPassword}"></div>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group text-center">
+          <h5 class="text-warning">Điền vào ô dưới đây nếu bạn muốn đổi mật khẩu hoặc bỏ qua nó</h5>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Mật khẩu mới:</label>
+          <div class="col-sm-8">
+            <input type="password" th:field="*{newPassword}" name="newPassword" id="newPassword" class="form-control"
+                   minlength="6"
+                   maxlength="20">
+
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Nhập lại khẩu mới:</label>
+          <div class="col-sm-8">
+            <input type="password" th:field="*{confirmPassword}" id="confirmPassword" name="confirmPassword"
+                   class="form-control" minlength="6"
+                   maxlength="20">
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary m-2">Lưu</button>
+          <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <script type="text/javascript">
+    function cancelForm() {
+      window.location = "[[@{/home}]]";
+    }
+
+    function checkPasswords() {
+      var oldPassword = document.getElementById("oldPassword").value;
+      var newPassword = document.getElementById("newPassword").value;
+      var confirmPassword = document.getElementById("confirmPassword").value;
+
+      // Kiểm tra nếu người dùng đã nhập mật khẩu mới
+      if (newPassword.trim() !== '' && confirmPassword.trim() !== '') {
+        if (oldPassword === newPassword) {
+          alert("Mật khẩu mới không được trùng với mật khẩu cũ.");
+          return false;
+        }
+
+        if (newPassword !== confirmPassword) {
+          alert("Mật khẩu mới và mật khẩu xác nhận không trùng khớp!");
+          return false;
+        }
+      }
+      return true;
+    }
+  </script>
+
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package dacs.nguyenhuubang.bookingwebsiteV1.registration;
+package dacs.nguyenhuubang.bookingwebsiteV1.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
