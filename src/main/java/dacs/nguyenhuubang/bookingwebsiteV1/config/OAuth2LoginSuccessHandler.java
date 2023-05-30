@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -26,26 +25,6 @@ import java.util.Optional;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Autowired
     private UserService userService;
-
-    /*@Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)throws IOException, ServletException {
-        DefaultOidcUser oauthUser = (DefaultOidcUser) authentication.getPrincipal();
-
-        String email = oauthUser.getAttribute("email");
-        String fullName = oauthUser.getAttribute("name");
-        Optional<UserEntity> user = userService.findbyEmail(email);
-        System.out.println("Find user:"+user);
-        if (user==null){
-            System.out.println("Customer email:" + email);
-            System.out.println("Customer name:" + fullName);
-            userService.createNewUserAfterOauthLoginSuccess(email, fullName,Provider.GOOGLE);
-        } else {
-            userService.updateCustomerAfterOauthLoginSuccess(user.get(), fullName, Provider.GOOGLE);
-            System.out.println(user);
-        }
-
-        super.onAuthenticationSuccess(request, response,authentication);
-    }*/
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // Xác định thông tin người dùng từ authentication
