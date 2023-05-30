@@ -69,7 +69,8 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Số điện thoại :</label>
                         <div class="col-sm-8">
-                            <input type="text" th:field="*{phone}" class="form-control" minlength="10" maxlength="12"
+                            <input type="text" pattern="(\+84|0)\d{9,10}" title="Vui lòng nhập số điện thoại hợp lệ"
+                                   th:field="*{phone}" class="form-control" minlength="10" maxlength="12"
                                    min="0" required th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''">
                             <div class="invalid-feedback" th:errors="*{phone}"></div>
                         </div>

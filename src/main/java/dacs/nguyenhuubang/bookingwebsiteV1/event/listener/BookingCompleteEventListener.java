@@ -96,7 +96,6 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         String str2 = vn.format(Double.parseDouble(totalPrice));
         mailContentBuilder.append("<p><strong>Tổng tiền:</strong> " + str2 + "đ</p>");
         mailContentBuilder.append("<p>Vui lòng đến nhà xe trước thời gian khởi hành <strong>20 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình email này cho nhân viên soát vé.</p>");
-        mailContentBuilder.append("<p><strong>Địa chỉ nhà xe:</strong> Hutech, khu công nghệ cao, Quận 9, TP.HCM</p>");
         mailContentBuilder.append("<p><a href=\"" + url + "\">Xem chi tiết vé</a></p>");
         mailContentBuilder.append("</div>");
         mailContentBuilder.append("</body>");

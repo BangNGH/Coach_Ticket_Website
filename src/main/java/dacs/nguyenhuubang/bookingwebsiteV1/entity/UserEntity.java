@@ -1,17 +1,15 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
@@ -36,13 +34,10 @@ public class UserEntity {
     @Column(name = "email", nullable = false, length = 50, unique = true)
     private String email;
 
-   // @NotBlank(message = "Password is required")
- //   @Size(min = 6, message = "Password must be at least 6 characters")
     @Column(name = "password", nullable = true)
     private String password;
 
-    //@NotBlank(message = "Address is required")
-    @Column(name = "address", nullable = true)
+    @Column(name = "address", nullable = false, unique = true)
     private String address;
 
     @Column

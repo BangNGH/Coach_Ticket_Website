@@ -3,7 +3,6 @@ package dacs.nguyenhuubang.bookingwebsiteV1.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,8 +30,7 @@ public class ShuttleBus {
 
     @Column(name = "phone", nullable = false)
     @NotBlank(message = "Số điện thoại không được bỏ trống")
-    @PositiveOrZero(message = "Số điện thoại không có điền ký tự đặt biệt")
-    @Size(min = 10, max = 11, message = "Vui lòng điền số điện thoại hợp lệ")
+    @Size(min = 12, max = 13, message = "Vui lòng điền số điện thoại hợp lệ")
     private String phone;
 
     @NotNull(message = "Thông tin đặt chỗ không được để trống")

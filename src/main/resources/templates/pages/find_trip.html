@@ -43,6 +43,7 @@
             element.nextElementSibling.classList.toggle("checked");
         }
     </script>
+    <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
 </head>
 <body>
 <div layout:fragment="content">
@@ -56,7 +57,7 @@
         </div>
         <div>
             <div class="seat-map-container">
-                <input type="text" class="input-group-text" placeholder="search by name, capacity" id="q" size="50">
+                <input type="text" class="input-group-text" placeholder="Tìm chuyến" id="q" size="50">
                 <form th:action="@{/users/booking-trip}" method="post">
                 <table class="table table-bordered">
                     <thead class="thead-dark">

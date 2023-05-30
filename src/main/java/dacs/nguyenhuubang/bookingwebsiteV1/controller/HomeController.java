@@ -148,14 +148,19 @@ public class HomeController {
 
     @PostMapping("/save-email")
     private String saveEmail(@ModelAttribute("user") UserEntity user, @RequestParam("gbUserName") String gbUserName, Model model) {
-        Optional<UserEntity> existsUser = userService.findByGithubUserName(user.getAddress());
-        if (existsUser != null) {
+        Optional<UserEntity> existsGBUser = userService.findByGithubUserName(user.getAddress());
+        Optional<UserEntity> existsGGUser = userService.findbyEmail(user.getAddress());
+        if (existsGBUser != null) {
             model.addAttribute("errorMessage", "Email này đã đuợc đăng ký rồi");
             return "pages/fill_out_email";
         }
+        if (existsGGUser != null) {
+            model.addAttribute("errorMessage", "Email này đã đuợc đăng ký rồi");
+            return "pages/fill_out_email";
+        }
+
         user.setProvider(Provider.GITHUB);
         user.setRole("USER");
-        System.out.println("GITHUB username:" + gbUserName);
         user.setEnabled(true);
         userService.save(user);
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -164,7 +169,7 @@ public class HomeController {
 
         // Thiết lập Authentication mới cho SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-        System.out.println("User github: " + user);
+        model.addAttribute("message", "Cám ơn bạn đã cung cấp email, hãy hoàn tất tiếp tục đặt vé của bạn");
         return "success_message";
     }
 

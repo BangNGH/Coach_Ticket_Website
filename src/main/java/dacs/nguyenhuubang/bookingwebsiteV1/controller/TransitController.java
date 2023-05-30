@@ -32,10 +32,7 @@ public class TransitController {
         int pageSize = 6;
         Page<ShuttleBus> page = transitionService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<ShuttleBus> cities = page.getContent();
-        System.out.println(cities);
-        System.out.println(LocalDate.now());
         List<ShuttleBus> transitToday = cities.stream().filter(i -> i.getBooking().getBookingDate().equals(LocalDate.now())).toList();
-        System.out.println(transitToday);
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());

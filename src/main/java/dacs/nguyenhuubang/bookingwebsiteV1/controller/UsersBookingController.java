@@ -1,5 +1,8 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.Config;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
@@ -44,7 +47,9 @@ public class UsersBookingController {
     private final BookingDetailsService bookingDetailsService;
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
-
+    public static final String ACCOUNT_SID = "ACa3f5ab465b8859f75c2294541894d897";
+    public static final String AUTH_TOKEN = "53273e302aa835e8c92a30ff5eeab690";
+    public static final String TWILIO_PHONE_NUMBER = "+13156303801";
 
 
     public boolean isValidEmail(String email) {
@@ -61,19 +66,21 @@ public class UsersBookingController {
                                 @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re, @RequestParam(value = "endTime", required = false) LocalDate endTime) {
         String validEmail = p.getName();
         UserEntity checkUser = userService.findbyEmail(validEmail).get();
-        if (!isValidEmail(validEmail)&&!isValidEmail(checkUser.getAddress())) {
+        if (checkUser.getAddress() == null) {
             model.addAttribute("user", checkUser);
             model.addAttribute("gbUserName", checkUser.getEmail());
-
             return "pages/fill_out_email";
         }
-
-
-            if (endTime != null) {
-                List<Long> seatIds = new ArrayList<>();
-                String[] seatIdArray = inputSelectedSeats.split(",");
-                for (String seatId : seatIdArray) {
-                    seatIds.add(Long.valueOf(seatId));
+        if (!isValidEmail(validEmail) && !isValidEmail(checkUser.getAddress())) {
+            model.addAttribute("user", checkUser);
+            model.addAttribute("gbUserName", checkUser.getEmail());
+            return "pages/fill_out_email";
+        }
+        if (endTime != null) {
+            List<Long> seatIds = new ArrayList<>();
+            String[] seatIdArray = inputSelectedSeats.split(",");
+            for (String seatId : seatIdArray) {
+                seatIds.add(Long.valueOf(seatId));
                 }
                 LocalTime now = LocalTime.now();
                 LocalDate today = LocalDate.now();
@@ -314,7 +321,7 @@ public class UsersBookingController {
                              @RequestParam("vnp_OrderInfo") String bookingId,
                              @RequestParam("vnp_ResponseCode") String responseCode,
                              final HttpServletRequest request,
-                             @RequestParam(value = "sentEmail", required = false) String sentEmail
+                             @RequestParam(value = "sentEmail", required = false) String sentEmail, Principal p
     ) {
         if (responseCode.equals("00")) {
             String[] parts = bookingId.split("_");
@@ -337,8 +344,23 @@ public class UsersBookingController {
             }
 
             if (sentEmail == null) {
+                System.out.println("Sending email...");
                 sendEmail(part2, request, totalPrice, myBooking, reservedSeat);
                 model.addAttribute("bookingTransit", true);
+                //Gửi sms
+                UserEntity checkUser = userService.findbyEmail(p.getName()).get();
+                String destinyPhone = checkUser.getAddress();
+                if (validatePhoneNumber(destinyPhone)) {
+                    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+                    String message = "Cám ơn bạn đã đặt vé tại Travelista, phương thức thanh toán VNPAY. Tuyến: " + myBooking.getTrip().getRoute().getName() + ", lúc: " + myBooking.getTrip().getStartTime() + ", mã vé: " + myBooking.getBookingDetails().get(0).getId().getTicketCode() + ". Vui lòng mang theo thông tin email hoặc tin nhắn này để soát vé trước khi lên xe, hãy kiểm tra email của bạn để xem chi tiết vé";
+                    // Sử dụng thư viện Twilio để gửi tin nhắn SMS
+                    System.out.println("Sending sms...");
+                    Message.creator(
+                            new PhoneNumber(destinyPhone), // Số điện thoại người nhận (+84 + số điện thoại)
+                            new PhoneNumber(TWILIO_PHONE_NUMBER), // Số điện thoại nguồn (Twilio phone number)
+                            message// Nội dung tin nhắn
+                    ).create();
+                }
             } else model.addAttribute("bookingTransit", false);
             String paymentMethod = "Thanh toán Vnpay ID: " + part1;
             model.addAttribute("paymentMethod", paymentMethod);
@@ -369,6 +391,7 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(totalPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
+        System.out.println(sub_momoAmount + bookingId);
         String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
 
         model.addAttribute("momo", momoPaymentUrl);
@@ -484,7 +507,6 @@ public class UsersBookingController {
         JSONObject jmessage = new JSONObject(responseFromMomo);
 
         String payUrl = jmessage.getString("payUrl").toString();
-        System.out.println("payUrl" + payUrl);
         return payUrl;
     }
 
@@ -492,7 +514,7 @@ public class UsersBookingController {
     public String momoPaymentResult(@RequestParam("amount") String amount,
                                     @RequestParam("errorCode") String errorCode,
                                     @RequestParam("extraData") String bookingId, Model model, final HttpServletRequest request,
-                                    @RequestParam(value = "sentEmail", required = false) String sentEmail) {
+                                    @RequestParam(value = "sentEmail", required = false) String sentEmail, Principal p) {
         if (errorCode.equals("0")) {
             String[] parts = bookingId.split("_");
             String part1 = parts[0];
@@ -513,9 +535,24 @@ public class UsersBookingController {
             booking2.setIsPaid(true);
             Booking myBooking2 = bookingService.save(booking2);
             List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(myBooking2);
-            System.out.println(part2);
             if (sentEmail == null) {
                 sendEmail(part2, request, amount, myBooking2, reservedSeat2);
+                System.out.println("Sending email...");
+                //Gửi sms
+                UserEntity checkUser = userService.findbyEmail(p.getName()).get();
+                String destinyPhone = checkUser.getAddress();
+                if (validatePhoneNumber(destinyPhone)) {
+                    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+                    System.out.println("Sending sms...");
+                    String message = "Cám ơn bạn đã đặt vé tại Travelista, phương thức thanh toán MOMO. Tuyến: " + myBooking2.getTrip().getRoute().getName() + ", lúc: " + myBooking2.getTrip().getStartTime() + ", mã vé: " + myBooking2.getBookingDetails().get(0).getId().getTicketCode() + ". Vui lòng mang theo thông tin email hoặc tin nhắn này để soát vé trước khi lên xe, hãy kiểm tra email của bạn để xem chi tiết vé";
+                    // Sử dụng thư viện Twilio để gửi tin nhắn SMS
+                    Message.creator(
+                            new PhoneNumber(destinyPhone), // Số điện thoại người nhận (+84 + số điện thoại)
+                            new PhoneNumber(TWILIO_PHONE_NUMBER), // Số điện thoại nguồn (Twilio phone number)
+                            message// Nội dung tin nhắn
+                    ).create();
+                }
+
                 model.addAttribute("bookingTransit", true);
             } else model.addAttribute("bookingTransit", false);
             model.addAttribute("totalPrice", amount);
@@ -557,6 +594,19 @@ public class UsersBookingController {
         publisher.publishEvent(new BookingCompleteEvent(myBooking, roundTripId, totalPrice, send_reservedSeatNames, send_numberOfTicket, send_ticketCodes, currentUrl));
     }
 
+    private boolean validatePhoneNumber(String phoneNumber) {
+        // Định dạng pattern
+        String pattern = "(\\+84)\\d{9,10}";
+
+        // Tạo đối tượng Pattern từ pattern
+        Pattern compiledPattern = Pattern.compile(pattern);
+
+        // Tạo đối tượng Matcher để so khớp pattern với số điện thoại
+        Matcher matcher = compiledPattern.matcher(phoneNumber);
+
+        // Kiểm tra khớp pattern
+        return matcher.matches();
+    }
 
 }
 

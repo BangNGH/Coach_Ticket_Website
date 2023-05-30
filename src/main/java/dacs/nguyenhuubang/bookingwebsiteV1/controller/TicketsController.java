@@ -1,26 +1,25 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.ShuttleBus;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.TransitionService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @RequestMapping(value = {"/users/tickets"})

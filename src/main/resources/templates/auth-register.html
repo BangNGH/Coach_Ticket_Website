@@ -49,8 +49,10 @@
 									</div>
 									<div class="col-md-6 col-12">
 										<div class="form-group">
-											<label for="address">Địa chỉ</label>
-											<input type="text" id="address" name="address" required class="form-control"
+											<label for="address">Điện thoại</label>
+											<input type="text" pattern="(\+84)\d{9,10}"
+												   title="Vui lòng nhập số điện thoại hợp lệ" placeholder="+84********"
+												   id="address" name="address" required class="form-control"
 												   th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''"
 												   th:field="*{address}">
 											<div class="invalid-feedback" th:errors="*{address}"></div>
@@ -94,37 +96,6 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript">
-		function getCurrentLocation() {
-			if (navigator.geolocation) {
-				//Nếu hàm getCurrentPosition() chạy thành công, thì nó trả về cho người dùng tọa độ vị trí thông qua hàm truyền tham số (showPosition)
-				navigator.geolocation.getCurrentPosition(showPosition);
-			} else {
-				alert("Trình duyệt của bạn không hỗ trợ định vị");
-			}
-		}
-
-		function showPosition(position) {
-			var latitude = position.coords.latitude;
-			var longitude = position.coords.longitude;
-			var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
-
-			$.ajax({
-				url: nominatimApiUrl,
-				type: "GET",
-				dataType: "json",
-				success: function (response) {
-					// Lấy thông tin địa chỉ từ response và gán vào ô input "address"
-					var address = response.display_name;
-					document.getElementById("address").value = address;
-				},
-				error: function (xhr, status, error) {
-					console.log("Error: " + error);
-				}
-			});
-
-		}
-	</script>
 	</div>
     <script th:src="@{/js/feather.min.js}"></script>
     <script th:src="@{/js/app.js}"></script>

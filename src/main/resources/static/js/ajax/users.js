@@ -18,7 +18,6 @@ $(document).ready(function () {
         <td>${user.id}</td>
         <td>${user.fullname}</td>
         <td>${user.email}</td>
-        <td>${user.password}</td>
         <td>${user.address}</td>
         <td>${user.role}</td>
         <td>${user.isEnabled}</td>

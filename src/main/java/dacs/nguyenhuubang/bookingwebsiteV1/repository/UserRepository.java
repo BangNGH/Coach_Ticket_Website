@@ -1,8 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,9 +15,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 	public UserEntity getUserByUsername(@Param("username") String username);
 
 	public Long countById(Integer id);
+
 	Optional<UserEntity> findByEmail(String email);
 
-	@Query("SELECT p FROM UserEntity p WHERE CONCAT(p.fullname, ' ', p.email) LIKE %?1%")
+	@Query("SELECT p FROM UserEntity p WHERE CONCAT(p.fullname, ' ', p.email, ' ', p.address) LIKE %?1%")
 	public List<UserEntity> search(String keyword);
 
 	@Query("SELECT u FROM UserEntity u WHERE u.address= :loginName")
