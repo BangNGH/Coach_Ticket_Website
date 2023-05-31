@@ -119,7 +119,7 @@ public class HomeController {
         model.addAttribute("topDestinationCities", topDestinationCities);
         model.addAttribute("topTripList", topTripList);
         model.addAttribute("contact", new Contact());
-        return "pages/index";
+        return "pages/home_page";
     }
 
     @RequestMapping(value = {"/about"})
