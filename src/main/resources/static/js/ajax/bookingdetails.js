@@ -22,8 +22,8 @@ $(document).ready(function () {
                         <td>${booking.numberOfTickets}</td>
                         <td>${price}</td>
         <td>
-          <a href="/admin/booking-details/edit/${booking.id}">Edit</a> |
-          <a href="/admin/booking-details/delete/${booking.id}">Delete</a>
+          <a href="/admin/booking-details/edit/${booking.id.bookingId}/${booking.id.ticketCode}">Edit</a> |
+          <a href="/admin/booking-details/edit/${booking.id.bookingId}/${booking.id.ticketCode}">Delete</a>
         </td>
       </tr>
     `;

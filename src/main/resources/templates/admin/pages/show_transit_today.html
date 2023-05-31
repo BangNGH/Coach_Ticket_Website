@@ -54,7 +54,11 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <th:block th:each="city : ${cities}">
+                        <tr th:if="${isListEmpty}">
+                            <td colspan='11' class='text-center'>Không có chuyến nào cần trung chuyển hôm nay.</td>
+                        </tr>
+
+                        <th:block th:unless="${isListEmpty}" th:each="city : ${cities}">
                             <tr>
                                 <td>[[${city.booking.trip.route.name}]]</td>
                                 <td>[[${city.booking.bookingDate}]]</td>

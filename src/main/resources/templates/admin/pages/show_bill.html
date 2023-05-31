@@ -2,124 +2,126 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
 <head>
-  <meta charset="UTF-8">
-  <title>Hóa Đơn</title>
+    <meta charset="UTF-8">
+    <title>Hóa Đơn</title>
 </head>
 <body>
 <div layout:fragment="content">
-  <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
-    <div th:if="${raMessage}" class="alert alert-success text-center">
-      [[${raMessage}]]
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger text-center">
-      [[${errorMessage}]]
-    </div>
-
-    <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <!--                <h4 class="card-title text-danger" th:text="'Tổng tiền: '+${#numbers.formatDecimal(totalBill, 0, 'COMMA', 0, 'POINT') + 'đ'}" ></h4>
-                        <div class="d-flex ">
-
-                        </div>-->
-        <h4 class="card-title text-danger">Hóa đơn chưa thanh toán</h4>
-        <div class="d-flex ">
-
+    <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
+        <div th:if="${raMessage}" class="alert alert-success text-center">
+            [[${raMessage}]]
         </div>
-      </div>
-
-      <div class="card-body px-0 pb-0">
-        <div class="table-responsive">
-          <table class='table mb-0' id="table1">
-            <thead>
-            <tr>
-                <th>
-                    <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=id&sortDir='+${reserseSortDir}}">Mã
-                        vé</a>
-                </th>
-                <th>
-                    <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.route.name&sortDir='+${reserseSortDir}}">Tuyến
-                        đi</a>
-                </th>
-                <th>
-                    <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=bookingDate&sortDir='+${reserseSortDir}}">Ngày
-                        đi</a>
-                </th>
-                <th>
-                    <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.startTime&sortDir='+${reserseSortDir}}">Giờ
-                        khởi hành</a>
-                </th>
-                <th>
-                    <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.name&sortDir='+${reserseSortDir}}">Loại
-                        xe</a>
-                </th>
-                <th>
-                    <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
-                        số</a>
-                </th>
-                <th>Ghế đã chọn</th>
-                <th>Số lượng vé</th>
-                <th>Tổng tiền</th>
-                <th></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody id="tbody">
-            <tr th:if="${notFound}">
-              <td colspan='11' class='text-center'>No results found</td>
-            </tr>
-            <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
-              <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
-              <td th:text="${booking.trip.route.name}"></td>
-              <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
-              <td th:text="${booking.trip.startTime}"></td>
-              <td th:text="${booking.trip.vehicle.name}"></td>
-              <td th:text="${booking.trip.vehicle.licensePlates}"></td>
-              <td>
-                <span th:each="sr : ${booking.seatReservations}" th:text="${sr.seat.name} + ', '"></span>
-              </td>
-              <td th:text="${booking.seatReservations.size()}"></td>
-              <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0, 'POINT') +
-                'đ'}]]
-              </td>
-              <td>
-                <a th:href="@{'/admin/delete/' + ${booking.id}}">Hủy vé</a> |
-
-              </td>
-            </tr>
-            </tbody>
-          </table>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+            [[${errorMessage}]]
         </div>
-        <div th:if="${totalPages>1}" class="d-flex justify-content-center">
-          <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
-                    <a class="page-link"
-                       th:href="@{'/admin/bill-page/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
-                </li>
-                <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
-                    <a class="page-link"
-                       th:href="@{'/admin/bill-page/page/'+${currentPage1 - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
-                </li>
-              <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
-                  <a class="page-link" th:classappend="${page == currentPage1} ? activeCurrentPage1"
-                     th:href="@{'/admin/bill-page/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
-                     th:text="${page}"></a>
-              </li>
-                <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
-                    <a class="page-link"
-                       th:href="@{'/admin/bill-page/page/'+${currentPage1 + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
-                </li>
-                <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
-                    <a class="page-link"
-                       th:href="@{'/admin/bill-page/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
-                </li>
-            </ul>
-          </nav>
+
+        <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title text-danger">Hóa đơn chưa thanh toán</h4>
+                <p><span class="text-danger">Lưu ý</span> khi ấn vào nút <a
+                        href="/admin/bookings/cancel-unpaid-tickets-over120">hủy vé</a> toàn bộ vé chưa thanh toán có
+                    thời gian đặt trước quá <strong>120 phút</strong> sẻ bị hủy </p>
+                <div class="d-flex">
+                    <a href="/admin/bookings/cancel-unpaid-tickets-over120" class="btn btn-outline-primary">Hủy Vé</a>
+                </div>
+            </div>
+
+            <div class="card-body px-0 pb-0">
+                <div class="table-responsive">
+                    <table class='table mb-0' id="table1">
+                        <thead>
+                        <tr>
+                            <th>
+                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=id&sortDir='+${reserseSortDir}}">Mã
+                                    vé</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.route.name&sortDir='+${reserseSortDir}}">Tuyến
+                                    đi</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=bookingDate&sortDir='+${reserseSortDir}}">Ngày
+                                    đi</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.startTime&sortDir='+${reserseSortDir}}">Giờ
+                                    khởi hành</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.name&sortDir='+${reserseSortDir}}">Loại
+                                    xe</a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
+                                    số</a>
+                            </th>
+                            <th>Ghế đã chọn</th>
+                            <th>Số lượng vé</th>
+                            <th>Tổng tiền</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:if="${notFound}">
+                            <td colspan='11' class='text-center'>No results found</td>
+                        </tr>
+                        <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
+                            <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
+                            <td th:text="${booking.trip.route.name}"></td>
+                            <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${booking.trip.startTime}"></td>
+                            <td th:text="${booking.trip.vehicle.name}"></td>
+                            <td th:text="${booking.trip.vehicle.licensePlates}"></td>
+                            <td>
+                                <span th:each="sr : ${booking.seatReservations}"
+                                      th:text="${sr.seat.name} + ', '"></span>
+                            </td>
+                            <td th:text="${booking.seatReservations.size()}"></td>
+                            <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
+                                'POINT') +
+                                'đ'}]]
+                            </td>
+                            <td>
+                                <a th:href="@{'/admin/delete/' + ${booking.id}}">Hủy</a> |
+                                <a th:href="@{'/admin/send-email-reminder/' + ${booking.id}}">Nhắc nhở</a>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
+                                <a class="page-link"
+                                   th:href="@{'/admin/bill-page/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage1 == 1} ? disabled">
+                                <a class="page-link"
+                                   th:href="@{'/admin/bill-page/page/'+${currentPage1 - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
+                            </li>
+                            <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+                                <a class="page-link" th:classappend="${page == currentPage1} ? activeCurrentPage1"
+                                   th:href="@{'/admin/bill-page/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                                   th:text="${page}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
+                                <a class="page-link"
+                                   th:href="@{'/admin/bill-page/page/'+${currentPage1 + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage1 == totalPages} ? disabled">
+                                <a class="page-link"
+                                   th:href="@{'/admin/bill-page/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 </body>
 </html>

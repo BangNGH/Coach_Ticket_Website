@@ -49,7 +49,6 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        log.info("Click the link below: {}", url);
     }
 
     public void sendTicketCode(String url) throws MessagingException, UnsupportedEncodingException {
@@ -109,6 +108,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         if (!isValidEmail(theBooking.getUser().getEmail()))
             sendEmail=theBooking.getUser().getAddress();
         else sendEmail=theBooking.getUser().getEmail();
+        System.out.println("Sending email to" + sendEmail + "...");
         messageHelper.setTo(sendEmail);
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);

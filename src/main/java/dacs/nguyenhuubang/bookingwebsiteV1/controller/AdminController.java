@@ -1,6 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.event.SendEmailReminderEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
@@ -8,6 +9,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +42,7 @@ public class AdminController {
     private final UserService userService;
     private final SeatService seatService;
     private final SeatReservationService seatReservationService;
-
-    @GetMapping("/bill")
-    public String showBill(Model model) {
-        return findPageBill(1, model, "id", "asc");
-    }
+    private final ApplicationEventPublisher publisher;
 
     @GetMapping("/print-tickets/{id}")
     public String printTicket(@PathVariable("id") Integer id, RedirectAttributes ra) {
@@ -52,6 +50,12 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @GetMapping("/bill")
+    public String showBill(Model model) {
+        return findPageBill(1, model, "id", "asc");
+    }
+
+    //Hóa đơn chưa thanh toán
     @GetMapping("/bill-page/page/{pageNo}")
     public String findPageBill(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
         int pageSize = 6;
@@ -127,7 +131,6 @@ public class AdminController {
         Double currentMonthRevenue = revenueByMonth.get(currentMonth);
 
         if (currentMonthRevenue != null) {
-            // Do something with the current month revenue
             model.addAttribute("currentMonthRevenue", currentMonthRevenue);
         } else {
             // Tháng hiện tại chưa có doanh số
@@ -485,4 +488,38 @@ public class AdminController {
             return "redirect:/admin";
         }
     }
+
+    @GetMapping("/send-email-reminder/{id}")
+    public String sendEmailForPayment(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
+        try {
+            Booking myBooking = bookingService.get(id);
+            List<Seat> reservedSeat = seatReservationService.getReservedSeat(myBooking);
+            String totalPrice = myBooking.getBookingDetails().get(0).getTotalPrice().toString().substring(0, myBooking.getBookingDetails().get(0).getTotalPrice().toString().length() - 2);
+            sendEmail(totalPrice, myBooking, reservedSeat);
+            ra.addFlashAttribute("raMessage", "Đã gửi email nhắc nhở cho (ID: " + id + ").");
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return "redirect:/admin/bill";
+    }
+
+    private void sendEmail(String totalPrice, Booking myBooking, List<Seat> reservedSeat) {
+        List<String> ticketCodes = bookingDetailsService.getTicketCodes(myBooking);
+        String send_ticketCodes = "";
+        for (String tc : ticketCodes) {
+            String code = tc;
+            send_ticketCodes += code + ", ";
+        }
+        send_ticketCodes = send_ticketCodes.substring(0, send_ticketCodes.length() - 2);
+
+        String send_numberOfTicket = String.valueOf(reservedSeat.size());
+        String send_reservedSeatNames = ""; // Chuỗi để lưu tên các ghế đã đặt
+        for (Seat seat : reservedSeat) {
+            String seatName = seat.getName();
+            send_reservedSeatNames += seatName + ", "; // Thêm tên của ghế vào chuỗi
+        }
+        send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
+        publisher.publishEvent(new SendEmailReminderEvent(myBooking, totalPrice, send_reservedSeatNames, send_numberOfTicket, send_ticketCodes));
+    }
+
 }

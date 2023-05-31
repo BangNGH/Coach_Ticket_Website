@@ -64,7 +64,9 @@
                         </tr>
                         </thead>
                         <tbody id="tbody">
-                        <tr th:if="${notFound}"><td colspan='11' class='text-center'>No results found</td></tr>
+                        <tr th:if="${notFound}">
+                            <td colspan='11' class='text-center'>Không có hóa đơn nào cần thanh toán.</td>
+                        </tr>
                         <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
                             <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
                             <td th:text="${booking.trip.route.name}"></td>

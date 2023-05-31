@@ -1,20 +1,16 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.time.LocalDate;
+import java.util.List;
 @Entity
 @Getter
 @Setter
@@ -53,9 +49,6 @@ public class Booking {
     @JsonIgnore
     private List<BookingDetails> bookingDetails;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private ShuttleBus shuttleBus;
 
 /*
     @PreRemove

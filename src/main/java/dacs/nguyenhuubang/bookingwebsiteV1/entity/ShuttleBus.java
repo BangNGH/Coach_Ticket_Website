@@ -30,7 +30,7 @@ public class ShuttleBus {
 
     @Column(name = "phone", nullable = false)
     @NotBlank(message = "Số điện thoại không được bỏ trống")
-    @Size(min = 12, max = 13, message = "Vui lòng điền số điện thoại hợp lệ")
+    @Size(min = 10, max = 13, message = "Vui lòng điền số điện thoại hợp lệ")
     private String phone;
 
     @NotNull(message = "Thông tin đặt chỗ không được để trống")

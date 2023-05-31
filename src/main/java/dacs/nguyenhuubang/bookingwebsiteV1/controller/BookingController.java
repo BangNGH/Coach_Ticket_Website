@@ -1,12 +1,14 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
-import java.util.List;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.TripService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin/bookings")
@@ -94,15 +100,30 @@ public class BookingController {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
-        try{
+        try {
             bookingService.delete(id);
-            ra.addFlashAttribute("raMessage", "The booking (ID: "+id+") has been deleted");
-        }catch (VehicleNotFoundException e){
+            ra.addFlashAttribute("raMessage", "The booking (ID: " + id + ") has been deleted");
+        } catch (VehicleNotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
-        }catch (CannotDeleteException e){
+        } catch (CannotDeleteException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/bookings";
     }
 
+    @GetMapping("/cancel-unpaid-tickets-over120")
+    @Transactional
+    public String cancelBill(Model model, RedirectAttributes re) {
+        /*        try{*/
+        bookingService.cancelAllUnpaidTickets(LocalDate.now(), LocalTime.now());
+        re.addFlashAttribute("successMessage", "Hủy thành công các vé chưa thanh toán quá 120 phút");
+        return "redirect:/admin/bill";
+       /* }catch (Exception e){
+            re.addFlashAttribute("errorMessage",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception(e.getMessage());
+           // return "redirect:/admin/bill";
+        }*/
+
+    }
 }

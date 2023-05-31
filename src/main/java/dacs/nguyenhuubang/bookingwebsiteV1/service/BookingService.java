@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,5 +87,9 @@ public class BookingService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.bookingRepository.getBills(isPaid, pageable);
+    }
+
+    public void cancelAllUnpaidTickets(LocalDate currentDate, LocalTime currentTime) {
+        this.bookingRepository.cancelAllUnpaidTickets(currentDate, currentTime);
     }
 }
