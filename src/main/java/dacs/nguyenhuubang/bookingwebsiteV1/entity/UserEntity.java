@@ -24,11 +24,11 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message = "Fullname is required")
+    @NotBlank(message = "Vui lòng điền tên")
     @Column(name = "fullname", nullable = false, length = 45)
     private String fullname;
 
-    @NotBlank(message = "Email is required")
+    @NotBlank(message = "Vui lòng điền email")
   //  @Email(message = "Email is not valid")
     @NaturalId(mutable = true)
     @Column(name = "email", nullable = false, length = 50, unique = true)
@@ -46,9 +46,13 @@ public class UserEntity {
     @Column
     @JsonProperty("isEnabled")
     private boolean isEnabled = false;
+
     @Enumerated(EnumType.STRING)
     @Column
     private Provider provider;
+
+    @Column(name = "reset_password_token", nullable = true)
+    private String resetPasswordToken;
 
     @Override
     public String toString() {

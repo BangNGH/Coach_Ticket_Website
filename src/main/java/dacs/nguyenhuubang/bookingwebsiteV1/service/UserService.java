@@ -163,8 +163,22 @@ public class UserService implements IUserService {
         Optional<UserEntity> result = userRepository.findByGithubUserName(loginName);
         if (result.isPresent()) {
             return result;
-        }
-        else return null;
+        } else return null;
+    }
+
+    public void updateResetPassword(String token, UserEntity user) throws UserNotFoundException {
+        user.setResetPasswordToken(token);
+        userRepository.save(user);
+    }
+
+    public UserEntity getResetPasswordToken(String resetPasswordToken) {
+        return userRepository.findByResetPasswordToken(resetPasswordToken);
+    }
+
+    public void updatePassword(UserEntity user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordToken(null);
+        userRepository.save(user);
     }
 }
 

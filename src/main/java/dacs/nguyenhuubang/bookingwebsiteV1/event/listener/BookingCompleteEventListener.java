@@ -53,7 +53,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
 
     public void sendTicketCode(String url) throws MessagingException, UnsupportedEncodingException {
         String subject = "Đặt Vé Thành Công";
-        String senderName = "Booking coach website";
+        String senderName = "Nhà xe Travelista";
         StringBuilder mailContentBuilder = new StringBuilder();
         mailContentBuilder.append("<html>");
         mailContentBuilder.append("<head>");

@@ -53,7 +53,7 @@
             </thead>
             <tbody id="tbody">
             <tr th:if="${notFound}"><td colspan='11' class='text-center'>Không có kết quả tìm kiếm.</td></tr>
-            <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
+            <tr th:unless="${notFound}" th:each="booking : ${bookings}">
               <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
               <td th:text="${booking.trip.route.name}"></td>
               <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>

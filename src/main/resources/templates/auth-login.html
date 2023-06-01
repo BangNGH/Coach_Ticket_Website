@@ -33,6 +33,9 @@
 									 style="display: flex; justify-content: center; color: white;">
 									Đăng xuất thành công.
 								</div>
+								<div th:if="${success}" th:text="${success}" class="alert alert-success"
+									 style="display: flex; justify-content: center; color: white;">
+								</div>
 								<div class="form-group position-relative has-icon-left">
 									<label for="username">Email</label>
 									<div class="position-relative">
@@ -45,8 +48,9 @@
 								<div class="form-group position-relative has-icon-left">
 									<div class="clearfix">
 										<label for="password">Mật khẩu</label> <a
-											href="auth-forgot-password.html" class='float-end'> <small>Quên mật khẩu?</small>
-										</a>
+											th:href="@{/forgot-password}" class='float-end'> <small>Quên mật
+										khẩu?</small>
+									</a>
 									</div>
 									<div class="position-relative">
 										<input type="password" name="password" required minlength="6" maxlength="20" class="form-control" id="password">

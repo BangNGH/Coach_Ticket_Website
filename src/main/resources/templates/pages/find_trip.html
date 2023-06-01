@@ -72,7 +72,11 @@
                     </tr>
                     </thead>
                     <tbody id="tbody">
-                    <th:block th:each="trip: ${foundTrips}">
+                    <tr th:if="${isListEmpty}">
+                        <td colspan='11' class='text-center'>Không có chuyến nào cần trung chuyển hôm nay.</td>
+                    </tr>
+
+                    <th:block th:unless="${isListEmpty}" th:each="trip: ${foundTrips}">
                         <tr>
                             <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
                             <td>[[${trip.vehicle.name}]]</td>

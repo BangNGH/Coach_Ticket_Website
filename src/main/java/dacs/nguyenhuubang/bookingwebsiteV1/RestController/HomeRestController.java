@@ -58,6 +58,11 @@ public class HomeRestController {
 
         ModelAndView modelAndView = new ModelAndView("fragments/find_trip");
         modelAndView.addObject("foundTrips", foundTrips);
+        if (foundTrips.isEmpty()) {
+            modelAndView.addObject("isListEmpty", true);
+        } else {
+            modelAndView.addObject("isListEmpty", false);
+        }
         modelAndView.addObject("loadAvailableSeatsMap", loadAvailableSeatsMap);
         modelAndView.addObject("availableSeatsMap", availableSeatsMap);
         modelAndView.addObject("header", "Tìm chuyến");
@@ -66,7 +71,6 @@ public class HomeRestController {
         modelAndView.addObject("endCity", endCity.getName());
         modelAndView.addObject("startTime", startTime);
         modelAndView.addObject("endTime", endTime);
-
         return modelAndView;
     }
 

@@ -177,16 +177,11 @@ public class HomeController {
                            @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
                            @RequestParam(value = "endTime", required = false) LocalDate endTime) {
         if (startCity == endCity) {
-            re.addFlashAttribute("errorMessage", "Vui lòng chọn thành phố khác nhau");
+            re.addFlashAttribute("errorMessage", "Vui lòng chọn thành hai phố khác nhau");
             return "redirect:/";
         }
         try {
             List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
-            if (foundTrips.isEmpty()) {
-                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
-                return "redirect:/";
-            }
-
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             for (Trip trip : foundTrips) {
@@ -198,7 +193,9 @@ public class HomeController {
                 loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
                 availableSeatsMap.put(trip.getId(), availableSeats);
             }
-
+            if (foundTrips.isEmpty()) {
+                model.addAttribute("isListEmpty", true);
+            } else model.addAttribute("isListEmpty", false);
             model.addAttribute("foundTrips", foundTrips);
             model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
             model.addAttribute("availableSeatsMap", availableSeatsMap);

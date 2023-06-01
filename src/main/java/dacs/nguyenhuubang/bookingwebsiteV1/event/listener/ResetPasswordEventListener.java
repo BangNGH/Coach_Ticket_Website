@@ -1,7 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.event.listener;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
-import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
+import dacs.nguyenhuubang.bookingwebsiteV1.event.ResetPasswordEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,29 +18,30 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RegistrationCompleteEventListener implements ApplicationListener<RegistrationCompleteEvent> {
+public class ResetPasswordEventListener implements ApplicationListener<ResetPasswordEvent> {
 
     private final UserService userService;
     private final JavaMailSender mailSender;
-    private UserEntity theUser;
+    private UserEntity user;
+    private String email;
 
     @Override
-    public void onApplicationEvent(RegistrationCompleteEvent event) {
-        theUser = event.getUser();
-        String verificationToken = UUID.randomUUID().toString();
-        userService.saveUserVerificationToken(theUser, verificationToken);
-        String url = event.getApplicationUrl()+"/register/verifyEmail?token="+verificationToken;
+    public void onApplicationEvent(ResetPasswordEvent event) {
+        email = event.getUser().getEmail();
+        user = event.getUser();
+        String token = UUID.randomUUID().toString();
+        userService.updateResetPassword(token, user);
+        String resetUrl = event.getApplicationUrl() + "/reset-password?token=" + token;
+        String url = event.getApplicationUrl();
         try {
-            sendVerificationEmail(url);
+            sendVerificationEmail(url, resetUrl);
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        log.info("Click the link below to verify your registration: {}", url);
-
     }
 
-    public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
-        String subject = "Xác Nhận Tài Khoản";
+    public void sendVerificationEmail(String url, String resetUrl) throws MessagingException, UnsupportedEncodingException {
+        String subject = "Khôi Phục Mật Khẩu";
         String senderName = "Nhà xe Travelista";
         String mailContent = "<html><head><style>" +
                 "body { font-family: Arial, sans-serif; }" +
@@ -49,16 +50,16 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
                 "a { background-color: #bbbfcb; color: #FFFFFF; padding: 10px 15px; border-radius: 5px; text-decoration: none; }" +
                 "</style></head>" +
                 "<body>" +
-                "<h2>Hi, " + theUser.getFullname() + "</h2>" +
-                "<p>Cám ơn bạn đã đăng ký tại khoản tại Travelista. Để xác nhận việc đăng ký tài khoản của bạn, vui lòng ấn vòng đường link bên dưới:</p>" +
-                "<p><a href=\"" + url + "\">Xác nhận đăng ký</a></p>" +
+                "<h2>Xin chào bạn</h2>" +
+                "<p>Chúng tôi nhận thấy rằng bạn đã yêu cầu khôi phục mật khẩu tại <a href=\"" + url + "\">Travelista</a>Vui lòng ấn vào đường dẫn bên dưới để khôi phục mật khẩu của bạn.</p>" +
+                "<p>Hãy <a href=\"" + resetUrl + "\">khôi phục mật khẩu</a> và vui lòng không chia sẻ đường dẫn này cho bất cứ ai.</p>" +
                 "<p>Xin cám ơn,<br>Nhà xe Travelista</p>" +
                 "</body></html>";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom("nghbang1909@gmail.com", senderName);
-        System.out.println("Sending email to" + theUser.getEmail() + "...");
-        messageHelper.setTo(theUser.getEmail());
+        System.out.println("Sending email to" + email + "...");
+        messageHelper.setTo(email);
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);
         mailSender.send(message);
