@@ -148,16 +148,13 @@ public class AdminController {
             if (currentMonthRevenue > lastMonthRevenue) {
                 deviation = currentMonthRevenue - lastMonthRevenue;
                 model.addAttribute("sign", "+");
-                System.out.println("dương" + deviation);
             } else {
                 deviation = (Double) abs(currentMonthRevenue - lastMonthRevenue);
                 model.addAttribute("sign", "-");
                 model.addAttribute("warnning", "true");
-                System.out.println("âm" + deviation);
             }
             //% chênh lệch
             Double percentageOfSales = (deviation / lastMonthRevenue) * 100;
-            System.out.println(percentageOfSales);
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             String roundedNumber = decimalFormat.format(percentageOfSales);
             model.addAttribute("percentageOfSales", roundedNumber);
@@ -355,7 +352,6 @@ public class AdminController {
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
     public String bookTrip(Principal p, Integer bookedId, Model model, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
                            @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re) {
-        System.out.println("Booked" + bookedId);
         String validEmail = p.getName();
         UserEntity checkUser = userService.findbyEmail(validEmail).get();
         if (!isValidEmail(validEmail) && !isValidEmail(checkUser.getAddress())) {
@@ -363,7 +359,6 @@ public class AdminController {
             model.addAttribute("gbUserName", checkUser.getEmail());
             return "pages/fill_out_email";
         }
-        System.out.println("Check2" + checkUser);
         List<Long> seatIds = new ArrayList<>();
         String[] seatIdArray = inputSelectedSeats.split(",");
         for (String seatId : seatIdArray) {
@@ -446,7 +441,6 @@ public class AdminController {
                 }
                 Float roundTripPrice = 0.0F;
                 if (bookedId != null) {
-                    System.out.println("Có vô");
                     Booking roundTrip = bookingService.get(bookedId);
                     roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
                 }
@@ -459,7 +453,6 @@ public class AdminController {
                 Booking myBooking = bookingService.get(savedBooking.getId());
                 model.addAttribute("myBooking", myBooking);
                 model.addAttribute("seatsReserved", seatsReserved);
-                System.out.println("My booking" + myBooking);
                 if (bookedId != null) {
                     Booking booking2 = bookingService.get(bookedId);
                     List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(booking2);
