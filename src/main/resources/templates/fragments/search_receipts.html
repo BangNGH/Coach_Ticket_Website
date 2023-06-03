@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<tbody th:fragment="listReceipts" id="tbody">
+<tr th:if="${notFound}">
+    <td colspan='11' class='text-center'>Không có kết quả tìm kiếm.</td>
+</tr>
+<tr th:unless="${notFound}" th:each="booking : ${bookings}">
+    <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
+    <td th:text="${booking.trip.route.name}"></td>
+    <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
+    <td th:text="${booking.trip.startTime}"></td>
+    <td th:text="${booking.trip.vehicle.name}"></td>
+    <td th:text="${booking.trip.vehicle.licensePlates}"></td>
+    <td>
+               <span th:each="sr, iterStat : ${booking.seatReservations}">
+  <span th:text="${sr.seat.name}"></span>
+  <span th:if="${!iterStat.last}">, </span>
+</span>
+
+    </td>
+    <td th:text="${booking.seatReservations.size()}"></td>
+    <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
+        'POINT') + 'đ'}]]
+    </td>
+    <td th:text="${booking.isPaid} ? 'Đã thanh toán' : 'Chưa thanh toán'"></td>
+</tr>
+</tbody>
+</body>
+</html>

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -29,6 +28,9 @@ public class City {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "image_path", nullable = false)
+    private String image_path;
+
     @OneToMany(mappedBy = "startCity", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Route> startRoutes;
@@ -36,6 +38,14 @@ public class City {
     @OneToMany(mappedBy = "endCity", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Route> endRoutes;
+
+    @Transient
+    public String getCityImagePath() {
+        if (image_path == null) {
+            return null;
+        }
+        return "/cities-images/" + id + "/" + image_path;
+    }
 
     @PreRemove
     public void checkRoutesBeforeDelete() {

@@ -9,19 +9,10 @@
 <body>
 <div layout:fragment="content">
     <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
-        <div th:if="${raMessage}" class="alert alert-success text-center">
-            [[${raMessage}]]
-        </div>
-        <div th:if="${errorMessage}" class="alert alert-danger text-center">
-            [[${errorMessage}]]
-        </div>
-
+        <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm" id="q"
+               size="50">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-<!--                <h4 class="card-title text-danger" th:text="'Tổng tiền: '+${#numbers.formatDecimal(totalBill, 0, 'COMMA', 0, 'POINT') + 'đ'}" ></h4>
-                <div class="d-flex ">
-
-                </div>-->
                 <h4 class="card-title text-danger" >Hóa đơn chưa thanh toán</h4>
                 <div class="d-flex ">
                     <a class="card-title btn btn-info" th:href="@{/home}" style="color: white">Trờ lại</a>
@@ -67,7 +58,7 @@
                         <tr th:if="${notFound}">
                             <td colspan='11' class='text-center'>Không có hóa đơn nào cần thanh toán.</td>
                         </tr>
-                        <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
+                        <tr th:unless="${notFound}" th:each="booking : ${bookings}">
                             <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
                             <td th:text="${booking.trip.route.name}"></td>
                             <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
@@ -75,12 +66,15 @@
                             <td th:text="${booking.trip.vehicle.name}"></td>
                             <td th:text="${booking.trip.vehicle.licensePlates}"></td>
                             <td>
-                                <span th:each="sr : ${booking.seatReservations}" th:text="${sr.seat.name} + ', '"></span>
+                                <span th:each="sr, iterStat : ${booking.seatReservations}">
+                                <span th:text="${sr.seat.name}"></span>
+                                <span th:if="${!iterStat.last}">, </span>
+                                </span>
                             </td>
                             <td th:text="${booking.seatReservations.size()}"></td>
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                             <td>
-                                <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy</a> |
+                                <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy |</a>
                                 <a th:href="@{'/users/payment-basket?bookingId=' + ${booking.id} + '&totalPrice=' + ${booking.bookingDetails.get(0).totalPrice}}">Thanh toán</a>
 
                             </td>
@@ -118,6 +112,7 @@
             </div>
         </div>
     </div>
+    <script th:src="@{/js/ajax/findBill.js}"></script>
 </div>
 </body>
 </html>

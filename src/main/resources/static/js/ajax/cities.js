@@ -18,7 +18,9 @@ $(document).ready(function () {
       <tr>
        <td>${city.id}</td>
        <td>${city.name}</td>
-      
+                              <td>
+                            <img alt="hình tuyến đi" style="max-width: 100%; max-height: 170px;" src="${city.cityImagePath}">
+                        </td>
         <td>
           <a href="/admin/cities/edit/${city.id}">Edit</a> |
           <a href="/admin/cities/delete/${city.id}">Delete</a>

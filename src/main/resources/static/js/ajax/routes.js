@@ -22,9 +22,6 @@ $(document).ready(function () {
                         <td>${route.distance}km</td>
                         <td>${route.timeTrip}h</td>
                         <td>
-                            <img alt="hình tuyến đi" style="max-width: 100%; max-height: 170px;" src="${route.routeImagePath}">
-                        </td>
-                        <td>
                             <a href="/admin/routes/edit/${route.id}">Edit</a> |
           <a href="/admin/routes/delete/${route.id}">Delete</a>
                         </td>

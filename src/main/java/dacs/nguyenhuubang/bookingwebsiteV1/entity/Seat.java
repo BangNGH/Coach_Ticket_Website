@@ -7,7 +7,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class Seat {
     @PreRemove
     private void checkForDependencies() {
         if (!seatReservations.isEmpty()) {
-            throw new CannotDeleteException("Cannot delete Seat with associated Seat-reservation");
+            throw new CannotDeleteException("Không thể xóa ghế ngồi này vì đã có người đặt trước!");
         }
     }
 }

@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,9 +52,6 @@ public class Route {
     @Column(name = "time_trip", nullable = false)
     private Integer timeTrip;
 
-    @Column(name = "image_path", nullable = true)
-    private String image_path;
-
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Trip> trips;
@@ -59,16 +59,7 @@ public class Route {
     @PreRemove
     private void checkForDependencies() {
         if (!trips.isEmpty()) {
-            throw new CannotDeleteException("Cannot delete routes with associated trips");
+            throw new CannotDeleteException("Không thể xóa tuyếnn này vì có các thành chuyến đi liên quan");
         }
     }
-    @Transient
-    public String getRouteImagePath(){
-        if (image_path == null){
-            return null;
-        }
-        return "/route-images/" +id+"/"+image_path;
-    }
-
-
 }

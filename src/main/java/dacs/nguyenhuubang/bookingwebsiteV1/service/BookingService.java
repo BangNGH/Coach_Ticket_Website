@@ -1,6 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,5 +93,20 @@ public class BookingService {
 
     public void cancelAllUnpaidTickets(LocalDate currentDate, LocalTime currentTime) {
         this.bookingRepository.cancelAllUnpaidTickets(currentDate, currentTime);
+    }
+
+    //dùng cho search ajax bill
+    public List<Booking> getBill(UserEntity user, Boolean isPaid) {
+        return this.bookingRepository.getBill(user, isPaid);
+    }
+
+    public List<Booking> searchBookings(List<Booking> bookedTrip, String key) {
+        List<Booking> foundBills = new ArrayList<>();
+        for (Booking booking : bookedTrip) {
+            if (booking.getBookingDetails().get(0).getTotalPrice().toString().contains(key) || booking.getTrip().getVehicle().getLicensePlates().toString().contains(key) || booking.getTrip().getVehicle().getName().toString().contains(key) || booking.getTrip().getStartTime().toString().contains(key) || booking.getTrip().getRoute().getName().toString().contains(key) || booking.getBookingDate().toString().contains(key) || booking.getBookingDetails().get(0).getId().getTicketCode().toString().contains(key)) {
+                foundBills.add(booking);
+            }
+        }
+        return foundBills;
     }
 }

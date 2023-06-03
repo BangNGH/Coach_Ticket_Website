@@ -1,8 +1,8 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import java.io.IOException;
-import java.util.List;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Route;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Vehicle;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.RouteService;
@@ -17,6 +17,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/admin/trips")
 @Controller
@@ -27,7 +30,7 @@ public class TripController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-        int pageSize = 6;
+        int pageSize = 8;
         Page<Trip> page = tripService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Trip> trips = page.getContent();
         model.addAttribute("currentPage", pageNo);
@@ -68,8 +71,6 @@ public class TripController {
             model.addAttribute("vehicles", vehicles);
             return "admin/pages/trip_form";
         }
-
-
         tripService.save(trip);
         re.addFlashAttribute("raMessage", "Lưu thành công chuyến đi.");
         return "redirect:/admin/trips";

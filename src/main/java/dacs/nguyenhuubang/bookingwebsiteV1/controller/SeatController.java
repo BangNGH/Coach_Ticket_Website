@@ -27,8 +27,7 @@ public class SeatController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-
-        int pageSize = 5;
+        int pageSize = 8;
         Page<Seat> page = seatService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Seat> seats = page.getContent();
         model.addAttribute("currentPage", pageNo);

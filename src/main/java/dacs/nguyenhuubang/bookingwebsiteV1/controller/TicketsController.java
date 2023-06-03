@@ -83,7 +83,6 @@ public class TicketsController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("sortField", sortField);
         model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-        System.out.println("Boking details" + bookedTrip.get(0).getId());
         return "pages/show_receipts";
     }
 

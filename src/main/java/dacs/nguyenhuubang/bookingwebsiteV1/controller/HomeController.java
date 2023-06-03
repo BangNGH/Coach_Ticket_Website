@@ -184,20 +184,27 @@ public class HomeController {
             List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
             for (Trip trip : foundTrips) {
                 int totalSeat = trip.getVehicle().getCapacity();
                 int seatReserved = seatReservationRepo.checkAvailableSeat(trip, startTime);
                 List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, startTime);
+                List<Seat> listReservedSeat = seatReservationRepo.listReservedSeat(trip.getVehicle(), trip, startTime);
                 int availableSeats = totalSeat - seatReserved;
 
                 loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                loadReservedSeat.put(trip.getId(), listReservedSeat);
                 availableSeatsMap.put(trip.getId(), availableSeats);
             }
+
             if (foundTrips.isEmpty()) {
                 model.addAttribute("isListEmpty", true);
             } else model.addAttribute("isListEmpty", false);
             model.addAttribute("foundTrips", foundTrips);
+            //chổ trống
             model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+            model.addAttribute("listReservedSeat", loadReservedSeat);
+            //số lượng chổ trống
             model.addAttribute("availableSeatsMap", availableSeatsMap);
             model.addAttribute("header", "Tìm chuyến");
             model.addAttribute("currentPage", "Tìm chuyến");

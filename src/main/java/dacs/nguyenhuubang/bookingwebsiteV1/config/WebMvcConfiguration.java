@@ -16,9 +16,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path routeUploadDir = Paths.get("./route-images");
+        Path routeUploadDir = Paths.get("./cities-images");
         String routeUploadPath = routeUploadDir.toFile().getAbsolutePath();
-        registry.addResourceHandler("/route-images/**").addResourceLocations("file:/"+routeUploadPath+"/");
+        registry.addResourceHandler("/cities-images/**").addResourceLocations("file:/" + routeUploadPath + "/");
 
         Path routeUploadDir1 = Paths.get("./vehicle-images");
         String routeUploadPath1 = routeUploadDir1.toFile().getAbsolutePath();

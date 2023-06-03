@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import org.thymeleaf.TemplateEngine;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,8 +30,6 @@ public class HomeRestController {
     private final CityService cityService;
     private final TripService tripService;
     private final SeatReservationRepository seatReservationRepo;
-    private final TemplateEngine templateEngine;
-
 
     @GetMapping("/search")
     public ModelAndView searchTrips(@RequestParam("startCity") String sStartCity,
@@ -40,10 +37,8 @@ public class HomeRestController {
                                     @RequestParam("endTime") String endTime, @RequestParam("startTime") String startTime, @RequestParam("keyword") String keyword, Model model) {
         City startCity = cityService.findCityByName(sStartCity);
         City endCity = cityService.findCityByName(sEndCity);
-        System.out.println(startCity.getName() + " " + endCity.getName());
         List<Trip> foundTripsWithoutSearch = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
         List<Trip> foundTrips = searchTrips(foundTripsWithoutSearch, keyword);
-        System.out.println(foundTrips);
         Map<Integer, Integer> availableSeatsMap = new HashMap<>();
         Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
         for (Trip trip : foundTrips) {

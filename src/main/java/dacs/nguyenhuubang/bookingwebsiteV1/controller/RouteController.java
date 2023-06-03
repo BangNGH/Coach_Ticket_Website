@@ -11,18 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -67,34 +59,26 @@ public class RouteController {
     }
 
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("route") Route route, BindingResult bindingResult, Model model, RedirectAttributes re, @RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public String save(@Valid @ModelAttribute("route") Route route, BindingResult bindingResult, Model model, RedirectAttributes re) {
         if (bindingResult.hasErrors()) {
             List<City> cities = cityService.getCities();
             model.addAttribute("cities", cities);
             return "admin/pages/route_form";
         }
-        if (route.getEndCity().getName().equals(route.getStartCity().getName())){
+        if (route.getEndCity().getName().equals(route.getStartCity().getName())) {
             re.addFlashAttribute("errorMessage", "Start-city and End-city must be difference!");
             return "redirect:/admin/routes";
         }
-
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        route.setImage_path(fileName);
-        Route savedRoute = routeService.save(route);
-        String uploadDir = "./route-images/" + savedRoute.getId();
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        try {
+            System.out.println(route.getTrips());
+            routeService.save(route);
+            re.addFlashAttribute("raMessage", "Lưu tuyến đường thành công.");
+            return "redirect:/admin/routes";
+        } catch (Exception e) {
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/routes";
         }
-        try (InputStream inputStream = multipartFile.getInputStream()){
 
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new IOException("Could not save uploaded file " + e.getMessage());
-        }
-        re.addFlashAttribute("raMessage", "The route has been saved successfully.");
-        return "redirect:/admin/routes";
     }
 
 

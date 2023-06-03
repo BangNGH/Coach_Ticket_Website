@@ -10,7 +10,7 @@
   <div class="container-fluid">
     <div class="text-center"><h2>[[${pageTitle}]]</h2></div>
 
-    <form th:action="@{/admin/cities/save}" method="post" th:object="${city}"
+    <form th:action="@{/admin/cities/save}" method="post" th:object="${city}" enctype="multipart/form-data"
           style="max-width: 500px; margin: 0 auto;">
       <input type="hidden" th:field="*{id}">
       <div class="border border-secondary rounded p-3">
@@ -23,7 +23,13 @@
             <div class="invalid-feedback" th:errors="*{name}"></div>
           </div>
         </div>
-
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Hình ảnh:</label>
+          <div class="col-sm-8">
+            <input type="file" name="file" required id="imageFile" accept=".png, .jpg, .jpeg" class="form-control"/>
+            <img style="max-width: 100%; max-height: 200px;margin-top: 10px" id="thumbnail" alt=" image-preview"/>
+          </div>
+        </div>
         <div class="text-center">
           <button type="submit" class="btn btn-primary m-2">Save</button>
           <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
@@ -32,6 +38,24 @@
     </form>
   </div>
   <script type="text/javascript">
+    $(document).ready(function () {
+      $('#imageFile').change(function () {
+        showImageThumbnail(this);
+      })
+    });
+
+    function showImageThumbnail(inputFile) {
+      file = inputFile.files[0];
+      reader = new FileReader();
+
+      reader.onload = function (e) {
+        $('#thumbnail').attr('src', e.target.result);
+      };
+
+      reader.readAsDataURL(file);
+
+    }
+
     function cancelForm() {
       window.location = "[[@{/admin/cities}]]";
     }

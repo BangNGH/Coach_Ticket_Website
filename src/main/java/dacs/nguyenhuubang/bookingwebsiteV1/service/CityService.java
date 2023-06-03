@@ -21,8 +21,9 @@ public class CityService {
         return (List<City>)cityRepository.findAll();
     }
 
-    public void save(City city) {
+    public City save(City city) {
         cityRepository.save(city);
+        return city;
     }
 
     public City get(Integer id){

@@ -37,6 +37,7 @@
                                 <a th:href="@{'/admin/cities/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Tên
                                     thành phố</a>
                             </th>
+                            <th>Image</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -45,6 +46,10 @@
                             <tr>
                                 <td>[[${city.id}]]</td>
                                 <td>[[${city.name}]]</td>
+                                <td>
+                                    <img alt="hình tuyến đi" style="max-width: 100%; max-height: 170px;"
+                                         th:src="@{${city.cityImagePath}}">
+                                </td>
                                 <td>
                                     <a th:href="@{'/admin/cities/edit/' + ${city.getId()}}">Edit</a> |
                                     <a th:href="@{'/admin/cities/delete/' + ${city.getId()}}">Delete</a>

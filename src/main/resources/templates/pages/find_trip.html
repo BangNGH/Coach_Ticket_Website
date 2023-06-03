@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/sub_layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/sub_layout">
 <head>
     <meta charset="UTF-8">
     <title>Find Trip</title>
@@ -8,19 +9,23 @@
             max-width: 100%;
             overflow-x: auto;
         }
+
         .seat-map {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
             gap: 5px;
         }
+
         .seat-map img {
             max-width: 100px;
             max-height: 100px;
         }
+
         .seat-item {
             display: flex;
             align-items: center;
         }
+
         .seat-item label {
             display: block;
             background-color: #ECECEC;
@@ -29,9 +34,11 @@
             cursor: pointer;
             flex: 1;
         }
+
         .seat-item input[type="checkbox"] {
             display: none;
         }
+
         .seat-item input[type="checkbox"]:checked + label {
             background-color: #6FCF97;
             color: white;
@@ -39,8 +46,12 @@
     </style>
     <script>
         function toggleCheckbox(element) {
+            if (element.disabled) {
+                return false; // Không cho phép thay đổi trạng thái checkbox nếu đã vô hiệu hóa
+            }
             element.checked = !element.checked;
             element.nextElementSibling.classList.toggle("checked");
+
         }
     </script>
     <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
@@ -57,52 +68,76 @@
         </div>
         <div>
             <div class="seat-map-container">
-                <input type="text" class="input-group-text" placeholder="Tìm chuyến" id="q" size="50">
-                <form th:action="@{/users/booking-trip}" method="post">
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                    <tr>
-                        <th style="width: 10%">Thời gian</th>
-                        <th style="width: 10%">Loại xe</th>
-                        <th style="width: 10%">Giá vé</th>
-                        <th style="width: 8%">Trống</th>
-                        <th style="width: 6%">Chọn</th>
-                        <th style="width: 26%">Chọn ghế</th>
-                        <th style="width: 30%">Sơ đồ ghế</th>
-                    </tr>
-                    </thead>
-                    <tbody id="tbody">
-                    <tr th:if="${isListEmpty}">
-                        <td colspan='11' class='text-center'>Không có chuyến nào cần trung chuyển hôm nay.</td>
-                    </tr>
+                <div style="float: right;margin:20px 0px;" class="d-flex">
+                    <div style="margin-right: 50px;">
+                        <input type="text" class="input-group-text" placeholder="Tìm chuyến" id="q"
+                               size="50">
+                    </div>
+                    <div>
+                        <label th:for="sample"
+                               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
+                        <label th:for="sample" style="color:black;font-size: 20px;"
+                        >: Ghế đã được đặt trước</label>
+                    </div>
 
-                    <th:block th:unless="${isListEmpty}" th:each="trip: ${foundTrips}">
+                </div>
+                <form th:action="@{/users/booking-trip}" method="post">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
                         <tr>
-                            <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
-                            <td>[[${trip.vehicle.name}]]</td>
-                            <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
-                            <td th:text="${availableSeatsMap.get(trip.id)}"></td>
-                            <td>
-                                <input required type="radio" name="selectedTrip" th:value="${trip.id}">
-                                Chọn
-                            </td>
-                            <td>
-                                <div class="seat-map">
-                                    <th:block th:each="seat : ${loadAvailableSeatsMap.get(trip.id)}">
-                                        <div class="seat-item">
-                                            <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}" id="seat-${seat.getId()}">
-                                            <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}" onclick="toggleCheckbox(this.previousElementSibling)"></label>
-                                        </div>
-                                    </th:block>
-                                </div>
-                            </td>
-                            <td>
-                                <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
-                            </td>
+                            <th style="width: 10%">Thời gian</th>
+                            <th style="width: 10%">Loại xe</th>
+                            <th style="width: 10%">Giá vé</th>
+                            <th style="width: 8%">Trống</th>
+                            <th style="width: 6%">Chọn</th>
+                            <th style="width: 26%">Chọn ghế</th>
+                            <th style="width: 30%">Sơ đồ ghế</th>
                         </tr>
-                    </th:block>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:if="${isListEmpty}">
+                            <td colspan='11' class='text-center'>Không có chuyến nào cần trung chuyển hôm nay.</td>
+                        </tr>
+
+                        <th:block th:unless="${isListEmpty}" th:each="trip: ${foundTrips}">
+                            <tr>
+                                <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
+                                <td>[[${trip.vehicle.name}]]</td>
+                                <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
+                                <td th:text="${availableSeatsMap.get(trip.id)}"></td>
+                                <td>
+                                    <input required type="radio" name="selectedTrip" th:value="${trip.id}">
+                                    Chọn
+                                </td>
+                                <td>
+                                    <div class="seat-map">
+                                        <!-- danh sách các ghế đã được đặt -->
+                                        <th:block th:each="seat : ${listReservedSeat.get(trip.id)}">
+                                            <div class="seat-item">
+                                                <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
+                                                       disabled id="seatReserved-${seat.getId()}">
+                                                <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                                                       style="background-color: #b93333;color:white;"></label>
+                                            </div>
+                                        </th:block>
+                                        <!-- danh sách các ghế chưa được đặt trước của xe -->
+                                        <th:block th:each="seat : ${loadAvailableSeatsMap.get(trip.id)}">
+                                            <div class="seat-item">
+                                                <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
+                                                       id="seat-${seat.getId()}">
+                                                <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                                                       onclick="toggleCheckbox(this.previousElementSibling)"></label>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                </td>
+                                <td>
+                                    <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
                     <input type="hidden" id="selectedTripId" name="selectedTripId">
                     <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
                     <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">

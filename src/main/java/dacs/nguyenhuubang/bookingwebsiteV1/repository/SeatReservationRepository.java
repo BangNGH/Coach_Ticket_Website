@@ -1,11 +1,8 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.repository;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +22,10 @@ public interface SeatReservationRepository extends JpaRepository<SeatReservation
     @Query("SELECT s FROM Seat s WHERE s.vehicle = ?1 AND s NOT IN " +
             "(SELECT sr.seat FROM SeatReservation sr WHERE sr.booking.trip = ?2 AND sr.booking.bookingDate = ?3)")
     List<Seat> listAvailableSeat(Vehicle vehicle, Trip trip, LocalDate bookingDate);
+
+    @Query("SELECT s FROM Seat s WHERE s.vehicle = ?1 AND s IN " +
+            "(SELECT sr.seat FROM SeatReservation sr WHERE sr.booking.trip = ?2 AND sr.booking.bookingDate = ?3)")
+    List<Seat> listReservedSeat(Vehicle vehicle, Trip trip, LocalDate bookingDate);
 
 
     @Query("SELECT s.seat FROM SeatReservation s where s.booking =?1")
