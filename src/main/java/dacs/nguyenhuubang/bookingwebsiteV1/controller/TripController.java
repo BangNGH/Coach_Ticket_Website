@@ -30,7 +30,7 @@ public class TripController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-        int pageSize = 8;
+        int pageSize = 10;
         Page<Trip> page = tripService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Trip> trips = page.getContent();
         model.addAttribute("currentPage", pageNo);

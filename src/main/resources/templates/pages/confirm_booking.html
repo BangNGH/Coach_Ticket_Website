@@ -8,7 +8,7 @@
         .square-container {
             width: 490px; /* Điều chỉnh theo kích thước mong muốn */
             height: 450px;
-           text-align: center;
+            text-align: center;
         }
 
         .row-container {
@@ -17,6 +17,7 @@
             margin-top: 80px;
             margin-bottom: 75px;
         }
+
         .term-heading {
             font-weight: bold;
             font-size: 18px;
@@ -74,16 +75,19 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label class="col-sm-4 col-form-label font-weight-bold" th:text="'Số ghế('+ ${seatsReserved.size()}+'): '"></label>
+                        <label class="col-sm-4 col-form-label font-weight-bold"
+                               th:text="'Số ghế('+ ${seatsReserved.size()}+'): '"></label>
                         <div class="col-sm-8">
-                            <label class="highlighted-text" th:each="seat : ${roundTrip.seatReservations}" th:value="${seat.seat.id}" th:text="${seat.seat.name} + ', '"></label>
+                            <label class="highlighted-text" th:each="seat : ${roundTrip.seatReservations}"
+                                   th:value="${seat.seat.id}" th:text="${seat.seat.name} + ', '"></label>
                         </div>
                     </div>
 
                     <div class="mb-3 row">
                         <label class="col-sm-4 col-form-label">Giá mỗi vé:</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" readonly th:value="${#numbers.formatDecimal(roundTrip.trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                            <input type="text" class="form-control" readonly
+                                   th:value="${#numbers.formatDecimal(roundTrip.trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">
                         </div>
                     </div>
                 </div>
@@ -93,9 +97,9 @@
             <form th:action="@{/users/save}" method="post" th:object="${trip}"
                   style="max-width: 500px; margin: 0 auto;">
                 <input type="hidden" name="bookedId" th:value="${bookedId}">
-                <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" th:field="*{route}"/>
-                <input type="hidden" th:field="*{vehicle}" />
+                <input type="hidden" th:field="*{vehicle}"/>
                 <input type="hidden" th:field="*{startTime}"/>
                 <input type="hidden" th:field="*{price}"/>
                 <input type="hidden" th:each="seat : ${seatsReserved}" th:name="'seatsReserved'" th:value="${seat.id}"/>
@@ -129,16 +133,29 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label class="col-sm-4 col-form-label font-weight-bold" th:text="'Số ghế('+ ${seatsReserved.size()}+'): '"></label>
+                        <label class="col-sm-4 col-form-label font-weight-bold"
+                               th:text="'Số ghế('+ ${seatsReserved.size()}+'): '"></label>
                         <div class="col-sm-8">
-                            <label class="highlighted-text" th:each="seat : ${seatsReserved}" th:value="${seat.id}" th:text="${seat.name} + ', '"></label>
+                            <span class="highlighted-text" th:each="sr, iterStat : ${seatsReserved}">
+                                <span th:text="${sr.name}" th:value="${sr.id}"></span>
+                                <span th:if="${!iterStat.last}">, </span>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label">Giá:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" readonly
+                                   th:value="${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}+' x '+ ${seatsReserved.size()} + ' vé ='+ ${#numbers.formatDecimal(trip.price * seatsReserved.size(), 0, 'COMMA', 0, 'POINT') + 'đ'}">
                         </div>
                     </div>
 
                     <div class="mb-3 row">
-                        <label class="col-sm-4 col-form-label">Giá mỗi vé:</label>
+                        <label class="col-sm-4 col-form-label">Ghi chú:</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" readonly th:value="${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                            <input type="text" name="note" id="note" class="form-control"
+                                   placeholder="Thêm ghi chú cho chúng tôi ở đây." onfocus="this.placeholder = ''"
+                                   onblur="this.placeholder = 'Bạn có thể thêm ghi chú cho chúng tôi ở đây.'">
                         </div>
                     </div>
 
@@ -146,7 +163,8 @@
                         <div class="col-sm-8 offset-sm-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="acceptTerms" required>
-                                <label class="form-check-label" for="acceptTerms">Chấp nhận điều khoản của <strong>Voley</strong> </label>
+                                <label class="form-check-label" for="acceptTerms">Chấp nhận điều khoản của
+                                    <strong>Voley</strong> </label>
                             </div>
                         </div>
                     </div>
@@ -189,7 +207,7 @@
         var saveButton = document.querySelector('button[type="submit"]');
         saveButton.disabled = true;
         // Gán sự kiện onchange cho checkbox
-        acceptTermsCheckbox.addEventListener('change', function() {
+        acceptTermsCheckbox.addEventListener('change', function () {
             // Kiểm tra trạng thái của checkbox
             if (acceptTermsCheckbox.checked) {
                 // Nếu checkbox đã được chọn, bỏ vô hiệu hóa nút "Save"
@@ -199,6 +217,7 @@
                 saveButton.disabled = true;
             }
         });
+
         function cancelForm() {
             window.location = "[[@{/home}]]";
         }

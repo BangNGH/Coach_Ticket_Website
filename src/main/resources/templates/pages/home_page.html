@@ -88,7 +88,8 @@
 						<div class="single-destination relative">
 							<div class="thumb relative">
 								<div class="overlay overlay-bg"></div>
-								<img class="img-fluid" src="img/vehicle2.jpg" alt="hình ảnh">
+								<img alt="hình thành phố" style="width: 700px;height: 350px;" class="img-fluid"
+									 th:src="@{${city.cityImagePath}}">
 							</div>
 							<div class="desc">
 								<a th:href="'/home/find-destination-city/'+${city.id}" class="price-btn">Đặt vé ngay</a>

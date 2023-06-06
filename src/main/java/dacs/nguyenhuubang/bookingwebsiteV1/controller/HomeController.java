@@ -176,12 +176,9 @@ public class HomeController {
     public String getTrips(Model model, RedirectAttributes re, @RequestParam("startCity") City startCity,
                            @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
                            @RequestParam(value = "endTime", required = false) LocalDate endTime) {
-        if (startCity == endCity) {
-            re.addFlashAttribute("errorMessage", "Vui lòng chọn thành hai phố khác nhau");
-            return "redirect:/";
-        }
         try {
             List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            foundTrips.sort(Comparator.comparing(Trip::getStartTime));
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,11 +36,16 @@ public class Booking {
 
     @NotNull
     @Column(name = "isPaid")
-    private Boolean isPaid=false;
+    private Boolean isPaid = false;
 
     @NotNull
     @Column(name = "booking_date", nullable = false)
     private LocalDate bookingDate;
+
+    @Size(max = 1000, message = "Nội dung không được vượt quá 1000 ký tự")
+    @Column(name = "note", nullable = true)
+    private String note;
+
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore

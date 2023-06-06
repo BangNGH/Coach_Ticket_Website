@@ -10,6 +10,10 @@
             overflow-x: auto;
         }
 
+        tr:hover {
+            background-color: #f8f8f8;
+        }
+
         .seat-map {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
@@ -43,6 +47,18 @@
             background-color: #6FCF97;
             color: white;
         }
+
+        input[type="radio"] {
+            transform: scale(2); /* Tăng kích thước 1.2 lần */
+            margin-right: 6px; /* Tạo khoảng cách giữa nút radio và văn bản */
+        }
+
+        input[type="radio"]:checked + label {
+            background-color: #6FCF97;
+            color: white;
+            font-weight: bold;
+        }
+
     </style>
     <script>
         function toggleCheckbox(element) {
@@ -68,7 +84,7 @@
         </div>
         <div>
             <div class="seat-map-container">
-                <div style="float: right;margin:20px 0px;" class="d-flex">
+                <div style="float: left;margin:40px 0px 20px 0px;" class="d-flex">
                     <div style="margin-right: 50px;">
                         <input type="text" class="input-group-text" placeholder="Tìm chuyến" id="q"
                                size="50">
@@ -96,7 +112,7 @@
                         </thead>
                         <tbody id="tbody">
                         <tr th:if="${isListEmpty}">
-                            <td colspan='11' class='text-center'>Không có chuyến nào cần trung chuyển hôm nay.</td>
+                            <td colspan='11' class='text-center'>Không tìm thấy chuyến nào hôm nay.</td>
                         </tr>
 
                         <th:block th:unless="${isListEmpty}" th:each="trip: ${foundTrips}">
@@ -106,8 +122,11 @@
                                 <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                                 <td th:text="${availableSeatsMap.get(trip.id)}"></td>
                                 <td>
-                                    <input required type="radio" name="selectedTrip" th:value="${trip.id}">
-                                    Chọn
+                                    <label>
+                                        <input type="radio" name="selectedTrip" th:value="${trip.id}">
+                                        <span class="radio-label">Chọn</span>
+                                    </label>
+
                                 </td>
                                 <td>
                                     <div class="seat-map">

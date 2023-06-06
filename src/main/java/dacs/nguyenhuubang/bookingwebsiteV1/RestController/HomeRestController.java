@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/home")
@@ -39,6 +36,7 @@ public class HomeRestController {
         City endCity = cityService.findCityByName(sEndCity);
         List<Trip> foundTripsWithoutSearch = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
         List<Trip> foundTrips = searchTrips(foundTripsWithoutSearch, keyword);
+        foundTrips.sort(Comparator.comparing(Trip::getStartTime));
         Map<Integer, Integer> availableSeatsMap = new HashMap<>();
         Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
         for (Trip trip : foundTrips) {

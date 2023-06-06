@@ -76,4 +76,12 @@ public class TripService {
     public Trip getTripByRouteName(String routeName) {
         return tripRepository.getTripByRouteName(routeName);
     }
+
+    //phân trang & sort tìm kiếm chuyến
+    public Page<Trip> findPaginated(int pageNo, int pageSize, String sortField, String sortDir, City startCity, City endCity) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.tripRepository.findTripsByCitiesAndStartTime(startCity, endCity, pageable);
+    }
 }

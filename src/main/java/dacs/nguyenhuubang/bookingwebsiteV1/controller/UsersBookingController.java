@@ -195,6 +195,7 @@ public class UsersBookingController {
                 seatsReserved.add(seat);
             }
 
+
             if (bookedId != null) {
                 Booking roundTrip = bookingService.get(bookedId);
                 model.addAttribute("roundTrip", roundTrip);
@@ -226,7 +227,7 @@ public class UsersBookingController {
 
     @PostMapping("/save")
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
-    public String saveBooking(@RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws Exception {
+    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws Exception {
 
         List<Seat> seatsReserved = new ArrayList<>();
         for (Integer seatId : seatIds) {
@@ -252,6 +253,7 @@ public class UsersBookingController {
         booking.setBookingDate(date);
         booking.setIsPaid(false);
         booking.setUser(user);
+        booking.setNote(note);
         Booking savedBooking = bookingService.save(booking);
 
         //Save booking details
@@ -306,10 +308,9 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
+        //String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
 
-
-        model.addAttribute("momo", momoPaymentUrl);
+        //  model.addAttribute("momo", momoPaymentUrl);
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("startTime", savedBooking.getBookingDate());
         model.addAttribute("currentPage", "thanh toán");
@@ -392,9 +393,9 @@ public class UsersBookingController {
         String momoAmount = String.valueOf(totalPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
         System.out.println(sub_momoAmount + bookingId);
-        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
+        // String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
 
-        model.addAttribute("momo", momoPaymentUrl);
+        //  model.addAttribute("momo", momoPaymentUrl);
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("currentPage", "Phương thức thanh toán");
         return "pages/payment_methods";
