@@ -2,7 +2,6 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class HomeController {
     private final TripService tripService;
     private final BookingService bookingService;
     private final ContactService contactService;
-    private final SeatReservationRepository seatReservationRepo;
+    private final SeatReservationService seatReservationService;
 
     @GetMapping("/book-now")
     public String bookNow(RedirectAttributes redirectAttributes) {
@@ -184,9 +183,9 @@ public class HomeController {
             Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
             for (Trip trip : foundTrips) {
                 int totalSeat = trip.getVehicle().getCapacity();
-                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, startTime);
-                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, startTime);
-                List<Seat> listReservedSeat = seatReservationRepo.listReservedSeat(trip.getVehicle(), trip, startTime);
+                int seatReserved = seatReservationService.checkAvailableSeat(trip, startTime);
+                List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip.getVehicle(), trip, startTime);
+                List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, startTime);
                 int availableSeats = totalSeat - seatReserved;
 
                 loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
@@ -224,16 +223,19 @@ public class HomeController {
             List<Trip> foundTrips = tripService.findTripsByDestination(endCity);
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
             for (Trip trip : foundTrips) {
                 int totalSeat = trip.getVehicle().getCapacity();
-                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, LocalDate.now());
-                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, LocalDate.now());
+                int seatReserved = seatReservationService.checkAvailableSeat(trip, LocalDate.now());
+                List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip.getVehicle(), trip, LocalDate.now());
+                List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, LocalDate.now());
                 int availableSeats = totalSeat - seatReserved;
 
                 loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                loadReservedSeat.put(trip.getId(), listReservedSeat);
                 availableSeatsMap.put(trip.getId(), availableSeats);
             }
-
+            model.addAttribute("listReservedSeat", loadReservedSeat);
             model.addAttribute("foundTrips", foundTrips);
             model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
             model.addAttribute("availableSeatsMap", availableSeatsMap);
@@ -261,17 +263,21 @@ public class HomeController {
             List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
             for (Trip trip : foundTrips) {
                 int totalSeat = trip.getVehicle().getCapacity();
-                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, LocalDate.now());
-                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, LocalDate.now());
+                int seatReserved = seatReservationService.checkAvailableSeat(trip, LocalDate.now());
+                List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, LocalDate.now());
+                List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip.getVehicle(), trip, LocalDate.now());
                 int availableSeats = totalSeat - seatReserved;
 
                 loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                loadReservedSeat.put(trip.getId(), listReservedSeat);
                 availableSeatsMap.put(trip.getId(), availableSeats);
             }
 
             model.addAttribute("foundTrips", foundTrips);
+            model.addAttribute("listReservedSeat", loadReservedSeat);
             model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
             model.addAttribute("availableSeatsMap", availableSeatsMap);
             model.addAttribute("header", "Tìm chuyến");

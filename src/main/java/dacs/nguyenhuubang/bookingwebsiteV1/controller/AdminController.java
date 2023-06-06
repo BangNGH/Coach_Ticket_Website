@@ -6,7 +6,6 @@ import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -38,7 +37,6 @@ public class AdminController {
     private final BookingService bookingService;
     private final CityService cityService;
     private final TripService tripService;
-    private final SeatReservationRepository seatReservationRepo;
     private final UserService userService;
     private final SeatService seatService;
     private final SeatReservationService seatReservationService;
@@ -114,12 +112,12 @@ public class AdminController {
         model.addAttribute("cities", cities);
         Float revenue = 0.0F;
         revenue = bookingDetailsList
-                .stream()
+                .stream().filter(bookingDetails -> bookingDetails.getBooking().getIsPaid() == true)
                 .collect(Collectors.summingDouble(BookingDetails::getTotalPrice))
                 .floatValue();
 
         //Chart doanh thu theo tháng
-        Map<YearMonth, Double> revenueByMonth = bookingDetailsList.stream()
+        Map<YearMonth, Double> revenueByMonth = bookingDetailsList.stream().filter(bookingDetails -> bookingDetails.getBooking().getIsPaid() == true)
                 .collect(Collectors.groupingBy(
                         bookingDetails -> YearMonth.from(bookingDetails.getBooking().getBookingDate()),
                         TreeMap::new, // tự động sắp xếp các entry theo thứ tự của khóa (YearMonth).
@@ -164,7 +162,7 @@ public class AdminController {
         //Tính doanh thu ngày hôm nay
         LocalDate currentDate = LocalDate.now();
         Float revenueToday = 0.0F;
-        revenueToday = (float) bookingDetailsList.stream()
+        revenueToday = (float) bookingDetailsList.stream().filter(bookingDetails -> bookingDetails.getBooking().getIsPaid() == true)
                 .filter(bookingDetails -> bookingDetails.getBooking().getBookingDate().equals(currentDate))
                 .mapToDouble(BookingDetails::getTotalPrice)
                 .sum();
@@ -179,7 +177,6 @@ public class AdminController {
         numberOfBill = bookings
                 .stream().filter(booking -> booking.getIsPaid() == false)
                 .collect(Collectors.counting());
-        Long numberOfReceipt = numberOfBookings - numberOfBill;
 
         model.addAttribute("numberOfBill", numberOfBill);
         model.addAttribute("numberOfBookings", numberOfBookings);
@@ -206,18 +203,22 @@ public class AdminController {
             }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+            Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
             for (Trip trip : foundTrips) {
                 int totalSeat = trip.getVehicle().getCapacity();
-                int seatReserved = seatReservationRepo.checkAvailableSeat(trip, startTime);
-                List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, startTime);
+                int seatReserved = seatReservationService.checkAvailableSeat(trip, startTime);
+                List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip.getVehicle(), trip, startTime);
+                List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, startTime);
                 int availableSeats = totalSeat - seatReserved;
 
                 loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
+                loadReservedSeat.put(trip.getId(), listReservedSeat);
                 availableSeatsMap.put(trip.getId(), availableSeats);
             }
 
             model.addAttribute("foundTrips", foundTrips);
             model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+            model.addAttribute("listReservedSeat", loadReservedSeat);
             model.addAttribute("availableSeatsMap", availableSeatsMap);
             model.addAttribute("header", "Tìm chuyến");
             model.addAttribute("currentPage", "Tìm chuyến");
@@ -318,19 +319,23 @@ public class AdminController {
                 List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(trip.getRoute().getEndCity(), trip.getRoute().getStartCity());
                 Map<Integer, Integer> availableSeatsMap = new HashMap<>();
                 Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+                Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
                 for (Trip trip2 : foundTrips) {
                     int totalSeat = trip2.getVehicle().getCapacity();
                     int seatReserved = seatReservationService.checkAvailableSeat(trip2, endTime);
                     List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip2.getVehicle(), trip2, endTime);
+                    List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip2.getVehicle(), trip2, startTime);
                     int availableSeats = totalSeat - seatReserved;
 
                     loadAvailableSeatsMap.put(trip2.getId(), seatsAvailable);
+                    loadReservedSeat.put(trip2.getId(), listReservedSeat);
                     availableSeatsMap.put(trip2.getId(), availableSeats);
                 }
 
                 model.addAttribute("foundTrips", foundTrips);
                 model.addAttribute("bookedId", savedBooking.getId());
                 model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+                model.addAttribute("listReservedSeat", loadReservedSeat);
                 model.addAttribute("availableSeatsMap", availableSeatsMap);
                 model.addAttribute("header", "Tìm chuyến về");
                 model.addAttribute("currentPage", "Tìm chuyến");

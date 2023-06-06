@@ -44,6 +44,16 @@
             color: white;
         }
 
+        input[type="radio"] {
+            transform: scale(2); /* Tăng kích thước 1.2 lần */
+            margin-right: 6px; /* Tạo khoảng cách giữa nút radio và văn bản */
+        }
+
+        input[type="radio"]:checked + label {
+            background-color: #6FCF97;
+            color: white;
+            font-weight: bold;
+        }
     </style>
     <script>
         function toggleCheckbox(element) {
@@ -65,7 +75,19 @@
         </div>
         <div>
             <div class="seat-map-container">
-                <input type="text" class="input-group-text" placeholder="search" id="q" size="50">
+                <div style="float: left;margin:40px 0px 20px 0px;" class="d-flex">
+                    <div style="margin-right: 50px;">
+                        <input type="text" class="input-group-text" placeholder="Tìm chuyến" id="q"
+                               size="50">
+                    </div>
+                    <div>
+                        <label th:for="sample"
+                               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
+                        <label th:for="sample" style="color:black;font-size: 20px;"
+                        >: Ghế đã được đặt trước</label>
+                    </div>
+
+                </div>
                 <form th:action="@{/admin/booking-trip}" method="post">
                     <table class="table table-bordered">
                         <thead class="thead-dark">
@@ -87,16 +109,21 @@
                                 <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                                 <td th:text="${availableSeatsMap.get(trip.id)}"></td>
                                 <td>
-                                    <input required type="radio" name="selectedTrip" th:value="${trip.id}">
-                                    Chọn
+                                    <label>
+                                        <input type="radio" name="selectedTrip" th:value="${trip.id}">
+                                        <span class="radio-label">Chọn</span>
+                                    </label>
                                 </td>
                                 <td>
                                     <div class="seat-map">
-                                        <th:block th:each="seat : ${loadAvailableSeatsMap.get(trip.id)}">
+                                        <th:block th:each="seat : ${trip.getVehicle().getSeats()}">
                                             <div class="seat-item">
                                                 <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
-                                                       id="seat-${seat.getId()}">
+                                                       disabled th:id="'seatReserved-' + ${seat.getId()}"
+                                                       th:checked="${listReservedSeat.get(trip.id).contains(seat)}"
+                                                       th:disabled="${listReservedSeat.get(trip.id).contains(seat)}">
                                                 <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                                                       th:style="${listReservedSeat.get(trip.id).contains(seat)} ? 'background-color: #b93333;color:white;' : ''"
                                                        onclick="toggleCheckbox(this.previousElementSibling)"></label>
                                             </div>
                                         </th:block>

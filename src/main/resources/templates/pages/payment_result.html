@@ -78,8 +78,10 @@
 
                             <div class="form-group">
                                 <label>Ghế đặt trước:</label>
-                                <label style="font-weight: bold" th:each="seat : ${seatsReserved}"
-                                       th:text="${seat.name} + ', '"></label>
+                                <span th:each="sr, iterStat : ${seatsReserved}">
+                                <span th:text="${sr.name}"></span>
+                                <span th:if="${!iterStat.last}">, </span>
+                                </span>
                             </div>
                             <div class="form-group">
                                 <label>Tổng tiền:</label>
@@ -163,8 +165,10 @@
                             </div>
                             <div class="form-group">
                                 <label>Ghế đặt trước:</label>
-                                <label style="font-weight: bold" th:each="seat : ${seatsReserved2}"
-                                       th:text="${seat.name} + ', '"></label>
+                                <span th:each="sr, iterStat : ${seatsReserved2}">
+                                <span th:text="${sr.name}"></span>
+                                <span th:if="${!iterStat.last}">, </span>
+                                </span>
                             </div>
                             <div th:if="${hasRoundTrip}" class="form-group">
                                 <p>Chúng tôi đã gửi một email chứa thông tin giao dịch trên. Vui lòng kiểm tra email và

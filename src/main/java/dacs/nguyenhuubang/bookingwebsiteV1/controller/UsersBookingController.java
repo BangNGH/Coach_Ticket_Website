@@ -81,21 +81,24 @@ public class UsersBookingController {
             String[] seatIdArray = inputSelectedSeats.split(",");
             for (String seatId : seatIdArray) {
                 seatIds.add(Long.valueOf(seatId));
-                }
-                LocalTime now = LocalTime.now();
-                LocalDate today = LocalDate.now();
-                Trip trip = tripService.get(selectedTripId);
+            }
+            LocalTime now = LocalTime.now();
+            LocalDate today = LocalDate.now();
+            Trip trip = tripService.get(selectedTripId);
 
-                if (startTime.isEqual(today) && trip.getStartTime().compareTo(now) <= 0) {
-                    re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
-                    return "redirect:/home";
-                }
+            if (startTime.isEqual(today) && trip.getStartTime().compareTo(now) <= 0) {
+                re.addFlashAttribute("errorMessage", "Chuyến này đã xuất phát rồi!");
+                return "redirect:/home";
+            }
 
-                List<Seat> seatsReserved = new ArrayList<>();
-                for (Long seatId : seatIds) {
-                    Seat seat = seatService.get(seatId);
-                    seatsReserved.add(seat);
-                }
+            List<Seat> seatsReserved = new ArrayList<>();
+            for (Long seatId : seatIds) {
+                Seat seat = seatService.get(seatId);
+                seatsReserved.add(seat);
+            }
+            try {
+
+
                 //Save booking
                 Trip bookingTrip = trip;
                 Booking booking = new Booking();
@@ -140,19 +143,23 @@ public class UsersBookingController {
                 List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(trip.getRoute().getEndCity(), trip.getRoute().getStartCity());
                 Map<Integer, Integer> availableSeatsMap = new HashMap<>();
                 Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+                Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
                 for (Trip trip2 : foundTrips) {
                     int totalSeat = trip2.getVehicle().getCapacity();
                     int seatReserved = seatReservationService.checkAvailableSeat(trip2, endTime);
                     List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip2.getVehicle(), trip2, endTime);
+                    List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip2.getVehicle(), trip2, startTime);
                     int availableSeats = totalSeat - seatReserved;
 
                     loadAvailableSeatsMap.put(trip2.getId(), seatsAvailable);
+                    loadReservedSeat.put(trip2.getId(), listReservedSeat);
                     availableSeatsMap.put(trip2.getId(), availableSeats);
                 }
 
                 model.addAttribute("foundTrips", foundTrips);
                 model.addAttribute("bookedId", savedBooking.getId());
                 model.addAttribute("loadAvailableSeatsMap", loadAvailableSeatsMap);
+                model.addAttribute("listReservedSeat", loadReservedSeat);
                 model.addAttribute("availableSeatsMap", availableSeatsMap);
                 model.addAttribute("header", "Tìm chuyến về");
                 model.addAttribute("currentPage", "Tìm chuyến");
@@ -160,9 +167,13 @@ public class UsersBookingController {
                 model.addAttribute("endCity", trip.getRoute().getStartCity().getName());
                 model.addAttribute("startTime", endTime);
                 return "pages/find_trip";
-            } else {
-                return bookTrip(bookedId, model, startTime, selectedTripId, inputSelectedSeats, re);
+            } catch (Exception e) {
+                re.addFlashAttribute("errorMessage", e.getMessage());
+                return "redirect:/home";
             }
+        } else {
+            return bookTrip(bookedId, model, startTime, selectedTripId, inputSelectedSeats, re);
+        }
     }
 
     @PostMapping("/book")
@@ -308,9 +319,9 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-        //String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
+        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
 
-        //  model.addAttribute("momo", momoPaymentUrl);
+        model.addAttribute("momo", momoPaymentUrl);
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("startTime", savedBooking.getBookingDate());
         model.addAttribute("currentPage", "thanh toán");
@@ -392,10 +403,9 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(totalPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-        System.out.println(sub_momoAmount + bookingId);
-        // String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
+        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
 
-        //  model.addAttribute("momo", momoPaymentUrl);
+        model.addAttribute("momo", momoPaymentUrl);
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("currentPage", "Phương thức thanh toán");
         return "pages/payment_methods";
@@ -462,10 +472,10 @@ public class UsersBookingController {
 
         // Request params needed to request MoMo system
         String endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
-        String partnerCode = "MOMOOJOI20210710";
-        String accessKey = "iPXneGmrJH0G8FOP";
+        String partnerCode = "MOMOOJOI20m210710";
+        String accessKey = "iPXneGmrmJH0G8FOP";
         String serectkey = "sFcbSGRSJjwGxwhhcEktCHWYUuTuPNDB";
-        String orderInfo = "Thanh toan cho website Voley";
+        String orderInfo = "Thanh toan dat ve";
         String returnUrl = "http://localhost:8080/users/momo-payment-result";
         String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
         String amount = send_amount;

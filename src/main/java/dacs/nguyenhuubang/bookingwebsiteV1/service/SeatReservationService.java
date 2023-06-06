@@ -73,7 +73,7 @@ public class SeatReservationService {
                 throw new SeatHasBeenReseredException("Chuyến xe này đã hết ghế!Vui lòng tìm chuyến khác");
             }
             if (seatReservationRepository.seatIsReserved(seatReservation.getBooking().getTrip(), seatReservation.getBooking().getBookingDate(), seatReservation.getSeat())) {
-                throw new SeatHasBeenReseredException("Ghế " + seatReservation.getSeat().getName() + " đã được đặt rồi!");
+                throw new SeatHasBeenReseredException(seatReservation.getSeat().getName() + " đã được đặt rồi!");
             } else {
                 if (availableSeat == 0) {
                     availableSeat = totalSeat - 1;
@@ -129,5 +129,9 @@ public class SeatReservationService {
 
     public List<Seat> listAvailableSeat(Vehicle vehicle, Trip trip, LocalDate startTime) {
         return seatReservationRepository.listAvailableSeat(vehicle, trip, startTime);
+    }
+
+    public List<Seat> listReservedSeat(Vehicle vehicle, Trip trip, LocalDate startTime) {
+        return seatReservationRepository.listReservedSeat(vehicle, trip, startTime);
     }
 }

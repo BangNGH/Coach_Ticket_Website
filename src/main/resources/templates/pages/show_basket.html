@@ -9,11 +9,17 @@
 <body>
 <div layout:fragment="content">
     <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
+        <div th:if="${raMessage}" class="alert alert-success text-center">
+            [[${raMessage}]]
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-success text-center">
+            [[${errorMessage}]]
+        </div>
         <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm" id="q"
                size="50">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title text-danger" >Hóa đơn chưa thanh toán</h4>
+                <h4 class="card-title text-danger">Hóa đơn chưa thanh toán</h4>
                 <div class="d-flex ">
                     <a class="card-title btn btn-info" th:href="@{/home}" style="color: white">Trờ lại</a>
                 </div>
