@@ -130,21 +130,14 @@
                                 </td>
                                 <td>
                                     <div class="seat-map">
-                                        <!-- danh sách các ghế đã được đặt -->
-                                        <th:block th:each="seat : ${listReservedSeat.get(trip.id)}">
+                                        <th:block th:each="seat : ${trip.getVehicle().getSeats()}">
                                             <div class="seat-item">
                                                 <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
-                                                       disabled id="seatReserved-${seat.getId()}">
+                                                       disabled th:id="'seatReserved-' + ${seat.getId()}"
+                                                       th:checked="${listReservedSeat.get(trip.id).contains(seat)}"
+                                                       th:disabled="${listReservedSeat.get(trip.id).contains(seat)}">
                                                 <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
-                                                       style="background-color: #b93333;color:white;"></label>
-                                            </div>
-                                        </th:block>
-                                        <!-- danh sách các ghế chưa được đặt trước của xe -->
-                                        <th:block th:each="seat : ${loadAvailableSeatsMap.get(trip.id)}">
-                                            <div class="seat-item">
-                                                <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
-                                                       id="seat-${seat.getId()}">
-                                                <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                                                       th:style="${listReservedSeat.get(trip.id).contains(seat)} ? 'background-color: #b93333;color:white;' : ''"
                                                        onclick="toggleCheckbox(this.previousElementSibling)"></label>
                                             </div>
                                         </th:block>
