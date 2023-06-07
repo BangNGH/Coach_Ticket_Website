@@ -9,19 +9,18 @@
 <div layout:fragment="content">
 
   <div class="container-fluid text-center">
-    <input type="text" class="input-group-text" placeholder="search by email, name" id="q" size="50">
-    <hr/>
-
-
-    <div th:if="${raMessage}" class="alert alert-success text-center">
-      [[${raMessage}]]
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger text-center">
-      [[${errorMessage}]]
-    </div>
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h4 class="card-title">All users</h4>
+      <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+             onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
+      <hr/>
+      <div th:if="${raMessage}" class="alert alert-success text-center">
+          [[${raMessage}]]
+      </div>
+      <div th:if="${errorMessage}" class="alert alert-danger text-center">
+          [[${errorMessage}]]
+      </div>
+      <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+              <h4 class="card-title">Tất cả người dùng</h4>
         <div class="d-flex ">
           <i data-feather="download"></i>
         </div>
@@ -49,8 +48,8 @@
                     <a th:href="@{'/admin/users/page/'+${currentPage}+'?sortField=role&sortDir='+${reserseSortDir}}">Quyền</a>
                 </th>
                 <th>
-                    <a th:href="@{'/admin/users/page/'+${currentPage}+'?sortField=isEnabled&sortDir='+${reserseSortDir}}">Trạng
-                        thái</a>
+                    <a th:href="@{'/admin/users/page/'+${currentPage}+'?sortField=isEnabled&sortDir='+${reserseSortDir}}">Tài
+                        khoản</a>
                 </th>
                 <th>
                     <a th:href="@{'/admin/users/page/'+${currentPage}+'?sortField=provider&sortDir='+${reserseSortDir}}">Phương
@@ -68,15 +67,16 @@
                 <td th:text="${user.address}"></td>
                 <td th:text="${user.role}"></td>
                 <td th:if="${user.enabled}">
-                  <span class="badge bg-success">Active</span>
+                    <span class="badge bg-success">Đã kích hoạt</span>
                 </td>
                 <td th:unless="${user.enabled}">
-                  <span class="badge bg-danger">Disable</span>
+                    <span class="badge bg-danger">Chưa kích hoạt</span>
                 </td>
                   <td th:text="${user.provider}"></td>
                   <td>
                       <a th:if="!${user.provider}" th:href="@{'/admin/users/edit/' + ${user.id}}">Sửa |</a>
-                      <a th:href="@{'/admin/users/delete/' + ${user.id}}">Xóa</a>
+                      <a class="text-danger" th:href="@{'/admin/users/delete/' + ${user.id}}"
+                         onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                   </td>
               </tr>
             </th:block>

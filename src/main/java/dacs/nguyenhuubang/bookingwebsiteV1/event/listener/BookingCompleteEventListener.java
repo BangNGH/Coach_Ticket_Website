@@ -59,17 +59,17 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         mailContentBuilder.append("<head>");
         mailContentBuilder.append("<style>");
         mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
-        mailContentBuilder.append("h2 { color: #1a6f2d; }");
-        mailContentBuilder.append(".container { margin: 20px; padding: 20px; border: 3px solid #1a6f2d; }");
+        mailContentBuilder.append("h2 { color: #383429; }");
+        mailContentBuilder.append(".container { background-color: #ffffff;margin: 20px; padding: 20px; border: 3px solid #ffffff; }");
         mailContentBuilder.append("p { margin-bottom: 10px; }");
         mailContentBuilder.append("a { color: #28a745; }");
         mailContentBuilder.append("</style>");
         mailContentBuilder.append("</head>");
-        mailContentBuilder.append("<body>");
+        mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px\">");
         mailContentBuilder.append("<div class=\"container\">");
-        mailContentBuilder.append("<h2>Chào, " + theBooking.getUser().getFullname() + "</h2>");
+        mailContentBuilder.append("<h2>Xin chào, " + theBooking.getUser().getFullname() + "</h2>");
         mailContentBuilder.append("<p>Cám ơn bạn đã chọn nhà xe của chúng tôi, dưới đây là thông tin vé của bạn</p>");
-        mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> Tuyến: " + theBooking.getTrip().getRoute().getName() + ", ngày:" + theBooking.getBookingDate() + ", lúc: " + theBooking.getTrip().getStartTime() + "</p>");
+        mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> tuyến: " + theBooking.getTrip().getRoute().getName() + ", ngày: " + theBooking.getBookingDate() + ", lúc: " + theBooking.getTrip().getStartTime() + "</p>");
         mailContentBuilder.append("<p><strong>Số lượng vé lượt đi:</strong> " + numberOfTicket + "</p>");
         mailContentBuilder.append("<p><strong>Chỗ ngồi lượt đi:</strong> " + reservedSeats + "</p>");
         mailContentBuilder.append("<p><strong>Mã vé lượt đi:</strong> " + ticketCode + "</p>");
@@ -108,7 +108,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         if (!isValidEmail(theBooking.getUser().getEmail()))
             sendEmail=theBooking.getUser().getAddress();
         else sendEmail=theBooking.getUser().getEmail();
-        System.out.println("Sending email to" + sendEmail + "...");
+        System.out.println("Sending email to " + sendEmail + "...");
         messageHelper.setTo(sendEmail);
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);

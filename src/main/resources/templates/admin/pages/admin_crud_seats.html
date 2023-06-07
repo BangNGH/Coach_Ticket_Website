@@ -9,28 +9,29 @@
 <div layout:fragment="content">
 
   <div class="container-fluid text-center">
-    <input type="text" class="input-group-text" placeholder="search by name" id="q" size="50">
-    <hr/>
-    <div th:if="${raMessage}" class="alert alert-success text-center">
-      [[${raMessage}]]
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger text-center">
-      [[${errorMessage}]]
-    </div>
-    <div>
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h4 class="card-title">Manage Seats</h4>
-          <div class="d-flex ">
-            <i data-feather="download"></i>
-          </div>
-        </div>
-        <div class="card-body px-0 pb-0">
-          <div class="table-responsive">
-            <table class='table mb-0' id="table1">
-              <thead>
-              <tr>
-                  <th>
+      <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+             onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
+      <hr/>
+      <div th:if="${raMessage}" class="alert alert-success text-center">
+          [[${raMessage}]]
+      </div>
+      <div th:if="${errorMessage}" class="alert alert-danger text-center">
+          [[${errorMessage}]]
+      </div>
+      <div>
+          <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                  <h4 class="card-title">Quản lý ghế ngồi</h4>
+                  <div class="d-flex ">
+                      <i data-feather="download"></i>
+                  </div>
+              </div>
+              <div class="card-body px-0 pb-0">
+                  <div class="table-responsive">
+                      <table class='table mb-0' id="table1">
+                          <thead>
+                          <tr>
+                              <th>
                       <a th:href="@{'/admin/seats/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
                   </th>
                   <th>
@@ -50,16 +51,17 @@
               </thead>
               <tbody id="tbody">
               <th:block th:each="seat : ${seats}">
-                <tr>
-                  <td>[[${seat.id}]]</td>
-                  <td>[[${seat.name}]]</td>
-                  <td>[[${seat.vehicle.name}]]</td>
-                  <td>[[${seat.vehicle.licensePlates}]]</td>
-                  <td>
-                    <a th:href="@{'/admin/seats/edit/' + ${seat.id}}">Edit</a> |
-                    <a th:href="@{'/admin/seats/delete/' + ${seat.id}}">Delete</a>
-                  </td>
-                </tr>
+                  <tr>
+                      <td>[[${seat.id}]]</td>
+                      <td>[[${seat.name}]]</td>
+                      <td>[[${seat.vehicle.name}]]</td>
+                      <td>[[${seat.vehicle.licensePlates}]]</td>
+                      <td>
+                          <a th:href="@{'/admin/seats/edit/' + ${seat.id}}">Sửa</a> |
+                          <a class="text-danger" th:href="@{'/admin/seats/delete/' + ${seat.id}}"
+                             onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
+                      </td>
+                  </tr>
               </th:block>
               </tbody>
             </table>

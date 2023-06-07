@@ -67,8 +67,9 @@
                                 <td>[[${city.address}]]</td>
                                 <td>[[${city.phone}]]</td>
                                 <td>
-                                    <a th:href="@{'/admin/transit/edit/' + ${city.getId()}}">Edit</a> |
-                                    <a th:href="@{'/admin/transit/delete/' + ${city.getId()}}">Delete</a>
+                                    <a th:href="@{'/admin/transit/edit/' + ${city.getId()}}">Sửa</a> |
+                                    <a class="text-danger" th:href="@{'/admin/transit/delete/' + ${city.getId()}}"
+                                       onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                                 </td>
                             </tr>
                         </th:block>

@@ -40,13 +40,13 @@ public class SendEmailReminderEventListener implements ApplicationListener<SendE
         mailContentBuilder.append("<head>");
         mailContentBuilder.append("<style>");
         mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
-        mailContentBuilder.append("h2 { color: #1a6f2d; }");
-        mailContentBuilder.append(".container { margin: 20px; padding: 20px; border: 3px solid #1a6f2d; }");
+        mailContentBuilder.append("h2 { color: #383429; }");
+        mailContentBuilder.append(".container { background-color: #ffffff;margin: 20px; padding: 20px; border: 3px solid #ffffff; }");
         mailContentBuilder.append("p { margin-bottom: 10px; }");
         mailContentBuilder.append("a { color: #28a745; }");
         mailContentBuilder.append("</style>");
         mailContentBuilder.append("</head>");
-        mailContentBuilder.append("<body>");
+        mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px\">");
         mailContentBuilder.append("<div class=\"container\">");
         mailContentBuilder.append("<h2>Xin chào, " + theBooking.getUser().getFullname() + "</h2>");
         mailContentBuilder.append("<p>Chúng tôi nhận thấy bạn đã đặt vé tại <a href='http://localhost:8080/home'>Travelista</a></p>");

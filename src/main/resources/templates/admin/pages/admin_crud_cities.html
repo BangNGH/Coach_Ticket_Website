@@ -9,7 +9,8 @@
 <div layout:fragment="content">
 
     <div class="container-fluid text-center">
-        <input type="text" class="input-group-text" placeholder="search by name" id="q" size="50">
+        <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+               onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
         <hr/>
         <div th:if="${raMessage}" class="alert alert-success text-center">
             [[${raMessage}]]
@@ -51,8 +52,9 @@
                                          th:src="@{${city.cityImagePath}}">
                                 </td>
                                 <td>
-                                    <a th:href="@{'/admin/cities/edit/' + ${city.getId()}}">Edit</a> |
-                                    <a th:href="@{'/admin/cities/delete/' + ${city.getId()}}">Delete</a>
+                                    <a th:href="@{'/admin/cities/edit/' + ${city.getId()}}">Sửa</a> |
+                                    <a class="text-danger" th:href="@{'/admin/cities/delete/' + ${city.getId()}}"
+                                       onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                                 </td>
                             </tr>
                         </th:block>

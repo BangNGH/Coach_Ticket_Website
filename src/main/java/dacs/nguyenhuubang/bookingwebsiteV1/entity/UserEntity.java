@@ -53,7 +53,6 @@ public class UserEntity {
 
     @Column(name = "reset_password_token", nullable = true)
     private String resetPasswordToken;
-
     @Override
     public String toString() {
         return "UserEntity{" +

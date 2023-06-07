@@ -9,11 +9,12 @@
 <body>
 <div layout:fragment="content">
     <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
-        <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm" id="q"
+        <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm chuyến"
+               onfocus="this.placeholder = ''" onblur="this.placeholder = 'Tìm kiếm chuyến'" id="q"
                size="50">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title">Thông tin chi tiết vé</h4>
+                <h4 class="card-title">Thông tin vé đã đặt.</h4>
                 <div class="d-flex ">
                     <a class="card-title btn btn-info" th:href="@{/home}" style="color: white">Trở lại</a>
                 </div>
@@ -50,7 +51,6 @@
                             <th>Ghế đã chọn</th>
                             <th>Số lượng vé</th>
                             <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -75,7 +75,6 @@
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
                                 'POINT') + 'đ'}]]
                             </td>
-                            <td th:text="${booking.isPaid} ? 'Đã thanh toán' : 'Chưa thanh toán'"></td>
                         </tr>
                         </tbody>
                     </table>

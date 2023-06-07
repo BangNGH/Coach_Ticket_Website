@@ -97,10 +97,10 @@ public class UserController {
 
 			UserEntity deleteUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with ID: " + id + " not found"));
 			if (deleteUser.getEmail().equals(currentUserName)) {
-				ra.addFlashAttribute("errorMessage", "Cannot delete current user (ID: "+id+")");
+				ra.addFlashAttribute("errorMessage", "Không thể xóa tài khoản đang đăng nhập (ID: " + id + ")");
 			} else {
 				userService.delete(id);
-				ra.addFlashAttribute("errorMessage", "The User (ID: "+id+") has been deleted");
+				ra.addFlashAttribute("raMessage", "Người dùng (ID: " + id + ") đã bị xóa");
 			}
 		}catch (UserNotFoundException e){
 			ra.addFlashAttribute("errorMessage", e.getMessage());

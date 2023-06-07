@@ -9,7 +9,8 @@
 <div layout:fragment="content">
 
   <div class="container-fluid text-center">
-    <input type="text" class="input-group-text" placeholder="search trips" id="q" size="50">
+    <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+           onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
     <hr/>
     <div th:if="${raMessage}" class="alert alert-success text-center">
       [[${raMessage}]]
@@ -58,8 +59,9 @@
                   <td>[[${trip.startTime}]]</td>
                   <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                   <td>
-                    <a th:href="@{'/admin/trips/edit/' + ${trip.id}}">Edit</a> |
-                    <a th:href="@{'/admin/trips/delete/' + ${trip.id}}">Delete</a>
+                    <a th:href="@{'/admin/trips/edit/' + ${trip.id}}">Sửa</a> |
+                    <a class="text-danger" th:href="@{'/admin/trips/delete/' + ${trip.id}}"
+                       onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                   </td>
                 </tr>
               </th:block>

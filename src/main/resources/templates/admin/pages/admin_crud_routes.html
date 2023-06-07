@@ -9,7 +9,8 @@
 <div layout:fragment="content">
 
     <div class="container-fluid text-center">
-        <input type="text" class="input-group-text" placeholder="search by name" id="q" size="50">
+        <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+               onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
         <hr/>
         <div th:if="${raMessage}" class="alert alert-success text-center">
             [[${raMessage}]]
@@ -21,7 +22,7 @@
         <div>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Manage Routes</h4>
+                    <h4 class="card-title">Quản lý tuyến xe</h4>
                     <div class="d-flex ">
                         <i data-feather="download"></i>
                     </div>
@@ -65,8 +66,9 @@
                                     <td>[[${route.getDistance()}]].km</td>
                                     <td>[[${route.timeTrip}]] tiếng</td>
                                     <td>
-                                        <a th:href="@{'/admin/routes/edit/' + ${route.id}}">Edit</a> |
-                                        <a th:href="@{'/admin/routes/delete/' + ${route.id}}">Delete</a>
+                                        <a th:href="@{'/admin/routes/edit/' + ${route.id}}">Sửa</a> |
+                                        <a class="text-danger" th:href="@{'/admin/routes/delete/' + ${route.id}}"
+                                           onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                                     </td>
                                 </tr>
                             </th:block>

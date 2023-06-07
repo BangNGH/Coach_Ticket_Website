@@ -63,16 +63,16 @@ public class RegisterController {
         String url = applicationUrl(servletRequest)+"/register/resend-verification-token?token="+token;
         VerificationToken theToken = tokenRepository.findByToken(token);
         if (theToken.getUser().isEnabled()) {
-            model.addAttribute("title", "Warn");
-            model.addAttribute("message", "This account has already been verified, please login.");
+            model.addAttribute("title", "Thông báo!");
+            model.addAttribute("message", "Tài khoản của bạn đã được kích hoạt, xin hãy đăng nhập.");
         } else {
             String verificationResult = userService.validateToken(token);
             if (verificationResult.equalsIgnoreCase("Valid")) {
-                model.addAttribute("title", "Success");
-                model.addAttribute("message", "Email verified successfully. Now you can login to your account");
+                model.addAttribute("title", "Thành công.");
+                model.addAttribute("message", "Xác nhận tài khoản thành công. Bạn đã có thể đăng nhập");
             } else {
-                model.addAttribute("title", "Fail");
-                model.addAttribute("message", "Invalid verification token, this verification link maybe expired. <a href=\""+url+"\">Get a new verification link.</a>");
+                model.addAttribute("title", "Lỗi");
+                model.addAttribute("message", "Đường dẫn này đã hết hạn, hãy<a href=\"" + url + "\">lấy đường dẫn mới </a>để kích hoạt tài khoản của bạn!");
             }
         }
         return "registerVerifyResult";
@@ -87,7 +87,7 @@ public class RegisterController {
         VerificationToken verificationToken = userService.generateNewVerificationToken(oldToken);
         UserEntity theUser = verificationToken.getUser();
         resendVerificationTokenEmail(theUser, applicationUrl(request), verificationToken);
-        model.addAttribute("message","A new verification link has been sent to your<a href=\\\"\"+http://gmail.com/+\"\\\">email</a>, please, check to active your account");
+        model.addAttribute("message", "Đường dẫn mới đã được gửi đến email của bạn và sẽ hết hạn trong vòng 15 phút, hãy kiểm tra đường dẫn để kích hoạt tài khoản.");
         return "registerVerifyResult";
     }
 

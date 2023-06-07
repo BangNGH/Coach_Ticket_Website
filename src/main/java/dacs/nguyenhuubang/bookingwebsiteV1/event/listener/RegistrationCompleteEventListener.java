@@ -39,7 +39,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 
     }
 
-    public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
+/*    public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
         String subject = "Xác Nhận Tài Khoản";
         String senderName = "Nhà xe Travelista";
         String mailContent = "<html><head><style>" +
@@ -62,5 +62,39 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);
         mailSender.send(message);
-    }
+    } */
+public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
+    String subject = "Xác Nhận Tài Khoản";
+    String senderName = "Nhà xe Travelista";
+    StringBuilder mailContentBuilder = new StringBuilder();
+    mailContentBuilder.append("<html>");
+    mailContentBuilder.append("<head>");
+    mailContentBuilder.append("<style>");
+    mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
+    mailContentBuilder.append("h2 { color: #383429; }");
+    mailContentBuilder.append(".container { background-color: #ffffff;margin: 20px; padding: 20px; border: 3px solid #ffffff; }");
+    mailContentBuilder.append("p { margin-bottom: 10px; }");
+    mailContentBuilder.append("a { color: #28a745; }");
+    mailContentBuilder.append("</style>");
+    mailContentBuilder.append("</head>");
+    mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px\">");
+    mailContentBuilder.append("<div class=\"container\">");
+    mailContentBuilder.append("<h2>Xin chào, " + theUser.getFullname() + "</h2>");
+    mailContentBuilder.append("<p>Cám ơn bạn đã đăng ký tại khoản tại Travelista. Để xác nhận việc đăng ký tài khoản của bạn, vui lòng ấn vòng đường link bên dưới:</p>");
+    mailContentBuilder.append("<p>Hãy <a href=\"" + url + "\">xác nhận đăng ký tài khoản</a> của bạn, đường dẫn này sẽ hết hạn trong vòng <strong>15 phút</strong></p>");
+    mailContentBuilder.append("<p>Xin cám ơn,<br>Nhà xe Travelista</p>");
+    mailContentBuilder.append("</div>");
+    mailContentBuilder.append("</body>");
+    mailContentBuilder.append("</html>");
+
+    String mailContent = mailContentBuilder.toString();
+    MimeMessage message = mailSender.createMimeMessage();
+    var messageHelper = new MimeMessageHelper(message);
+    messageHelper.setFrom("nghbang1909@gmail.com", senderName);
+    System.out.println("Sending email to" + theUser.getEmail() + "...");
+    messageHelper.setTo(theUser.getEmail());
+    messageHelper.setSubject(subject);
+    messageHelper.setText(mailContent, true);
+    mailSender.send(message);
+}
 }

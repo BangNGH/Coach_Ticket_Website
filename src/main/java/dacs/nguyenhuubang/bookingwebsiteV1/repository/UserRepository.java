@@ -1,7 +1,9 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.repository;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,5 +27,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findByGithubUserName(String loginName);
 
     public UserEntity findByResetPasswordToken(String token);
+
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM VerificationToken u WHERE u.user.id = :id")
+    void deleteTokenByUserId(@Param("id") Integer id);
 
 }

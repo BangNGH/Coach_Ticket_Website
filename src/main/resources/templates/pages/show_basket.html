@@ -15,7 +15,8 @@
         <div th:if="${errorMessage}" class="alert alert-success text-center">
             [[${errorMessage}]]
         </div>
-        <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm" id="q"
+        <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm hóa đơn"
+               onfocus="this.placeholder = ''" onblur="this.placeholder = 'Tìm kiếm hóa đơn'" id="q"
                size="50">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -80,8 +81,10 @@
                             <td th:text="${booking.seatReservations.size()}"></td>
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                             <td>
-                                <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy |</a>
-                                <a th:href="@{'/users/payment-basket?bookingId=' + ${booking.id} + '&totalPrice=' + ${booking.bookingDetails.get(0).totalPrice}}">Thanh toán</a>
+                                <a class="text-danger" th:href="@{'/users/tickets/delete/' + ${booking.id}}"
+                                   onclick="return confirm('Bạn có chắc muốn hủy chuyến này chứ?')">Hủy |</a>
+                                <a th:href="@{'/users/payment-basket?bookingId=' + ${booking.id} + '&totalPrice=' + ${booking.bookingDetails.get(0).totalPrice}}">Thanh
+                                    toán</a>
 
                             </td>
                         </tr>

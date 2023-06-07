@@ -40,7 +40,7 @@ public class ResetPasswordEventListener implements ApplicationListener<ResetPass
         }
     }
 
-    public void sendVerificationEmail(String url, String resetUrl) throws MessagingException, UnsupportedEncodingException {
+/*    public void sendVerificationEmail(String url, String resetUrl) throws MessagingException, UnsupportedEncodingException {
         String subject = "Khôi Phục Mật Khẩu";
         String senderName = "Nhà xe Travelista";
         String mailContent = "<html><head><style>" +
@@ -58,10 +58,46 @@ public class ResetPasswordEventListener implements ApplicationListener<ResetPass
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom("nghbang1909@gmail.com", senderName);
-        System.out.println("Sending email to" + email + "...");
+        System.out.println("Sending email to " + email + "...");
+        messageHelper.setTo(email);
+        messageHelper.setSubject(subject);
+        messageHelper.setText(mailContent, true);
+        mailSender.send(message);
+    }*/
+
+    public void sendVerificationEmail(String url, String resetUrl) throws MessagingException, UnsupportedEncodingException {
+        String subject = "Khôi Phục Mật Khẩu";
+        String senderName = "Nhà xe Travelista";
+        StringBuilder mailContentBuilder = new StringBuilder();
+        mailContentBuilder.append("<html>");
+        mailContentBuilder.append("<head>");
+        mailContentBuilder.append("<style>");
+        mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
+        mailContentBuilder.append("h2 { color: #383429; }");
+        mailContentBuilder.append(".container { background-color: #ffffff;margin: 20px; padding: 20px; border: 3px solid #ffffff; }");
+        mailContentBuilder.append("p { margin-bottom: 10px; }");
+        mailContentBuilder.append("a { color: #28a745; }");
+        mailContentBuilder.append("</style>");
+        mailContentBuilder.append("</head>");
+        mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px\">");
+        mailContentBuilder.append("<div class=\"container\">");
+        mailContentBuilder.append("<h2>Xin chào bạn.</h2>");
+        mailContentBuilder.append("<p>Chúng tôi nhận thấy rằng bạn đã gửi yêu cầu khôi phục mật khẩu tại <a href=\"" + url + "\">Travelista</a>. Vui lòng ấn vào đường dẫn để khôi phục mật khẩu của bạn.</p>");
+        mailContentBuilder.append("<p>Hãy <a href=\"" + resetUrl + "\">khôi phục mật khẩu</a> và vui lòng không chia sẻ đường dẫn này cho bất cứ ai.</p>");
+        mailContentBuilder.append("<p>Xin cám ơn,<br>Nhà xe Travelista</p>");
+        mailContentBuilder.append("</div>");
+        mailContentBuilder.append("</body>");
+        mailContentBuilder.append("</html>");
+
+        String mailContent = mailContentBuilder.toString();
+        MimeMessage message = mailSender.createMimeMessage();
+        var messageHelper = new MimeMessageHelper(message);
+        messageHelper.setFrom("nghbang1909@gmail.com", senderName);
+        System.out.println("Sending email to " + email + "...");
         messageHelper.setTo(email);
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);
         mailSender.send(message);
     }
+
 }

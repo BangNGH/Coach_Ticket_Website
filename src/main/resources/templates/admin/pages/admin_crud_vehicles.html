@@ -8,7 +8,8 @@
 <body>
 <div layout:fragment="content">
   <div class="container-fluid text-center">
-    <input type="text" class="input-group-text" placeholder="search by name, capacity" id="q" size="50">
+    <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+           onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
     <hr/>
     <div th:if="${raMessage}" class="alert alert-success text-center">
       [[${raMessage}]]
@@ -59,8 +60,9 @@
                     <img alt="seat-map" style="max-width: 100%; max-height: 170px;" th:src="@{${vehicle.routeImagePath}}">
                   </td>
                   <td>
-                    <a th:href="@{'/admin/vehicles/edit/' + ${vehicle.getId()}}">Edit</a> |
-                    <a th:href="@{'/admin/vehicles/delete/' + ${vehicle.getId()}}">Delete</a>
+                    <a th:href="@{'/admin/vehicles/edit/' + ${vehicle.getId()}}">Sửa</a> |
+                    <a class="text-danger" th:href="@{'/admin/vehicles/delete/' + ${vehicle.getId()}}"
+                       onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                   </td>
                 </tr>
               </th:block>

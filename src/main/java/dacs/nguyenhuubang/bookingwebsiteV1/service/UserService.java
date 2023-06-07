@@ -138,6 +138,7 @@ public class UserService implements IUserService {
         if (count == null || count == 0) {
             throw new UserNotFoundException("Không tìm thấy người dùng với ID " + id);
         }
+        userRepository.deleteTokenByUserId(id);
         userRepository.deleteById(id);
     }
 

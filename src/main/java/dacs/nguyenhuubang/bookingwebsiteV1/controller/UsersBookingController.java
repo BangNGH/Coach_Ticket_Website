@@ -48,7 +48,7 @@ public class UsersBookingController {
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
     public static final String ACCOUNT_SID = "ACa3f5ab465b8859f75c2294541894d897";
-    public static final String AUTH_TOKEN = "16f6e88b2c7b988d96b89592cdf38abf";
+    public static final String AUTH_TOKEN = "4c7654d646a88547f17ba6b438df7bbd";
     public static final String TWILIO_PHONE_NUMBER = "+13156303801";
 
 
@@ -319,9 +319,9 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
+/*        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
 
-        model.addAttribute("momo", momoPaymentUrl);
+        model.addAttribute("momo", momoPaymentUrl);*/
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("startTime", savedBooking.getBookingDate());
         model.addAttribute("currentPage", "thanh toán");
@@ -403,9 +403,9 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(totalPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
+/*        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
 
-        model.addAttribute("momo", momoPaymentUrl);
+        model.addAttribute("momo", momoPaymentUrl);*/
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("currentPage", "Phương thức thanh toán");
         return "pages/payment_methods";
@@ -475,6 +475,12 @@ public class UsersBookingController {
         String partnerCode = "MOMOOJOI20m210710";
         String accessKey = "iPXneGmrmJH0G8FOP";
         String serectkey = "sFcbSGRSJjwGxwhhcEktCHWYUuTuPNDB";
+        /*
+        String endpoint ="https://test-payment.momo.vn/v2/gateway/api/create";
+        String partnerCode = "MOMOBKUN20180529";
+        String accessKey = "klm05TvNBzhg7h7j";
+        String serectkey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";
+        * */
         String orderInfo = "Thanh toan dat ve";
         String returnUrl = "http://localhost:8080/users/momo-payment-result";
         String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
