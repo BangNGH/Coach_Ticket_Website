@@ -43,8 +43,8 @@ public class TicketsController {
             model.addAttribute("shuttlebus", shuttlebus);
             return "pages/transit-form";
         } catch (ResourceNotFoundException e) {
-            model.addAttribute("message", "Không tìm thấy mã đặt vé của bạn");
-            return "pages/error_message";
+            model.addAttribute("errorMessage", "Không tìm thấy mã đặt vé của bạn");
+            return "redirect:/users/tickets/manage-receipts";
         }
     }
 
@@ -56,11 +56,39 @@ public class TicketsController {
         }
         try {
             transitionService.save(shuttleBus);
-            re.addFlashAttribute("successMessage", "Cám ơn bạn đã chọn chúng tôi.");
-            return "redirect:/";
+            re.addFlashAttribute("raMessage", "Chúng tôi đã lưu thông tin trung chuyển của bạn.");
+            return "redirect:/users/tickets/manage-receipts";
         } catch (ResourceNotFoundException e) {
             model.addAttribute("message", "Không tìm thấy mã đặt vé của bạn");
             return "pages/error_message";
+        }
+    }
+
+    @GetMapping("/transit/edit/{id}")
+    public String showEditTransitForm(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
+        try {
+            ShuttleBus shuttleBus = transitionService.findByBookingId(id);
+            Booking booking = bookingService.get(id);
+            System.out.println("BOOKING: " + booking);
+            System.out.println("shuttleBus: " + shuttleBus);
+            if (booking == null) {
+                throw new ResourceNotFoundException("Không tìm thấy hóa đơn nào với ID: " + id);
+            }
+            if (shuttleBus == null) {
+                ShuttleBus shuttlebus = new ShuttleBus();
+                shuttlebus.setBooking(booking);
+                model.addAttribute("booking", booking);
+                model.addAttribute("shuttlebus", shuttlebus);
+                return "pages/transit-form";
+            } else {
+                //edit
+                model.addAttribute("booking", shuttleBus.getBooking());
+                model.addAttribute("shuttlebus", shuttleBus);
+                return "pages/transit-form";
+            }
+        } catch (ResourceNotFoundException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/users/tickets/manage-receipts";
         }
     }
 

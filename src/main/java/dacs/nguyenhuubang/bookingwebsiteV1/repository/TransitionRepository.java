@@ -16,4 +16,5 @@ public interface TransitionRepository extends JpaRepository<ShuttleBus, Integer>
 
     @Query("SELECT p FROM ShuttleBus p WHERE p.booking.id =:id")
     ShuttleBus findByBookingId(int id);
+
 }

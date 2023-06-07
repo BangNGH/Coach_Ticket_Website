@@ -55,11 +55,6 @@ public class Booking {
     @JsonIgnore
     private List<BookingDetails> bookingDetails;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private ShuttleBus shuttleBus;
-
-
 /*
     @PreRemove
     private void checkForDependencies() {

@@ -97,8 +97,6 @@ public class UsersBookingController {
                 seatsReserved.add(seat);
             }
             try {
-
-
                 //Save booking
                 Trip bookingTrip = trip;
                 Booking booking = new Booking();

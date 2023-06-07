@@ -35,6 +35,11 @@
         </script>-->
 	<!-- End of Async Drift Code -->
 	<link rel="shortcut icon" th:href="@{/img/favicon.svg}">
+	<style>
+		tr:hover {
+			background-color: #f8f8f8;
+		}
+	</style>
 </head>
 <body>
 	<div layout:fragment="content">
@@ -103,8 +108,6 @@
 		</section>
 		<!-- End popular-destination Area -->
 
-
-		<!-- Start price Area -->
 		<section class="price-area section-gap">
 			<div class="container">
 				<div class="row d-flex justify-content-center">
@@ -115,35 +118,43 @@
 					</div>
 				</div>
 				<div class="row">
-
-					<div class="container-fluid">
-						<div class="single-price">
-							<h4>CHUYẾN ĐI PHỔ BIẾN</h4>
-							<table class='table mb-0 price-list' id="table1">
-								<thead>
-								<th>Điểm đi</th>
-								<th>Điểm đến</th>
-								<th>Giá tiền</th>
-
-								</thead>
-								<tbody id="tbody">
-								<th:block th:each="trip: ${topTripList}">
-									<tr>
-										<td>[[${trip.route.startCity.name}]]</td>
-										<td>[[${trip.route.endCity.name}]]</td>
-										<td><a th:href="@{'/booking-popular-trip/'+${trip.id} }" class="price-btn"
-											   th:text="${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}"></a>
-										</td>
-									</tr>
-								</th:block>
-								</tbody>
-							</table>
+					<div class="col-md-12">
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title">CHUYẾN ĐI PHỔ BIẾN</h4>
+								<div class="table-responsive">
+									<table class="table table-striped" style="margin-left: 50px;">
+										<thead>
+										<tr>
+											<th>Điểm đi</th>
+											<th>Điểm đến</th>
+											<th>Giá tiền</th>
+										</tr>
+										</thead>
+										<tbody id="tbody">
+										<th:block th:each="trip: ${topTripList}">
+											<tr>
+												<td>[[${trip.route.startCity.name}]]</td>
+												<td>[[${trip.route.endCity.name}]]</td>
+												<td>
+													<a th:href="@{'/booking-popular-trip/'+${trip.id} }"
+													   class="btn btn-primary">
+														[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') +
+														'đ'}]]
+													</a>
+												</td>
+											</tr>
+										</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</section>
+
 		<!-- End price Area -->
 		<section class="about-info-area section-gap">
 			<div style="margin-right: 50px; margin-left: 50px">
@@ -194,7 +205,8 @@
 							<div class="row">
 								<div class="col-lg-6 form-group">
 									<input th:field="*{name}" name="name" placeholder="Nhập tên liên hệ"
-										   onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'"
+										   onfocus="this.placeholder = ''"
+										   onblur="this.placeholder = 'Nhập tên liên hệ'"
 										   class="common-input mb-20 form-control" required="" type="text"
 										   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
 									<div class="invalid-feedback" th:errors="*{name}"></div>
@@ -205,7 +217,7 @@
 										   placeholder="Nhập địa chỉ email"
 										   pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
 										   onfocus="this.placeholder = ''"
-										   onblur="this.placeholder = 'Enter email address'"
+										   onblur="this.placeholder = 'Nhập địa chỉ email'"
 										   class="common-input mb-20 form-control" required="" type="email">
 									<div class="invalid-feedback" th:errors="*{email}"></div>
 									<input th:field="*{title}"
@@ -220,8 +232,8 @@
                                 <textarea th:field="*{content}"
 										  th:classappend="${#fields.hasErrors('content')} ? 'is-invalid' : ''"
 										  class="common-textarea form-control" name="message"
-										  placeholder="Nhập nội dung" onfocus="this.placeholder = ''"
-										  onblur="this.placeholder = 'Enter Messege'" required=""></textarea>
+										  placeholder="Nhập nội dung thư" onfocus="this.placeholder = ''"
+										  onblur="this.placeholder = 'Nhập nội dung thư'" required=""></textarea>
 									<div class="invalid-feedback" th:errors="*{content}"></div>
 								</div>
 								<div class="col-lg-12">

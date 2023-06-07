@@ -34,7 +34,7 @@ public class ShuttleBus {
     private String phone;
 
     @NotNull(message = "Thông tin đặt chỗ không được để trống")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 

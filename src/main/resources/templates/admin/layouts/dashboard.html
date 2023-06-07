@@ -17,6 +17,10 @@
       background-color: #007bff;
       color: #fff;
     }
+
+    tr:hover {
+      background-color: #f8f8f8;
+    }
   </style>
 </head>
 <body>
@@ -27,7 +31,7 @@
     <div layout:fragment="content"><!--dynamic content-->
 
     </div>
-    <span th:replace="~{admin/fragments/footer :: footer}"></span>
+    <!--<span th:replace="~{admin/fragments/footer :: footer}"></span>-->
   </div>
 </div>
 <script th:src="@{/js/perfect-scrollbar.min.js}"></script>

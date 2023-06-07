@@ -22,8 +22,8 @@ $(document).ready(function () {
                             <img alt="hình tuyến đi" style="max-width: 100%; max-height: 170px;" src="${city.cityImagePath}">
                         </td>
         <td>
-          <a href="/admin/cities/edit/${city.id}">Edit</a> |
-          <a href="/admin/cities/delete/${city.id}">Delete</a>
+          <a href="/admin/cities/edit/${city.id}">Sửa</a> |
+          <a href="/admin/cities/delete/${city.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

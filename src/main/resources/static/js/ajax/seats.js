@@ -20,8 +20,8 @@ $(document).ready(function () {
             <td>${seat.vehicle.name}</td>
              <td>${seat.vehicle.licensePlates}</td>
         <td>
-          <a href="/admin/seats/edit/${seat.id}">Edit</a> |
-          <a href="/admin/seats/delete/${seat.id}">Delete</a>
+          <a href="/admin/seats/edit/${seat.id}">Sửa</a> |
+          <a href="/admin/seats/delete/${seat.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

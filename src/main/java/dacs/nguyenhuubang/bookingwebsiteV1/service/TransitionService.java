@@ -79,4 +79,8 @@ public class TransitionService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.transitionRepository.findAll(pageable);
     }
+
+    public ShuttleBus findByBookingId(Integer id) {
+        return this.transitionRepository.findByBookingId(id);
+    }
 }

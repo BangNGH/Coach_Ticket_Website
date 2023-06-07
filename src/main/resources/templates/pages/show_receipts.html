@@ -9,6 +9,12 @@
 <body>
 <div layout:fragment="content">
     <div class="container-fluid text-center" style="margin-bottom: 20px;margin-top: 20px;">
+        <div th:if="${raMessage}" class="alert alert-success text-center">
+            [[${raMessage}]]
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+            [[${errorMessage}]]
+        </div>
         <input style="margin-bottom: 30px;" type="text" class="input-group-text" placeholder="Tìm kiếm chuyến"
                onfocus="this.placeholder = ''" onblur="this.placeholder = 'Tìm kiếm chuyến'" id="q"
                size="50">
@@ -51,6 +57,7 @@
                             <th>Ghế đã chọn</th>
                             <th>Số lượng vé</th>
                             <th>Tổng tiền</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -74,6 +81,9 @@
                             <td th:text="${booking.seatReservations.size()}"></td>
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
                                 'POINT') + 'đ'}]]
+                            </td>
+                            <td>
+                                <a th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Trung chuyển</a>
                             </td>
                         </tr>
                         </tbody>

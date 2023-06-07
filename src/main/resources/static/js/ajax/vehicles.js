@@ -23,8 +23,8 @@ $(document).ready(function () {
                     <img alt="seat-map" style="max-width: 100%; max-height: 170px;" src="${vehicle.routeImagePath}">
                   </td>
         <td>
-          <a href="/admin/vehicles/edit/${vehicle.id}">Edit</a> |
-          <a href="/admin/vehicles/delete/${vehicle.id}">Delete</a>
+          <a href="/admin/vehicles/edit/${vehicle.id}">Sửa</a> |
+          <a href="/admin/vehicles/delete/${vehicle.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

@@ -22,8 +22,8 @@ $(document).ready(function () {
                         <td>${booking.numberOfTickets}</td>
                         <td>${price}</td>
         <td>
-          <a href="/admin/booking-details/edit/${booking.id.bookingId}/${booking.id.ticketCode}">Edit</a> |
-          <a href="/admin/booking-details/edit/${booking.id.bookingId}/${booking.id.ticketCode}">Delete</a>
+          <a href="/admin/booking-details/edit/${booking.id.bookingId}/${booking.id.ticketCode}">Sửa</a> |
+          <a href="/admin/booking-details/edit/${booking.id.bookingId}/${booking.id.ticketCode}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

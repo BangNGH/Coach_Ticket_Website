@@ -24,8 +24,8 @@ $(document).ready(function () {
                                 <td>${city.address}</td>
                                 <td>${city.phone}</td>
         <td>
-          <a href="/admin/transit/edit/${city.id}">Edit</a> |
-          <a href="/admin/transit/delete/${city.id}">Delete</a>
+          <a href="/admin/transit/edit/${city.id}">Sửa</a> |
+          <a href="/admin/transit/delete/${city.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

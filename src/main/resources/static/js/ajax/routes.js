@@ -22,8 +22,8 @@ $(document).ready(function () {
                         <td>${route.distance}km</td>
                         <td>${route.timeTrip}h</td>
                         <td>
-                            <a href="/admin/routes/edit/${route.id}">Edit</a> |
-          <a href="/admin/routes/delete/${route.id}">Delete</a>
+                            <a href="/admin/routes/edit/${route.id}">Sửa</a> |
+          <a href="/admin/routes/delete/${route.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
                         </td>
       </tr>
     `;

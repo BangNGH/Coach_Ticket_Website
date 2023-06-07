@@ -24,8 +24,8 @@ $(document).ready(function () {
                          <td>${seatReservation.booking.trip.startTime} ${booking_date} </td>
                         <td>${seatReservation.seatsAvailable}</td>
         <td>
-          <a href="/admin/seat-reservation/edit/${seatReservation.id}">Edit</a> |
-          <a href="/admin/seat-reservation/delete/${seatReservation.id}">Delete</a>
+          <a href="/admin/seat-reservation/edit/${seatReservation.id}">Sửa</a> |
+          <a href="/admin/seat-reservation/delete/${seatReservation.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

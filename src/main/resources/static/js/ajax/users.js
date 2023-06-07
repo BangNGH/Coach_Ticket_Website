@@ -22,8 +22,8 @@ $(document).ready(function () {
         <td>${user.role}</td>
         <td>${user.isEnabled}</td>
         <td>
-          <a href="/admin/users/edit/${user.id}">Edit</a> |
-          <a href="/admin/users/delete/${user.id}">Delete</a>
+          <a href="/admin/users/edit/${user.id}">Sửa</a> |
+          <a href="/admin/users/delete/${user.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

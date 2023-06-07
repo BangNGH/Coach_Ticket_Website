@@ -22,8 +22,8 @@ $(document).ready(function () {
 <td>${trip.startTime}</td>
            <td>${price}đ</td>
         <td>
-          <a href="/admin/trips/edit/${trip.id}">Edit</a> |
-          <a href="/admin/trips/delete/${trip.id}">Delete</a>
+          <a href="/admin/trips/edit/${trip.id}">Sửa</a> |
+          <a href="/admin/trips/delete/${trip.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;

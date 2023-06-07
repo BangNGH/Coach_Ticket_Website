@@ -22,7 +22,7 @@ $(document).ready(function () {
        <td>${city.content}</td>
       
         <td>
-          <a href="/admin/contacts/delete/${city.id}">Delete</a>
+          <a href="/admin/contacts/delete/${city.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>
     `;
