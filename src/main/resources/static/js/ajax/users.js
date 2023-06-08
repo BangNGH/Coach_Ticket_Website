@@ -20,9 +20,12 @@ $(document).ready(function () {
         <td>${user.email}</td>
         <td>${user.address}</td>
         <td>${user.role}</td>
-        <td>${user.isEnabled}</td>
+         <td>
+                <span class="badge bg-${user.enabled ? 'danger' : 'success'}">${user.enabled ? 'Chưa kích hoạt' : 'Đã kích hoạt'}</span>
+            </td>
+            <td>${user.provider != null ? user.provider : 'Tài khoản Travelista'}</td>
         <td>
-          <a href="/admin/users/edit/${user.id}">Sửa</a> |
+          <a href="/admin/users/edit/${user.id}">${user.provider ? '' : 'Sửa'}</a> |
           <a href="/admin/users/delete/${user.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
         </td>
       </tr>

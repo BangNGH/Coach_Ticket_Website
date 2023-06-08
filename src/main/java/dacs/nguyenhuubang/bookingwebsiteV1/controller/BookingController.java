@@ -31,9 +31,35 @@ public class BookingController {
     private final UserService userService;
     private final TripService tripService;
 
+    @GetMapping("/bookings-today")
+    public String getTransitToday(Model model) {
+        return findPaginatedBookingsToday(1, model, "id", "asc");
+    }
+
+    @GetMapping("/bookings-today/page/{pageNo}")
+    public String findPaginatedBookingsToday(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
+        int pageSize = 8;
+        Page<Booking> page = bookingService.findPaginated(pageNo, pageSize, sortField, sortDir, LocalDate.now());
+        List<Booking> bookings = page.getContent();
+        List<Booking> bookingsToday = bookings.stream().filter(i -> i.getBookingDate().equals(LocalDate.now())).toList();
+        if (bookingsToday.isEmpty()) {
+            model.addAttribute("isListEmpty", true);
+        } else model.addAttribute("isListEmpty", false);
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("bookings", bookingsToday);
+
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("reserseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+        return "admin/pages/show_bookings_today";
+    }
+
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-        int pageSize = 6;
+        int pageSize = 8;
         Page<Booking> page = bookingService.findPaginated(pageNo, pageSize, sortField, sortDir);
         List<Booking> bookings = page.getContent();
 

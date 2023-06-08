@@ -152,8 +152,18 @@
                         </div>
                     </div>
 
+                    <div th:if="${hasRoundTrip}" class="mb-3 row">
+                        <label class="col-sm-4 col-form-label">Ghi chú lượt đi:</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="noteRoundTrip" id="noteRoundTrip" class="form-control"
+                                   placeholder="Thêm ghi chú cho chúng tôi ở đây." onfocus="this.placeholder = ''"
+                                   onblur="this.placeholder = 'Bạn có thể thêm ghi chú cho chúng tôi ở đây.'">
+                        </div>
+                    </div>
+
                     <div class="mb-3 row">
-                        <label class="col-sm-4 col-form-label">Ghi chú:</label>
+                        <label class="col-sm-4 col-form-label"
+                               th:text="${hasRoundTrip}?'Ghi chú lượt về:':'Ghi chú:'"></label>
                         <div class="col-sm-8">
                             <input type="text" name="note" id="note" class="form-control"
                                    placeholder="Thêm ghi chú cho chúng tôi ở đây." onfocus="this.placeholder = ''"

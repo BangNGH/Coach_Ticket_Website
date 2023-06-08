@@ -51,11 +51,16 @@
                                 <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=isPaid&sortDir='+${reserseSortDir}}">Trạng
                                     thái</a>
                             </th>
+                            <th>Ghi chú</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <th:block th:each="booking: ${bookings}">
+                        <tr th:if="${isListEmpty}">
+                            <td colspan='11' class='text-center'>Không có hóa đơn nào hôm nay.</td>
+                        </tr>
+
+                        <th:block th:unless="${isListEmpty}" th:each="booking: ${bookings}">
                             <tr>
                                 <td>[[${booking.id}]]</td>
                                 <td>[[${booking.trip.route.name}]]</td>
@@ -63,6 +68,7 @@
                                 <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
                                 <td>[[${booking.trip.startTime}]]</td>
                                 <td th:text="${booking.isPaid}?'Đã thanh toán':'Chưa thanh toán'"></td>
+                                <td th:text="${booking.note != null ? booking.note : 'Không có ghi chú'}"></td>
                                 <td>
                                     <a th:href="@{'/admin/bookings/edit/' + ${booking.id}}">Sửa</a> |
                                     <a class="text-danger" th:href="@{'/admin/bookings/delete/' + ${booking.id}}"

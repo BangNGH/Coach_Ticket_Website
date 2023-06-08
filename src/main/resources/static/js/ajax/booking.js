@@ -23,6 +23,7 @@ $(document).ready(function () {
             <td>${booking_date}</td>
             <td>${booking.trip.startTime}</td>
             <td>${isPaid}</td>
+            <td>${booking.note != null ? booking.note : 'Không có ghi chú'}</td>
         <td>
           <a href="/admin/bookings/edit/${booking.id}">Sửa</a> |
           <a href="/admin/bookings/delete/${booking.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>

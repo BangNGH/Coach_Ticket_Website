@@ -44,7 +44,7 @@ public class Booking {
 
     @Size(max = 1000, message = "Nội dung không được vượt quá 1000 ký tự")
     @Column(name = "note", nullable = true)
-    private String note;
+    private String note = null;
 
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)

@@ -72,7 +72,7 @@
                 <td th:unless="${user.enabled}">
                     <span class="badge bg-danger">Chưa kích hoạt</span>
                 </td>
-                  <td th:text="${user.provider}"></td>
+                  <td th:text="${user.provider != null ? user.provider : 'Tài khoản Travelista'}"></td>
                   <td>
                       <a th:if="!${user.provider}" th:href="@{'/admin/users/edit/' + ${user.id}}">Sửa |</a>
                       <a class="text-danger" th:href="@{'/admin/users/delete/' + ${user.id}}"

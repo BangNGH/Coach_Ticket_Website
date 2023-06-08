@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý vé đặt</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <div class="container-fluid text-center">
+    <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
+    <hr/>
+    <div th:if="${raMessage}" class="alert alert-success text-center">
+      [[${raMessage}]]
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger text-center">
+      [[${errorMessage}]]
+    </div>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Quản lý vé đặt</h4>
+        <div class="d-flex ">
+          <i data-feather="download"></i>
+        </div>
+      </div>
+      <div class="card-body px-0 pb-0">
+        <div class="table-responsive">
+          <table class='table mb-0' id="table1">
+            <thead>
+            <tr>
+              <th>
+                <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
+              </th>
+              <th>
+                <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=trip.route.name&sortDir='+${reserseSortDir}}">Chuyến</a>
+              </th>
+              <th>
+                <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=user.email&sortDir='+${reserseSortDir}}">Người
+                  đặt</a>
+              </th>
+              <th>
+                <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=bookingDate&sortDir='+${reserseSortDir}}">Ngày
+                  đặt</a></th>
+              </th>
+              <th>
+                <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=trip.startTime&sortDir='+${reserseSortDir}}">Giờ
+                  đi</a>
+              </th>
+              <th>
+                <a th:href="@{'/admin/bookings/page/'+${currentPage}+'?sortField=isPaid&sortDir='+${reserseSortDir}}">Trạng
+                  thái</a>
+              </th>
+              <th>Ghi chú</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${isListEmpty}">
+              <td colspan='11' class='text-center'>Không có hóa đơn nào hôm nay.</td>
+            </tr>
+            <th:block th:unless="${isListEmpty}" th:each="booking: ${bookings}">
+              <tr>
+                <td>[[${booking.id}]]</td>
+                <td>[[${booking.trip.route.name}]]</td>
+                <td>[[${booking.user.email}]]</td>
+                <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
+                <td>[[${booking.trip.startTime}]]</td>
+                <td th:text="${booking.isPaid}?'Đã thanh toán':'Chưa thanh toán'"></td>
+                <td th:text="${booking.note != null ? booking.note : 'Không có ghi chú'}"></td>
+                <td>
+                  <a th:href="@{'/admin/bookings/edit/' + ${booking.id}}">Sửa</a> |
+                  <a class="text-danger" th:href="@{'/admin/bookings/delete/' + ${booking.id}}"
+                     onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
+                </td>
+              </tr>
+            </th:block>
+            </tbody>
+          </table>
+
+          <div th:if="${totalPages>1}" class="d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+                  <a class="page-link"
+                     th:href="@{'/admin/bookings/bookings-today/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">First</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == 1} ? disabled">
+                  <a class="page-link"
+                     th:href="@{'/admin/bookings/bookings-today/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
+                </li>
+                <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+                  <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                     th:href="@{'/admin/bookings/bookings-today/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                     th:text="${page}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+                  <a class="page-link"
+                     th:href="@{'/admin/bookings/bookings-today/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
+                  <a class="page-link"
+                     th:href="@{'/admin/bookings/bookings-today/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Last</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <script th:src="@{/js/ajax/booking.js}"></script>
+    </div>
+  </div>
+</div>
+</body>
+</html>

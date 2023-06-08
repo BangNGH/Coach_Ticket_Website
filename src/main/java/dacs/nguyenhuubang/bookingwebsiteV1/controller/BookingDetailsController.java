@@ -3,7 +3,6 @@ package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetails;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.BookingDetailsId;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
@@ -12,7 +11,6 @@ import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +30,7 @@ public class BookingDetailsController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-        int pageSize = 6;
+        int pageSize = 8;
         Page<BookingDetails> page = bookingDetailsService.findPaginated(pageNo, pageSize, sortField, sortDir);
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());

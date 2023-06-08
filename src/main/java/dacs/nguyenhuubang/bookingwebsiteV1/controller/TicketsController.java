@@ -41,6 +41,8 @@ public class TicketsController {
             shuttlebus.setBooking(booking);
             model.addAttribute("booking", booking);
             model.addAttribute("shuttlebus", shuttlebus);
+            model.addAttribute("header", "Đặt trung chuyển vé: " + booking.getBookingDetails().get(0).getId().getTicketCode());
+            model.addAttribute("currentPage", "Đặt trung chuyển.");
             return "pages/transit-form";
         } catch (ResourceNotFoundException e) {
             model.addAttribute("errorMessage", "Không tìm thấy mã đặt vé của bạn");
@@ -69,8 +71,6 @@ public class TicketsController {
         try {
             ShuttleBus shuttleBus = transitionService.findByBookingId(id);
             Booking booking = bookingService.get(id);
-            System.out.println("BOOKING: " + booking);
-            System.out.println("shuttleBus: " + shuttleBus);
             if (booking == null) {
                 throw new ResourceNotFoundException("Không tìm thấy hóa đơn nào với ID: " + id);
             }
@@ -79,11 +79,15 @@ public class TicketsController {
                 shuttlebus.setBooking(booking);
                 model.addAttribute("booking", booking);
                 model.addAttribute("shuttlebus", shuttlebus);
+                model.addAttribute("header", "Đặt trung chuyển vé: " + booking.getBookingDetails().get(0).getId().getTicketCode());
+                model.addAttribute("currentPage", "Đặt trung chuyển.");
                 return "pages/transit-form";
             } else {
                 //edit
                 model.addAttribute("booking", shuttleBus.getBooking());
                 model.addAttribute("shuttlebus", shuttleBus);
+                model.addAttribute("header", "Đặt trung chuyển vé: " + booking.getBookingDetails().get(0).getId().getTicketCode());
+                model.addAttribute("currentPage", "Đặt trung chuyển.");
                 return "pages/transit-form";
             }
         } catch (ResourceNotFoundException e) {

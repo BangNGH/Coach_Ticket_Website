@@ -29,6 +29,10 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT p FROM Booking p WHERE p.isPaid = ?1")
     Page<Booking> getBills(Boolean isPaid, Pageable pageable);
 
+    //booking today
+    @Query("SELECT p FROM Booking p WHERE p.bookingDate = ?1")
+    Page<Booking> findBookingToday(LocalDate now, Pageable pageable);
+
 
     //dùng cho search ajax bill
     @Query("SELECT p FROM Booking p WHERE p.user = ?1 AND p.isPaid = ?2")

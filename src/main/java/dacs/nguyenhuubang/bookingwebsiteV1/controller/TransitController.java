@@ -29,8 +29,8 @@ public class TransitController {
 
     @GetMapping("/transit-today/page/{pageNo}")
     public String findPaginatedTransitToday(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-        int pageSize = 6;
-        Page<ShuttleBus> page = transitionService.findPaginated(pageNo, pageSize, sortField, sortDir);
+        int pageSize = 8;
+        Page<ShuttleBus> page = transitionService.findPaginated(pageNo, pageSize, sortField, sortDir, LocalDate.now());
         List<ShuttleBus> cities = page.getContent();
         List<ShuttleBus> transitToday = cities.stream().filter(i -> i.getBooking().getBookingDate().equals(LocalDate.now())).toList();
         if (transitToday.isEmpty()) {

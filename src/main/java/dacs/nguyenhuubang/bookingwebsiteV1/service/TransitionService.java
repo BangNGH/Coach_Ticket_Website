@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +79,14 @@ public class TransitionService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.transitionRepository.findAll(pageable);
+    }
+
+    //transit today
+    public Page<ShuttleBus> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection, LocalDate now) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.transitionRepository.findTransitToday(now, pageable);
     }
 
     public ShuttleBus findByBookingId(Integer id) {

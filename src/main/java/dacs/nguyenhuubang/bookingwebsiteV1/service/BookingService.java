@@ -62,6 +62,14 @@ public class BookingService {
         return this.bookingRepository.findAll(pageable);
     }
 
+    //booking today
+    public Page<Booking> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection, LocalDate now) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.bookingRepository.findBookingToday(now, pageable);
+    }
+
     public Page<Booking> findPaginated(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return this.bookingRepository.findAll(pageable);

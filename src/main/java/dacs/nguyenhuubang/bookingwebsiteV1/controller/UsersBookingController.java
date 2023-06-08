@@ -139,6 +139,7 @@ public class UsersBookingController {
                 }
 
                 List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(trip.getRoute().getEndCity(), trip.getRoute().getStartCity());
+                foundTrips.sort(Comparator.comparing(Trip::getStartTime));
                 Map<Integer, Integer> availableSeatsMap = new HashMap<>();
                 Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
                 Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
@@ -236,7 +237,7 @@ public class UsersBookingController {
 
     @PostMapping("/save")
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
-    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws Exception {
+    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "noteRoundTrip", required = false) String noteRoundTrip, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws Exception {
 
         List<Seat> seatsReserved = new ArrayList<>();
         for (Integer seatId : seatIds) {
@@ -262,7 +263,11 @@ public class UsersBookingController {
         booking.setBookingDate(date);
         booking.setIsPaid(false);
         booking.setUser(user);
-        booking.setNote(note);
+        System.out.println("NOTE value" + note);
+        if (note.isBlank()) {
+            booking.setNote(null);
+            System.out.println("NOTE NULL");
+        } else booking.setNote(note);
         Booking savedBooking = bookingService.save(booking);
 
         //Save booking details
@@ -296,6 +301,8 @@ public class UsersBookingController {
             }
         } catch (SeatHasBeenReseredException e) {
             model.addAttribute("message", "Ghế này đã được đặt rồi!");
+            model.addAttribute("header", "Xảy ra lỗi");
+            model.addAttribute("currentPage", "Lỗi");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return "error_message";
         }
@@ -304,9 +311,23 @@ public class UsersBookingController {
         Float roundTripPrice = 0.0F;
         String roundTripId = "";
         if (bookedId != null) {
-            Booking roundTrip = bookingService.get(bookedId);
-            roundTripId = String.valueOf(bookedId);
-            roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
+            try {
+                Booking roundTrip = bookingService.get(bookedId);
+                System.out.println("noteRoundTrip value " + noteRoundTrip);
+                if (noteRoundTrip.isBlank()) {
+                    roundTrip.setNote(null);
+                    System.out.println("NOTE roundTrip NULL");
+                } else roundTrip.setNote(noteRoundTrip);
+                bookingService.save(roundTrip);
+                roundTripId = String.valueOf(bookedId);
+                roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
+            } catch (Exception e) {
+                model.addAttribute("message", e.getMessage());
+                model.addAttribute("header", "Xảy ra lỗi");
+                model.addAttribute("currentPage", "Lỗi");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return "error_message";
+            }
         }
 
         String bookingId = String.valueOf(savedBooking.getId()) + "_" + roundTripId;//nối chuỗi id gửi mail
@@ -382,6 +403,8 @@ public class UsersBookingController {
 
         } else {
             model.addAttribute("message", "Xảy ra lỗi trong quá trình thanh toán");
+            model.addAttribute("header", "Xảy ra lỗi");
+            model.addAttribute("currentPage", "Lỗi");
             return "error_message";
         }
 
@@ -579,6 +602,8 @@ public class UsersBookingController {
             return "pages/payment_result";
         } else {
             model.addAttribute("message", "Xảy ra lỗi trong quá trình thanh toán");
+            model.addAttribute("header", "Xảy ra lỗi");
+            model.addAttribute("currentPage", "Lỗi");
             return "error_message";
         }
 
