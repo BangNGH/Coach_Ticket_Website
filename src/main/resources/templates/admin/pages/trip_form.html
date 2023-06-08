@@ -17,7 +17,7 @@
             <div class="border border-secondary rounded p-3">
 
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Route:</label>
+                    <label class="col-sm-4 col-form-label">Tuyến:</label>
                     <div class="col-sm-8">
                         <select class="form-control" required th:field="*{route}">
                             <option value=""></option>
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Vehicle:</label>
+                    <label class="col-sm-4 col-form-label">Xe:</label>
                     <div class="col-sm-8">
                         <select class="form-control" required th:field="*{vehicle}">
                             <option value=""></option>
@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Start-time:</label>
+                    <label class="col-sm-4 col-form-label">Giờ đi:</label>
                     <div class="col-sm-8">
                         <input type="time" th:field="*{startTime}" class="form-control" required th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid' : ''">
                         <div class="invalid-feedback" th:errors="*{startTime}"></div>
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Price:</label>
+                    <label class="col-sm-4 col-form-label">Giá vé:</label>
                     <div class="col-sm-8">
                         <input type="number" th:field="*{price}" class="form-control" required min="1" th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''">
                         <div class="invalid-feedback" th:errors="*{price}"></div>
@@ -59,8 +59,8 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary m-2">Save</button>
-                    <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary m-2">Lưu</button>
+                    <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
                 </div>
             </div>
 

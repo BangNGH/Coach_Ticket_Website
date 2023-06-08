@@ -35,17 +35,18 @@
                   <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
                 </th>
                 <th>
-                  <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Vehicle
-                    Name</a>
+                  <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=name&sortDir='+${reserseSortDir}}">Loại
+                    xe</a>
                 </th>
                 <th>
-                  <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=licensePlates&sortDir='+${reserseSortDir}}">License
-                    Plates</a>
+                  <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=licensePlates&sortDir='+${reserseSortDir}}">Biển
+                    số</a>
                 </th>
                 <th>
-                  <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=capacity&sortDir='+${reserseSortDir}}">Capacity</a>
+                  <a th:href="@{'/admin/vehicles/page/'+${currentPage}+'?sortField=capacity&sortDir='+${reserseSortDir}}">Sức
+                    chứa</a>
                 </th>
-                <th>Seat-Map</th>
+                <th>Sơ đồ ghế</th>
                 <th></th>
               </tr>
               </thead>
@@ -97,7 +98,7 @@
           </ul>
         </nav>
       </div>
-      <a th:href="@{/admin/vehicles/new}" class="btn btn-info" style="float: right; margin: 10px">Create Vehicle</a>
+      <a th:href="@{/admin/vehicles/new}" class="btn btn-info" style="float: right; margin: 10px">Thêm xe mới</a>
     </div>
   </div>
   <script th:src="@{/js/ajax/vehicles.js}"></script>

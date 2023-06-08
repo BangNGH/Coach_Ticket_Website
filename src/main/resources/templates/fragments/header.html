@@ -94,18 +94,22 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-3">Điểm đi:</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" required id="startCity" name="startCity">
+                                    <select class="form-control" required id="startCity" name="startCity"
+                                            style="height: 45px;">
                                         <option value=""></option>
-                                        <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+                                        <option th:each="city : ${cities}" th:value="${city.id}"
+                                                th:text="${city.name}"></option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-3">Điểm đến:</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" required id="endCity" name="endCity">
+                                    <select class="form-control" required id="endCity" name="endCity"
+                                            style="height: 45px;">
                                         <option value=""></option>
-                                        <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+                                        <option th:each="city : ${cities}" th:value="${city.id}"
+                                                th:text="${city.name}"></option>
                                     </select>
                                 </div>
                             </div>

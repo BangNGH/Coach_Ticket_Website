@@ -16,7 +16,7 @@
       <div class="border border-secondary rounded p-3">
 
         <div class="form-group row">
-          <label class="col-sm-4 col-form-label">BookingID:</label>
+          <label class="col-sm-4 col-form-label">Mã hóa đơn:</label>
           <div class="col-sm-8">
             <select class="form-control" required id="trip" th:field="*{id.bookingId}" onchange="loadBooking()">
               <option value=""></option>
@@ -28,21 +28,21 @@
           </div>
         </div>
         <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Trip-info:</label>
+          <label class="col-sm-4 col-form-label">Thông tin chuyến:</label>
           <div class="col-sm-8">
             <input class="form-control" type="text" id="tripInfo" disabled/>
           </div>
         </div>
         <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Number of tickets:</label>
+          <label class="col-sm-4 col-form-label">Số lượng vé:</label>
           <div class="col-sm-8">
             <input type="number" th:field="*{numberOfTickets}" class="form-control" required min="1" th:classappend="${#fields.hasErrors('numberOfTickets')} ? 'is-invalid' : ''">
             <div class="invalid-feedback" th:errors="*{numberOfTickets}"></div>
           </div>
         </div>
         <div class="text-center">
-          <button type="submit" class="btn btn-primary m-2">Save</button>
-          <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+          <button type="submit" class="btn btn-primary m-2">Lưu</button>
+          <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
         </div>
       </div>
 

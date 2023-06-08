@@ -89,11 +89,38 @@
                         <a class="page-link"
                            th:href="@{'/admin/transit/page/'+${currentPage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
                     </li>
-                    <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
-                        <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
-                           th:href="@{'/admin/transit/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
-                           th:text="${page}"></a>
-                    </li>
+                    <!--   <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}">
+                           <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                              th:href="@{'/admin/transit/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                              th:text="${page}"></a>
+                       </li>-->
+                    <th:block th:if="${currentPage - 5 > 1}">
+                        <li class="page-item">
+                            <a class="page-link"
+                               th:href="@{'/admin/transit/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}}">1</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link">...</a>
+                        </li>
+                    </th:block>
+                    <th:block
+                            th:each="page : ${#numbers.sequence((currentPage - 5 > 1 ? currentPage - 5 : 1) , (currentPage + 5 < totalPages ? currentPage + 5 : totalPages))}">
+                        <li class="page-item">
+                            <a class="page-link" th:classappend="${page == currentPage} ? activeCurrentPage"
+                               th:href="@{'/admin/transit/page/'+${page}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                               th:text="${page}"></a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${currentPage + 5 < totalPages}">
+                        <li class="page-item disabled">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link"
+                               th:href="@{'/admin/transit/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}"
+                               th:text="${totalPages}"></a>
+                        </li>
+                    </th:block>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? disabled">
                         <a class="page-link"
                            th:href="@{'/admin/transit/page/'+${currentPage + 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>

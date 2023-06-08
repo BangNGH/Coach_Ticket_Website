@@ -76,7 +76,7 @@
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-4 col-form-label font-weight-bold"
-                               th:text="'Số ghế('+ ${seatsReserved.size()}+'): '"></label>
+                               th:text="'Số ghế('+ ${roundTrip.seatReservations.size()}+'): '"></label>
                         <div class="col-sm-8">
                             <span class="highlighted-text" th:each="sr, iterStat : ${roundTrip.seatReservations}">
                                 <span th:text="${sr.seat.name}" th:value="${sr.seat.id}"></span>
@@ -89,7 +89,7 @@
                         <label class="col-sm-4 col-form-label">Giá:</label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" readonly
-                                   th:value="${#numbers.formatDecimal(roundTrip.trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}+' x '+ ${seatsReserved.size()} + ' vé ='+ ${#numbers.formatDecimal(roundTrip.trip.price * seatsReserved.size(), 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                                   th:value="${#numbers.formatDecimal(roundTrip.trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}+' x '+ ${roundTrip.seatReservations.size()} + ' vé ='+ ${#numbers.formatDecimal(roundTrip.trip.price * roundTrip.seatReservations.size(), 0, 'COMMA', 0, 'POINT') + 'đ'}">
                         </div>
                     </div>
                 </div>
@@ -156,8 +156,8 @@
                         <label class="col-sm-4 col-form-label">Ghi chú lượt đi:</label>
                         <div class="col-sm-8">
                             <input type="text" name="noteRoundTrip" id="noteRoundTrip" class="form-control"
-                                   placeholder="Thêm ghi chú cho chúng tôi ở đây." onfocus="this.placeholder = ''"
-                                   onblur="this.placeholder = 'Bạn có thể thêm ghi chú cho chúng tôi ở đây.'">
+                                   placeholder="Thêm ghi chú ở đây." onfocus="this.placeholder = ''"
+                                   onblur="this.placeholder = 'Thêm ghi chú ở đây.'">
                         </div>
                     </div>
 
@@ -166,8 +166,8 @@
                                th:text="${hasRoundTrip}?'Ghi chú lượt về:':'Ghi chú:'"></label>
                         <div class="col-sm-8">
                             <input type="text" name="note" id="note" class="form-control"
-                                   placeholder="Thêm ghi chú cho chúng tôi ở đây." onfocus="this.placeholder = ''"
-                                   onblur="this.placeholder = 'Bạn có thể thêm ghi chú cho chúng tôi ở đây.'">
+                                   placeholder="Thêm ghi chú ở đây." onfocus="this.placeholder = ''"
+                                   onblur="this.placeholder = 'Thêm ghi chú ở đây.'">
                         </div>
                     </div>
 
@@ -175,8 +175,7 @@
                         <div class="col-sm-8 offset-sm-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="acceptTerms" required>
-                                <label class="form-check-label" for="acceptTerms">Chấp nhận điều khoản của chúng
-                                    tôi.</label>
+                                <label class="form-check-label" for="acceptTerms">Tôi chấp nhận điều khoản.</label>
                             </div>
                         </div>
                     </div>
@@ -192,21 +191,25 @@
 
         <div class="container-fluid">
             <div class="border border-secondary rounded p-3 square-container">
-                <p class="term-heading">ĐIỀU KHOẢN &amp; LƯU Ý</p>
+                <p class="term-heading">ĐIỀU KHOẢN &amp; <span class="text-danger">LƯU Ý</span></p>
                 <hr/>
                 <p>
-                    (*) Quý khách vui lòng mang email có chứa mã vé đến văn phòng để đổi vé lên xe trước giờ xuất bến ít
+                    <span class="text-danger">(*)</span> Quý khách vui lòng mang email có chứa mã vé đến văn phòng để
+                    đổi vé lên xe trước giờ xuất bến ít
                     nhất
                     <span class="highlighted-text"> <strong>20 phút</strong> </span> để thực hiện đổi vé
                 </p>
-                <p>(*) Thông tin hành khách phải chính xác, nếu không sẽ không thể lên xe hoặc hủy/đổi vé.</p>
+                <p><span class="text-danger">(*)</span> Thông tin hành khách phải chính xác, nếu không sẽ không thể lên
+                    xe hoặc hủy/đổi vé.</p>
                 <p>
-                    (*) Nếu quý khách có nhu cầu trung chuyển, vui lòng liên hệ số điện thoại
-                    <a class="highlighted-link">0345712873</a>
-                    , hoặc điền thông tin vào "Đặt vé trung chuyển sau khi thanh toán thành công. Chúng tôi không đón
-                    tại những điểm xe trung chuyển không thể tới được
-                    hoặc vượt quá bán kính 4km từ nhà xe
+                    <span class="text-danger">(*)</span> Nếu quý khách có nhu cầu trung chuyển, vui lòng liên hệ số điện
+                    thoại
+                    <a class="highlighted-text">0345712873</a>
+                    , hoặc điền thông tin vào "Đặt vé trung chuyển sau khi thanh toán thành công.
                 </p>
+                <p><span class="text-danger">(*)</span> Chúng tôi không đón
+                    tại những điểm xe trung chuyển không thể tới được
+                    hoặc vượt quá bán kính 4km từ nhà xe</p>
             </div>
 
         </div>
