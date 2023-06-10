@@ -22,10 +22,14 @@
     </td>
     <td>
       <div class="seat-map">
-        <th:block th:each="seat : ${loadAvailableSeatsMap.get(trip.id)}">
+        <th:block th:each="seat : ${trip.getVehicle().getSeats()}">
           <div class="seat-item">
-            <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}" id="seat-${seat.getId()}">
+            <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
+                   disabled th:id="'seatReserved-' + ${seat.getId()}"
+                   th:checked="${listReservedSeat.get(trip.id).contains(seat)}"
+                   th:disabled="${listReservedSeat.get(trip.id).contains(seat)}">
             <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                   th:style="${listReservedSeat.get(trip.id).contains(seat)} ? 'background-color: #b93333;color:white;' : ''"
                    onclick="toggleCheckbox(this.previousElementSibling)"></label>
           </div>
         </th:block>
@@ -33,6 +37,16 @@
     </td>
     <td>
       <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
+    </td>
+    <td>
+      <input type="hidden" id="selectedTripId" name="selectedTripId">
+      <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
+      <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
+      <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
+      <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
+      <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
+      <input type="hidden" name="bookedId" th:value="${bookedId}">
+      <button class="btn btn-outline-primary book-button" th:id="${'bookButton_' + trip.id}">Tiếp tục</button>
     </td>
   </tr>
 </th:block>

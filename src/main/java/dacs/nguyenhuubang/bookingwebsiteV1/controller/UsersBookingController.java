@@ -338,9 +338,10 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-/*        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
 
-        model.addAttribute("momo", momoPaymentUrl);*/
+        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
+        model.addAttribute("momo", momoPaymentUrl);
+
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("startTime", savedBooking.getBookingDate());
         model.addAttribute("currentPage", "thanh toán");
@@ -424,9 +425,10 @@ public class UsersBookingController {
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(totalPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
-/*        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
 
-        model.addAttribute("momo", momoPaymentUrl);*/
+        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
+        model.addAttribute("momo", momoPaymentUrl);
+
         model.addAttribute("vnpay", vnpayPaymentUrl);
         model.addAttribute("currentPage", "Phương thức thanh toán");
         return "pages/payment_methods";
@@ -493,15 +495,15 @@ public class UsersBookingController {
 
         // Request params needed to request MoMo system
         String endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
-        String partnerCode = "MOMOOJOI20m210710";
-        String accessKey = "iPXneGmrmJH0G8FOP";
+        String partnerCode = "MOMOOJOI20210710";
+        String accessKey = "iPXneGmrJH0G8FOP";
         String serectkey = "sFcbSGRSJjwGxwhhcEktCHWYUuTuPNDB";
-        /*
-        String endpoint ="https://test-payment.momo.vn/v2/gateway/api/create";
+
+/*        String endpoint ="https://test-payment.momo.vn/v2/gateway/api/create";
         String partnerCode = "MOMOBKUN20180529";
         String accessKey = "klm05TvNBzhg7h7j";
-        String serectkey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";
-        * */
+        String serectkey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";*/
+
         String orderInfo = "Thanh toan dat ve";
         String returnUrl = "http://localhost:8080/users/momo-payment-result";
         String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
@@ -540,11 +542,10 @@ public class UsersBookingController {
         message.put("requestType", "captureMoMoWallet");
         message.put("signature", signature);
 
+        System.out.println("Calling MomoWallet Api... ");
         String responseFromMomo = PaymentRequest.sendPaymentRequest(endpoint, message.toString());
-
         JSONObject jmessage = new JSONObject(responseFromMomo);
-
-        String payUrl = jmessage.getString("payUrl").toString();
+        String payUrl = jmessage.getString("payUrl");
         return payUrl;
     }
 

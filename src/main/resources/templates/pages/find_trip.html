@@ -60,6 +60,7 @@
         }
 
     </style>
+    <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
     <script>
         function toggleCheckbox(element) {
             if (element.disabled) {
@@ -69,8 +70,11 @@
             element.nextElementSibling.classList.toggle("checked");
 
         }
+
+        function cancelForm() {
+            window.location = "/home";
+        }
     </script>
-    <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
 </head>
 <body>
 <div layout:fragment="content">
@@ -84,19 +88,48 @@
         </div>
         <div>
             <div class="seat-map-container">
-                <div style="float: left;margin:40px 0px 20px 0px;" class="d-flex">
-                    <div style="margin-right: 50px;">
-                        <input type="text" class="input-group-text" placeholder="Tìm kiếm chuyến"
-                               onfocus="this.placeholder = ''" onblur="this.placeholder = 'Tìm kiếm chuyến'" id="q"
-                               size="50">
+                <div style="width: 100%;float: left;margin:40px 0px 20px 0px;justify-content: space-between;"
+                     class="d-flex">
+                    <div class="d-flex">
+                        <label th:for="sortTime"
+                               style="color:black;font-size: 20px; margin-top: 6px;margin-right: 20px;"
+                        >Chọn khung giờ đi: </label>
+                        <select style="border-radius: 20px;
+    background-color: rgba(99,114,128,.1);height:35px;width:160px;text-align: center" id="sortTime">
+                            <option></option>
+                            <option value="time03_10">03:00 -> 10:00</option>
+                            <option value="time10_16">10:00 -> 16:00</option>
+                            <option value="time16_23">16:00 -> 23:00</option>
+                        </select>
+                    </div>
+                    <div class="d-flex" style="margin-right: 30px;">
+                        <label th:for="sortPrice"
+                               style="color:black;font-size: 20px; margin-top: 6px;margin-right: 20px;"
+                        >Xếp giá vé: </label>
+                        <select style="border-radius: 20px;
+    background-color: rgba(99,114,128,.1);height:35px;width:170px;text-align: center" id="sortPrice">
+                            <option></option>
+                            <option value="priceDesc">Thấp -> Cao</option>
+                            <option value="priceAsc">Cao -> Thấp</option>
+                        </select>
+                    </div>
+                    <div class="d-flex" style="margin-right: 30px;">
+                        <label th:for="vehicle" style="color:black;font-size: 20px; margin-top: 6px;margin-right: 20px;"
+                        >Chọn xe: </label>
+                        <select style="border-radius: 20px;
+    background-color: rgba(99,114,128,.1);height:35px;width:170px;text-align: center" id="vehicle">
+                            <option></option>
+                            <option value="sixt">Xe 16 chổ</option>
+                            <option value="fourtf">Xe 45 chổ</option>
+                            <option value="lms">Xe Limousine</option>
+                        </select>
                     </div>
                     <div>
                         <label th:for="sample"
                                style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
                         <label th:for="sample" style="color:black;font-size: 20px;"
-                        >: Ghế đã được đặt trước</label>
+                        >: Đã được đặt trước</label>
                     </div>
-
                 </div>
                 <form th:action="@{/users/booking-trip}" method="post">
                     <table class="table table-bordered">
@@ -104,11 +137,12 @@
                         <tr>
                             <th style="width: 10%">Thời gian</th>
                             <th style="width: 10%">Loại xe</th>
-                            <th style="width: 10%">Giá vé</th>
-                            <th style="width: 8%">Trống</th>
+                            <th style="width: 8%">Giá vé</th>
+                            <th style="width: 6%">Trống</th>
                             <th style="width: 6%">Chọn</th>
                             <th style="width: 26%">Chọn ghế</th>
                             <th style="width: 30%">Sơ đồ ghế</th>
+                            <th style="width: 4%"></th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -146,27 +180,28 @@
                                 <td>
                                     <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
                                 </td>
+                                <td>
+                                    <input type="hidden" id="selectedTripId" name="selectedTripId">
+                                    <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
+                                    <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
+                                    <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
+                                    <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
+                                    <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
+                                    <input type="hidden" name="bookedId" th:value="${bookedId}">
+                                    <button class="btn btn-outline-primary book-button"
+                                            th:id="${'bookButton_' + trip.id}">Tiếp tục
+                                    </button>
+                                </td>
                             </tr>
                         </th:block>
                         </tbody>
                     </table>
-                    <input type="hidden" id="selectedTripId" name="selectedTripId">
-                    <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
-                    <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
-                    <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
-                    <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
-                    <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
-                    <input type="hidden" name="bookedId" th:value="${bookedId}">
-                    <button id="bookButton" class="btn btn-primary" style="margin-top: 10px;margin-bottom: 10px;">Tiếp
-                        tục
-                    </button>
-                    <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Trở về</button>
                 </form>
             </div>
         </div>
-        <script th:src="@{/js/ajax/home.js}"></script>
     </div>
     <script th:src="@{/js/ajax/findTrip.js}"></script>
+    <script th:src="@{/js/ajax/home.js}"></script>
 </div>
 </body>
 </html>

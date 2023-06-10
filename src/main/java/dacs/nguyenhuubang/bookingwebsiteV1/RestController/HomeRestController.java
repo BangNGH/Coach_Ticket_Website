@@ -4,9 +4,9 @@ package dacs.nguyenhuubang.bookingwebsiteV1.RestController;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.CityService;
+import dacs.nguyenhuubang.bookingwebsiteV1.service.SeatReservationService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.TripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/home")
@@ -26,27 +28,66 @@ public class HomeRestController {
     private final BookingService bookingService;
     private final CityService cityService;
     private final TripService tripService;
-    private final SeatReservationRepository seatReservationRepo;
+    private final SeatReservationService seatReservationService;
 
-    @GetMapping("/search")
-    public ModelAndView searchTrips(@RequestParam("startCity") String sStartCity,
-                                    @RequestParam("endCity") String sEndCity,
-                                    @RequestParam("endTime") String endTime, @RequestParam("startTime") String startTime, @RequestParam("keyword") String keyword, Model model) {
+    @GetMapping("/search/sort")
+    public ModelAndView sortTrips(@RequestParam("vehicle") String vehicle, @RequestParam("sortTime") String sSortTime, @RequestParam("sortPrice") String sortPrice, @RequestParam("startCity") String sStartCity,
+                                  @RequestParam("endCity") String sEndCity,
+                                  @RequestParam("endTime") String endTime, @RequestParam("startTime") String startTime, Model model) {
         City startCity = cityService.findCityByName(sStartCity);
         City endCity = cityService.findCityByName(sEndCity);
-        List<Trip> foundTripsWithoutSearch = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
-        List<Trip> foundTrips = searchTrips(foundTripsWithoutSearch, keyword);
+        List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
         foundTrips.sort(Comparator.comparing(Trip::getStartTime));
+        if (!sSortTime.isBlank()) {
+            if (sSortTime.equalsIgnoreCase("time03_10"))
+                foundTrips = foundTrips.stream()
+                        .filter(trip -> trip.getStartTime().isAfter(LocalTime.parse("03:00"))
+                                && trip.getStartTime().isBefore(LocalTime.parse("10:00")))
+                        .collect(Collectors.toList());
+            if (sSortTime.equalsIgnoreCase("time10_16"))
+                foundTrips = foundTrips.stream()
+                        .filter(trip -> trip.getStartTime().isAfter(LocalTime.parse("10:00"))
+                                && trip.getStartTime().isBefore(LocalTime.parse("16:00")))
+                        .collect(Collectors.toList());
+            if (sSortTime.equalsIgnoreCase("time16_23"))
+                foundTrips = foundTrips.stream()
+                        .filter(trip -> trip.getStartTime().isAfter(LocalTime.parse("16:00"))
+                                && trip.getStartTime().isBefore(LocalTime.parse("23:00")))
+                        .collect(Collectors.toList());
+        }
+        if (!sortPrice.isBlank()) {
+            if (sortPrice.equalsIgnoreCase("priceDesc"))
+                foundTrips.sort(Comparator.comparing(Trip::getPrice));
+            if (sortPrice.equalsIgnoreCase("priceAsc"))
+                foundTrips.sort(Comparator.comparing(Trip::getPrice, Collections.reverseOrder()));
+        }
+        if (!vehicle.isBlank()) {
+            String vehicleName = "";
+            if (vehicle.equalsIgnoreCase("sixt"))
+                vehicleName = "Xe 16 chổ";
+            if (vehicle.equalsIgnoreCase("fourtf"))
+                vehicleName = "Xe 45 chổ";
+            if (vehicle.equalsIgnoreCase("lms"))
+                vehicleName = "Xe Limousine";
+
+            String finalVehicleName = vehicleName.trim();
+            foundTrips = foundTrips.stream().filter(i -> i.getVehicle().getName().trim().equalsIgnoreCase(finalVehicleName)).collect(Collectors.toList());
+        }
+
         Map<Integer, Integer> availableSeatsMap = new HashMap<>();
         Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
+        Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
         for (Trip trip : foundTrips) {
             int totalSeat = trip.getVehicle().getCapacity();
-            int seatReserved = seatReservationRepo.checkAvailableSeat(trip, LocalDate.parse(startTime));
-            List<Seat> seatsAvailable = seatReservationRepo.listAvailableSeat(trip.getVehicle(), trip, LocalDate.parse(startTime));
+            int seatReserved = seatReservationService.checkAvailableSeat(trip, LocalDate.parse(startTime));
+            List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip.getVehicle(), trip, LocalDate.parse(startTime));
+            List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, LocalDate.parse(startTime));
+            System.out.println("Start time" + LocalDate.parse(startTime));
             int availableSeats = totalSeat - seatReserved;
 
             loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
             availableSeatsMap.put(trip.getId(), availableSeats);
+            loadReservedSeat.put(trip.getId(), listReservedSeat);
         }
 
         ModelAndView modelAndView = new ModelAndView("fragments/find_trip");
@@ -58,6 +99,7 @@ public class HomeRestController {
         }
         modelAndView.addObject("loadAvailableSeatsMap", loadAvailableSeatsMap);
         modelAndView.addObject("availableSeatsMap", availableSeatsMap);
+        modelAndView.addObject("listReservedSeat", loadReservedSeat);
         modelAndView.addObject("header", "Tìm chuyến");
         modelAndView.addObject("currentPage", "Tìm chuyến");
         modelAndView.addObject("startCity", startCity.getName());
