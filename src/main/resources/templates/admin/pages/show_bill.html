@@ -11,19 +11,23 @@
         <div th:if="${raMessage}" class="alert alert-success text-center">
             [[${raMessage}]]
         </div>
+        <div th:if="${cancelBooking}" class="alert alert-success text-center">
+            [[${cancelBooking}]]
+        </div>
         <div th:if="${errorMessage}" class="alert alert-danger text-center">
             [[${errorMessage}]]
         </div>
 
-        <input type="text" class="input-group-text" placeholder="search booking" id="q" size="50">
+        <input type="text" class="input-group-text" placeholder="Tìm hóa đơn chưa thanh toán"
+               onfocus="this.placeholder = ''"
+               onblur="this.placeholder = 'Tìm hóa đơn chưa thanh toán'" id="q" size="50" style="margin-bottom: 30px;">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title text-danger">Hóa đơn chưa thanh toán</h4>
-                <p><span class="text-danger">Lưu ý</span> khi ấn vào nút <a
+                <h4 class="card-title"><span class="text-danger">Lưu ý</span> khi ấn vào nút <a
                         href="/admin/bookings/cancel-unpaid-tickets-over120">hủy vé</a> toàn bộ vé chưa thanh toán có
-                    thời gian đặt trước quá <strong>120 phút</strong> sẻ bị hủy </p>
+                    thời gian đặt trước quá <strong>120 phút</strong> sẽ bị hủy</h4>
                 <div class="d-flex">
-                    <a href="/admin/bookings/cancel-unpaid-tickets-over120" class="btn btn-outline-primary">Hủy Vé</a>
+                    <a href="/admin/send-email-reminder/all" class="btn btn-outline-primary">Nhắc nhở</a>
                 </div>
             </div>
 
@@ -84,7 +88,7 @@
                                 'đ'}]]
                             </td>
                             <td>
-                                <a th:href="@{'/admin/delete/' + ${booking.id}}">Hủy</a> |
+                                <a th:href="@{'/admin/delete/' + ${booking.id}}">Hủy |</a>
                                 <a th:href="@{'/admin/send-email-reminder/' + ${booking.id}}">Nhắc nhở</a>
 
                             </td>
@@ -122,6 +126,38 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            const currentDate = new Date();
+            const bookingRows = document.querySelectorAll("#table1 tbody tr");
+            bookingRows.forEach(function (row) {
+                const bookingDateCell = row.querySelector("td:nth-child(3)");
+                const bookingTimeCell = row.querySelector("td:nth-child(4)");
+                const cancelButton = row.querySelector("td:last-child a:first-child");
+                const paymentButton = row.querySelector("td:last-child a:last-child");
+
+                const bookingDateStr = bookingDateCell.textContent;
+                const bookingTimeStr = bookingTimeCell.textContent;
+                const bookingDateParts = bookingDateStr.split("/");
+                const bookingDate = new Date(
+                    bookingDateParts[2], // Năm
+                    bookingDateParts[1] - 1, // Tháng (giảm đi 1 vì tháng trong JavaScript bắt đầu từ 0)
+                    bookingDateParts[0] // Ngày
+                );
+                const bookingDateTimeStr = `${bookingDate.toLocaleDateString("en-US")} ${bookingTimeStr}`;
+                const bookingDateTime = new Date(bookingDateTimeStr);
+                if (bookingDateTime < currentDate) {
+                    cancelButton.style.display = "none";
+                    paymentButton.style.display = "none";
+
+                    const cancelledText = document.createElement("span");
+                    cancelledText.textContent = "Đã bị hủy";
+                    cancelledText.classList.add("text-danger");
+                    row.querySelector("td:last-child").appendChild(cancelledText);
+                }
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

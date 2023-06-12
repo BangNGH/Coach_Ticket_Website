@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,10 +24,19 @@ public class BookingRestController {
     private final BookingService bookingService;
     private final TripRepository tripRepository;
     private final UserService userService;
+
     @GetMapping("/search")
     @ResponseBody
-    public List<Booking> searchUsers(@RequestParam("q") String q) {
+    public List<Booking> searchBookings(@RequestParam("q") String q) {
         List<Booking> bookings = bookingService.search(q);
+        return bookings;
+    }
+
+    @GetMapping("/search/bookings-today")
+    @ResponseBody
+    public List<Booking> searchBookingsToday(@RequestParam("q") String q) {
+        List<Booking> bookings = bookingService.search(q).stream().filter(i -> i.getBookingDate().equals(LocalDate.now())).toList();
+        ;
         return bookings;
     }
 

@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -535,6 +536,47 @@ public class AdminController {
         }
         send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
         publisher.publishEvent(new SendEmailReminderEvent(myBooking, totalPrice, send_reservedSeatNames, send_numberOfTicket, send_ticketCodes, applicationUrl(servletRequest)));
+    }
+
+
+    @GetMapping("/send-email-reminder/all")
+    @jakarta.transaction.Transactional
+    public String sendEmailAll(RedirectAttributes re) {
+        try {
+            String bookedId = "";
+            boolean sendEmail = false;
+            List<Booking> bookings = bookingService.getBookings().stream()
+                    .filter(i -> !i.getIsPaid())
+                    .collect(Collectors.toList());
+            for (Booking booking : bookings
+            ) {
+                if (booking.getBookingDate().isBefore(LocalDate.now())) {
+                    bookedId += booking.getId() + ", ";
+                    bookingService.delete(booking.getId());
+                    continue;
+                }
+                // sử dụng until() để tính toán khoảng thời gian theo đơn vị phút bằng cách sử dụng ChronoUnit.MINUTES.
+                long minutesUntilPayment = LocalTime.now().until(booking.getTrip().getStartTime(), ChronoUnit.MINUTES); // Khoảng thời gian tính bằng phút
+                if (booking.getBookingDate().isEqual(LocalDate.now()) && minutesUntilPayment > 120) {
+                    List<Seat> reservedSeat = seatReservationService.getReservedSeat(booking);
+                    String totalPrice = booking.getBookingDetails().get(0).getTotalPrice().toString().substring(0, booking.getBookingDetails().get(0).getTotalPrice().toString().length() - 2);
+                    sendEmail(totalPrice, booking, reservedSeat);
+                    sendEmail = true;
+                }
+            }
+            if (sendEmail) {
+                re.addFlashAttribute("raMessage", "Gửi email nhắc nhở thành công cho các hóa đơn chưa thanh toán");
+            }
+            if (!bookedId.isBlank()) {
+                re.addFlashAttribute("cancelBooking", "Đã hủy các vé chưa thanh toán trước 120 phút: " + bookedId.substring(0, bookedId.length() - 2));
+            }
+            return "redirect:/admin/bill";
+        } catch (Exception e) {
+            re.addFlashAttribute("errorMessage", e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return "redirect:/admin/bill";
+        }
+
     }
 
 }

@@ -16,7 +16,14 @@ public class TransitRestController {
 
     @GetMapping("/search")
     @ResponseBody
-    public List<ShuttleBus> searchUsers(@RequestParam("q") String q) {
+    public List<ShuttleBus> searchTransit(@RequestParam("q") String q) {
+        List<ShuttleBus> cities = transitionService.search(q);
+        return cities;
+    }
+
+    @GetMapping("/search/transits-today")
+    @ResponseBody
+    public List<ShuttleBus> searchTransitToday(@RequestParam("q") String q) {
         List<ShuttleBus> cities = transitionService.search(q);
         return cities;
     }

@@ -9,6 +9,8 @@
 <div layout:fragment="content">
 
     <div class="container-fluid text-center">
+        <input type="text" class="input-group-text" placeholder="Tìm kiếm" onfocus="this.placeholder = ''"
+               onblur="this.placeholder = 'Tìm kiếm'" id="q" size="50">
         <hr/>
         <div th:if="${raMessage}" class="alert alert-success text-center">
             [[${raMessage}]]
@@ -19,7 +21,7 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title">Quản lý trung chuyển</h4>
+                <h4 class="card-title">Chuyến xe trung chuyển hôm nay.</h4>
                 <div class="d-flex ">
                     <i data-feather="download"></i>
                 </div>
@@ -135,6 +137,7 @@
         </div>
         <a th:href="@{/admin}" class="btn btn-info" style="float: right; margin: 10px">Trở lại</a>
     </div>
+    <script th:src="@{/js/ajax/transitsToday.js}"></script>
 </div>
 </body>
 </html>

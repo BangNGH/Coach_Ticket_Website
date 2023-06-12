@@ -3,9 +3,9 @@ $(document).ready(function () {
     searchInput.addEventListener('keyup', (event) => {
         const q = event.target.value.trim();
         $.ajax({
-            url: '/api/bookings/search',
+            url: '/api/bookings/search/bookings-today',
             type: 'GET',
-            data: { q: q },
+            data: {q: q},
             success: (data) => {
                 const usersTableBody = document.querySelector('tbody');
                 usersTableBody.innerHTML = ''; // Clear current table body
@@ -13,8 +13,12 @@ $(document).ready(function () {
                 if (data.length > 0) {
                     // Loop through the search results and add each user to the table
                     data.forEach((booking) => {
-                        const booking_date = new Date(booking.bookingDate).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric'});
-                        const isPaid = booking.isPaid ?'Đã thanh toán':'Chưa thanh toán';
+                        const booking_date = new Date(booking.bookingDate).toLocaleString('vi-VN', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                        const isPaid = booking.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán';
                         const userRow = `
       <tr>
        <td>${booking.id}</td>
@@ -44,7 +48,7 @@ $(document).ready(function () {
 
             },
             error: (error) => {
-                alert(q+" search fail "+error)
+                alert(q + " search fail " + error)
                 console.log(error);
             }
         });

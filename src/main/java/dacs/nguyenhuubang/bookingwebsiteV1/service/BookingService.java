@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +20,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookingService {
     private final BookingRepository bookingRepository;
+
     public List<Booking> getBookings() {
-        return (List<Booking>)bookingRepository.findAll();
+        return (List<Booking>) bookingRepository.findAll();
     }
 
     public Booking save(Booking booking) {
@@ -30,13 +30,12 @@ public class BookingService {
         return booking;
     }
 
-    public Booking get(Integer id){
+    public Booking get(Integer id) {
         Optional<Booking> result = bookingRepository.findById(id);
-        if (result.isPresent()){
+        if (result.isPresent()) {
             return result.get();
-        }
-        else
-            throw new ResourceNotFoundException("Not found ticket with ID: "+id+"!");
+        } else
+            throw new ResourceNotFoundException("Not found ticket with ID: " + id + "!");
     }
 
     public void delete(Integer id) {
@@ -98,10 +97,6 @@ public class BookingService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.bookingRepository.getBills(isPaid, pageable);
-    }
-
-    public void cancelAllUnpaidTickets(LocalDate currentDate, LocalTime currentTime) {
-        this.bookingRepository.cancelAllUnpaidTickets(currentDate, currentTime);
     }
 
     //dùng cho search ajax bill

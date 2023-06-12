@@ -70,9 +70,6 @@ public class SendEmailReminderEventListener implements ApplicationListener<SendE
         messageHelper.setFrom("nghbang1909@gmail.com", senderName);
         String sendEmail = "";
         if (!isValidEmail(theBooking.getUser().getEmail())) {
-            System.out.println("Email ID" + theBooking.getUser().getEmail());
-            System.out.println("Email ID" + theBooking.getUser().getAddress());
-            System.out.println("Email ID" + theBooking.getId());
             sendEmail = theBooking.getUser().getAddress();
             System.out.println("Sending not valid email to " + sendEmail + "...");
         } else {
@@ -101,7 +98,7 @@ public class SendEmailReminderEventListener implements ApplicationListener<SendE
         reservedSeats = event.getReservedSeatNames();
         numberOfTicket = event.getNumberofTicket();
         ticketCode = event.getTicketCode();
-        url = event.getApplicationUrl();
+        url = event.getApplicationUrl() + "/users/tickets/basket";
 
         try {
             sendTicketCode();
