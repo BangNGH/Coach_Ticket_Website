@@ -132,6 +132,13 @@
                     </div>
                 </div>
                 <form th:action="@{/users/booking-trip}" method="post">
+                    <input type="hidden" id="selectedTripId" name="selectedTripId">
+                    <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
+                    <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
+                    <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
+                    <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
+                    <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
+                    <input type="hidden" name="bookedId" th:value="${bookedId}">
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                         <tr>
@@ -181,13 +188,6 @@
                                     <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
                                 </td>
                                 <td>
-                                    <input type="hidden" id="selectedTripId" name="selectedTripId">
-                                    <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
-                                    <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
-                                    <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
-                                    <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
-                                    <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
-                                    <input type="hidden" name="bookedId" th:value="${bookedId}">
                                     <button class="btn btn-outline-primary book-button"
                                             th:id="${'bookButton_' + trip.id}">Tiếp tục
                                     </button>

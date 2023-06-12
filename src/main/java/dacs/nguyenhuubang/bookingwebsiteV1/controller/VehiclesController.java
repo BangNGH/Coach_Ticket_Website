@@ -80,7 +80,7 @@ public class VehiclesController {
             } catch (IOException e) {
                 throw new IOException("Could not save uploaded file " + e.getMessage());
             }
-            ra.addFlashAttribute("raMessage", "The vehicle has been saved successfully.");
+            ra.addFlashAttribute("raMessage", "Xe đã được lưu thành công.");
         }catch (DataIntegrityViolationException e){
             ra.addFlashAttribute("errorMessage","License Plates " + vehicle.getLicensePlates() + " already exists "+e.getMessage());
         } catch (IOException e) {
@@ -95,7 +95,7 @@ public class VehiclesController {
         try{
             Vehicle vehicle = vehiclesService.get(id);
             model.addAttribute("vehicle", vehicle);
-            model.addAttribute("pageTitle", "Edit vehicle (ID: "+id+")");
+            model.addAttribute("pageTitle", "Sửa xe với (ID: " + id + ")");
             return "admin/pages/vehicle_form";
         }catch (VehicleNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
@@ -107,7 +107,7 @@ public class VehiclesController {
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
         try{
             vehiclesService.delete(id);
-            ra.addFlashAttribute("raMessage", "The vehicle (ID: "+id+") has been deleted");
+            ra.addFlashAttribute("raMessage", "Xe với (ID: " + id + ") đã bị xóa.");
         }catch (VehicleNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }catch (CannotDeleteException e){

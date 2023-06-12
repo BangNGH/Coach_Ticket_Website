@@ -82,7 +82,6 @@ public class HomeRestController {
             int seatReserved = seatReservationService.checkAvailableSeat(trip, LocalDate.parse(startTime));
             List<Seat> seatsAvailable = seatReservationService.listAvailableSeat(trip.getVehicle(), trip, LocalDate.parse(startTime));
             List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, LocalDate.parse(startTime));
-            System.out.println("Start time" + LocalDate.parse(startTime));
             int availableSeats = totalSeat - seatReserved;
 
             loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);

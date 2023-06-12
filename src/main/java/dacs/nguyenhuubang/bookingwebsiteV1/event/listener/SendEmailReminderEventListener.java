@@ -3,7 +3,6 @@ package dacs.nguyenhuubang.bookingwebsiteV1.event.listener;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.SendEmailReminderEvent;
-import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,13 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class SendEmailReminderEventListener implements ApplicationListener<SendEmailReminderEvent> {
 
-    private final BookingService bookingService;
     private final JavaMailSender mailSender;
     private Booking theBooking;
     private String totalPrice;
     private String reservedSeats;
     private String numberOfTicket;
     private String ticketCode;
+    private String url;
 
     public void sendTicketCode() throws MessagingException, UnsupportedEncodingException {
         String subject = "Nhắc Nhở Thanh Toán";
@@ -49,7 +48,7 @@ public class SendEmailReminderEventListener implements ApplicationListener<SendE
         mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px\">");
         mailContentBuilder.append("<div class=\"container\">");
         mailContentBuilder.append("<h2>Xin chào, " + theBooking.getUser().getFullname() + "</h2>");
-        mailContentBuilder.append("<p>Chúng tôi nhận thấy bạn đã đặt vé tại <a href='http://localhost:8080/home'>Travelista</a></p>");
+        mailContentBuilder.append("<p>Chúng tôi nhận thấy bạn đã đặt vé tại <a href=\"" + url + "\">Travelista</a></p>");
         mailContentBuilder.append("<p><strong>Theo tuyến: </strong> " + theBooking.getTrip().getRoute().getName() + ", ngày:" + theBooking.getBookingDate() + ", lúc: " + theBooking.getTrip().getStartTime() + "</p>");
         mailContentBuilder.append("<p><strong>Số lượng vé:</strong> " + numberOfTicket + "</p>");
         mailContentBuilder.append("<p><strong>Chỗ ngồi:</strong> " + reservedSeats + "</p>");
@@ -60,7 +59,7 @@ public class SendEmailReminderEventListener implements ApplicationListener<SendE
         NumberFormat vn = NumberFormat.getInstance(localeVN);
         String str2 = vn.format(Double.parseDouble(totalPrice));
         mailContentBuilder.append("<p><strong>Tổng tiền:</strong> " + str2 + "đ</p>");
-        mailContentBuilder.append("<p>Hóa đơn của bạn sẽ bị hủy nếu chưa thanh toán trước <strong>120 phút</strong> trước giờ khởi hành. Nếu bạn đã đặt vé mà chưa thanh toán, vui lòng <a href='http://localhost:8080/users/tickets/basket'>thanh toán</a> để nhận vé.</p>");
+        mailContentBuilder.append("<p>Hóa đơn của bạn sẽ bị hủy nếu chưa thanh toán trước <strong>120 phút</strong> trước giờ khởi hành. Nếu bạn đã đặt vé mà chưa thanh toán, vui lòng <a href=\"" + url + "\">thanh toán</a> để nhận vé.</p>");
         mailContentBuilder.append("</div>");
         mailContentBuilder.append("</body>");
         mailContentBuilder.append("</html>");
@@ -102,6 +101,7 @@ public class SendEmailReminderEventListener implements ApplicationListener<SendE
         reservedSeats = event.getReservedSeatNames();
         numberOfTicket = event.getNumberofTicket();
         ticketCode = event.getTicketCode();
+        url = event.getApplicationUrl();
 
         try {
             sendTicketCode();

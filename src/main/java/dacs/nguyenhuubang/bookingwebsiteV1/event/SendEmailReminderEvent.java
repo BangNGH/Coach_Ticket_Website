@@ -12,15 +12,18 @@ public class SendEmailReminderEvent extends ApplicationEvent {
     private String totalPrice;
     private String reservedSeatNames;
     private String numberofTicket;
+    private String applicationUrl;
     private String ticketCode;
 
-    public SendEmailReminderEvent(Booking booking, String totalPrice, String reservedSeatNames, String numberofTicket, String ticketCode) {
+    public SendEmailReminderEvent(Booking booking, String totalPrice, String reservedSeatNames, String numberofTicket, String ticketCode, String s) {
         super(booking);
         this.booking = booking;
         this.totalPrice = totalPrice;
         this.reservedSeatNames = reservedSeatNames;
         this.numberofTicket = numberofTicket;
         this.ticketCode = ticketCode;
+        this.applicationUrl = s;
+
 
     }
 }

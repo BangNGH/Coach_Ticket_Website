@@ -23,6 +23,7 @@ public class ForgotPassword {
     private final UserService userService;
     private final ApplicationEventPublisher publisher;
     private final PasswordEncoder passwordEncoder;
+    private final HttpServletRequest servletRequest;
 
     @PostMapping("/process-forgot-password")
     public String processForgotPassword(@RequestParam("email") String email, Model model, final HttpServletRequest request) {
@@ -32,7 +33,7 @@ public class ForgotPassword {
                 model.addAttribute("error", "Không tìm thấy người dùng với email: " + email);
                 return "auth-forgot-password";
             }
-            publisher.publishEvent(new ResetPasswordEvent(foundUser.get(), applicationUrl(request)));
+            publisher.publishEvent(new ResetPasswordEvent(foundUser.get(), applicationUrl(servletRequest)));
             model.addAttribute("success", "Gửi yêu cầu thành công, hãy kiểm tra email của bạn.");
         } catch (UserNotFoundException e) {
             model.addAttribute("error", e.getMessage());

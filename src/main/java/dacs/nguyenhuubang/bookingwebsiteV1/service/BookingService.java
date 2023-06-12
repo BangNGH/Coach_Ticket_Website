@@ -44,6 +44,7 @@ public class BookingService {
         if (count == null || count == 0) {
             throw new ResourceNotFoundException("Could not find any ticket with ID " + id);
         }
+
         bookingRepository.deleteById(id);
     }
 

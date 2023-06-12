@@ -128,7 +128,7 @@ public class BookingController {
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
         try {
             bookingService.delete(id);
-            ra.addFlashAttribute("raMessage", "The booking (ID: " + id + ") has been deleted");
+            ra.addFlashAttribute("raMessage", "Hóa có (ID: " + id + ") đã bị xóa");
         } catch (VehicleNotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         } catch (CannotDeleteException e) {

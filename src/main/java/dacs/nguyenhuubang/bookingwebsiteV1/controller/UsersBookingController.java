@@ -47,6 +47,7 @@ public class UsersBookingController {
     private final BookingDetailsService bookingDetailsService;
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
+    private final HttpServletRequest servletRequest;
     public static final String ACCOUNT_SID = "ACa3f5ab465b8859f75c2294541894d897";
     public static final String AUTH_TOKEN = "4c7654d646a88547f17ba6b438df7bbd";
     public static final String TWILIO_PHONE_NUMBER = "+13156303801";
@@ -400,6 +401,7 @@ public class UsersBookingController {
             model.addAttribute("myBooking", myBooking);
             model.addAttribute("seatsReserved", reservedSeat);
             model.addAttribute("currentPage", "Hóa đơn");
+            model.addAttribute("header", "Đặt vé thành công.");
             return "pages/payment_result";
 
         } else {
@@ -450,7 +452,8 @@ public class UsersBookingController {
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", bookingId);
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", Config.vnp_Returnurl);
+        String vnp_Returnurl = applicationUrl(servletRequest) + "/users/vnpay-payment-result";
+        vnp_Params.put("vnp_ReturnUrl", vnp_Returnurl);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -491,6 +494,7 @@ public class UsersBookingController {
         return paymentUrl;
     }
 
+
     public String paymentMomo(String send_amount, String bookingId) throws Exception {
 
         // Request params needed to request MoMo system
@@ -505,7 +509,7 @@ public class UsersBookingController {
         String serectkey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";*/
 
         String orderInfo = "Thanh toan dat ve";
-        String returnUrl = "http://localhost:8080/users/momo-payment-result";
+        String returnUrl = applicationUrl(servletRequest) + "/users/momo-payment-result";
         String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
         String amount = send_amount;
         String orderId = String.valueOf(System.currentTimeMillis());
@@ -599,6 +603,7 @@ public class UsersBookingController {
             model.addAttribute("seatsReserved", reservedSeat2);
             String paymentMethod = "Thanh toán Momo ID: " + part1;
             model.addAttribute("paymentMethod", paymentMethod);
+            model.addAttribute("header", "Đặt vé thành công.");
             model.addAttribute("currentPage", "Hóa đơn");
             return "pages/payment_result";
         } else {

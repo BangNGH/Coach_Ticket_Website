@@ -55,13 +55,9 @@ public class Booking {
     @JsonIgnore
     private List<BookingDetails> bookingDetails;
 
-/*
-    @PreRemove
-    private void checkForDependencies() {
-        if (!seatReservations.isEmpty()||!bookingDetails.isEmpty()) {
-            throw new CannotDeleteException("Cannot delete Booking with associated SeatReservation");
-        }
-    }
-*/
+    @OneToOne(mappedBy = "booking", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private ShuttleBus shuttleBus;
+
 
 }

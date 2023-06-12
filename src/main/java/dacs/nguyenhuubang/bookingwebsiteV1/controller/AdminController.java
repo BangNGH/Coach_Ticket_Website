@@ -7,6 +7,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,11 @@ public class AdminController {
     private final SeatService seatService;
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
+    private final HttpServletRequest servletRequest;
+
+    private String applicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
 
     @GetMapping("/print-tickets/{id}")
     public String printTicket(@PathVariable("id") Integer id, RedirectAttributes ra) {
@@ -98,7 +104,18 @@ public class AdminController {
         List<Booking> bookings = bookingService.getBookings();
         List<City> cities = cityService.getCities();
         if (bookings.isEmpty()) {
-            re.addFlashAttribute("errorMessage", "Hãy thêm dữ liệu cho bảng này.");
+            re.addFlashAttribute("errorMessage", "Chưa có hóa đơn nào cần quản lý.");
+            return "redirect:/admin/bookings";
+        }
+        int count = 0;
+        for (Booking check_booking : bookings
+        ) {
+            if (check_booking.getIsPaid() == false) {
+                count++;
+            }
+        }
+        if (count == bookings.size()) {
+            re.addFlashAttribute("errorMessage", "Các hóa đơn đều chưa thanh toán!");
             return "redirect:/admin/bookings";
         }
         if (cities.isEmpty()) {
@@ -517,7 +534,7 @@ public class AdminController {
             send_reservedSeatNames += seatName + ", "; // Thêm tên của ghế vào chuỗi
         }
         send_reservedSeatNames = send_reservedSeatNames.substring(0, send_reservedSeatNames.length() - 2);
-        publisher.publishEvent(new SendEmailReminderEvent(myBooking, totalPrice, send_reservedSeatNames, send_numberOfTicket, send_ticketCodes));
+        publisher.publishEvent(new SendEmailReminderEvent(myBooking, totalPrice, send_reservedSeatNames, send_numberOfTicket, send_ticketCodes, applicationUrl(servletRequest)));
     }
 
 }
