@@ -553,15 +553,19 @@ public class AdminController {
                 if (booking.getBookingDate().isBefore(LocalDate.now())) {
                     bookedId += booking.getId() + ", ";
                     bookingService.delete(booking.getId());
-                    continue;
                 }
                 // sử dụng until() để tính toán khoảng thời gian theo đơn vị phút bằng cách sử dụng ChronoUnit.MINUTES.
                 long minutesUntilPayment = LocalTime.now().until(booking.getTrip().getStartTime(), ChronoUnit.MINUTES); // Khoảng thời gian tính bằng phút
-                if (booking.getBookingDate().isEqual(LocalDate.now()) && minutesUntilPayment > 120) {
-                    List<Seat> reservedSeat = seatReservationService.getReservedSeat(booking);
-                    String totalPrice = booking.getBookingDetails().get(0).getTotalPrice().toString().substring(0, booking.getBookingDetails().get(0).getTotalPrice().toString().length() - 2);
-                    sendEmail(totalPrice, booking, reservedSeat);
-                    sendEmail = true;
+                if (booking.getBookingDate().isEqual(LocalDate.now())) {
+                    if (minutesUntilPayment > 120) {
+                        List<Seat> reservedSeat = seatReservationService.getReservedSeat(booking);
+                        String totalPrice = booking.getBookingDetails().get(0).getTotalPrice().toString().substring(0, booking.getBookingDetails().get(0).getTotalPrice().toString().length() - 2);
+                        sendEmail(totalPrice, booking, reservedSeat);
+                        sendEmail = true;
+                    } else {
+                        bookedId += booking.getId() + ", ";
+                        bookingService.delete(booking.getId());
+                    }
                 }
             }
             if (sendEmail) {

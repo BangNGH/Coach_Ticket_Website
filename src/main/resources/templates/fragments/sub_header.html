@@ -21,7 +21,7 @@
                             </li>
                             <li sec:authorize="!isAuthenticated()">
                                 <a class="btn btn-outline-primary" style="color: white;" href="/login">Đăng nhập</a>
-                                <a style="color: snow" th:inline="text">Xin chào, người dùng ẩn danh</span>!</a>
+                                <a style="color: snow" th:inline="text">Người dùng ẩn danh</span></a>
                             </li>
                             <li>
                             </li>
@@ -45,6 +45,7 @@
                     <li><a th:href="@{'/users/manage-account/edit/' + ${#authentication.name}}">Chỉnh sửa tài khoản</a>
                     </li>
                     <li><a th:href="@{/home/instruct}">Cách đặt vé</a></li>
+                    <li sec:authorize="hasAnyAuthority('ADMIN')"><a th:href="@{/admin}">Trang quản trị</a></li>
                 </ul>
             </nav>
             <!-- #nav-menu-container -->

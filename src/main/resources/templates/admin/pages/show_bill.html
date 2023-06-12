@@ -23,14 +23,13 @@
                onblur="this.placeholder = 'Tìm hóa đơn chưa thanh toán'" id="q" size="50" style="margin-bottom: 30px;">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title"><span class="text-danger">Lưu ý</span> khi ấn vào nút <a
-                        href="/admin/bookings/cancel-unpaid-tickets-over120">hủy vé</a> toàn bộ vé chưa thanh toán có
-                    thời gian đặt trước quá <strong>120 phút</strong> sẽ bị hủy</h4>
+                <h6 class="card-title"><span class="text-danger">Lưu ý</span> khi ấn vào <a
+                        href="/admin/bookings/cancel-unpaid-tickets-over120">check</a> các vé chưa thanh toán đặt trước
+                    quá <strong>120 phút</strong> sẽ bị hủy. Ngược lại sẽ gửi email nhắc nhở thanh toán</h6>
                 <div class="d-flex">
-                    <a href="/admin/send-email-reminder/all" class="btn btn-outline-primary">Nhắc nhở</a>
+                    <a href="/admin/send-email-reminder/all" class="btn btn-outline-primary">Check</a>
                 </div>
             </div>
-
             <div class="card-body px-0 pb-0">
                 <div class="table-responsive">
                     <table class='table mb-0' id="table1">
@@ -69,7 +68,7 @@
                         </thead>
                         <tbody id="tbody">
                         <tr th:if="${notFound}">
-                            <td colspan='11' class='text-center'>No results found</td>
+                            <td colspan='11' class='text-center'>Không tìm thấy chuyến.</td>
                         </tr>
                         <tr th:unless="${notFound}" th:each="booking, i : ${bookings}">
                             <td th:text="${booking.bookingDetails.get(0).id.ticketCode}"></td>
@@ -79,8 +78,10 @@
                             <td th:text="${booking.trip.vehicle.name}"></td>
                             <td th:text="${booking.trip.vehicle.licensePlates}"></td>
                             <td>
-                                <span th:each="sr : ${booking.seatReservations}"
-                                      th:text="${sr.seat.name} + ', '"></span>
+                                <span class="highlighted-text" th:each="sr, iterStat : ${booking.seatReservations}">
+                                <span th:text="${sr.seat.name}" th:value="${sr.seat.id}"></span>
+                                <span th:if="${!iterStat.last}">, </span>
+                                </span>
                             </td>
                             <td th:text="${booking.seatReservations.size()}"></td>
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,

@@ -16,11 +16,13 @@ public class UserRegistrationDetails implements UserDetails {
 
     private String userName;
     private String password;
+    private String fullName;
     private boolean isEnabled;
     private List<GrantedAuthority> authorities;
 
     public UserRegistrationDetails(UserEntity user) {
         this.userName = user.getEmail();
+        this.fullName = user.getFullname();
         this.password = user.getPassword();
         this.isEnabled = user.isEnabled();
         this.authorities = Arrays.stream(user.getRole().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
@@ -59,5 +61,9 @@ public class UserRegistrationDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }

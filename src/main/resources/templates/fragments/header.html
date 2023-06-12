@@ -11,20 +11,17 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6 col-sm-6 col-6 header-top-left">
-                        <ul>
+                        <ul class="list-inline">
                             <li sec:authorize="isAuthenticated()">
-                                <a class="btn btn-outline-danger" style="color: white;" href="/logout">Đăng xuất</a>
-                                <a style="color: snow" th:inline="text">User: <span style="font-weight: bold"
-                                                                                    th:remove="tag"
-                                                                                    sec:authentication="name"></span></a>
+                                <a class="btn btn-outline-danger text-white" href="/logout">Đăng xuất</a>
+                                <a style="color: snow;" th:inline="text">Chào, <span style="font-weight: bold"
+                                                                                     th:remove="tag"
+                                                                                     th:text="${#authentication.principal.getFullName()}"></span></a>
                             </li>
                             <li sec:authorize="!isAuthenticated()">
-                                <a class="btn btn-outline-primary" style="color: white;" href="/login">Đăng nhập</a>
-                                <a style="color: snow" th:inline="text">Người dùng ẩn danh</span>!</a>
+                                <a class="btn btn-outline-primary text-white" href="/login">Đăng nhập</a>
+                                <a style="color: snow;" th:inline="text">Người dùng ẩn danh</span></a>
                             </li>
-                            <li>
-                            </li>
-
                         </ul>
                 </div>
             </div>

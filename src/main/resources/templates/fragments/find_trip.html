@@ -17,8 +17,11 @@
     <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
     <td th:text="${availableSeatsMap.get(trip.id)}"></td>
     <td>
-      <input required type="radio" name="selectedTrip" th:value="${trip.id}">
-      Chọn
+      <label class="radio-container">
+        <input type="radio" name="selectedTrip" th:value="${trip.id}">
+        <span class="radio-checkmark"></span>
+        <span class="radio-label">Chọn</span>
+      </label>
     </td>
     <td>
       <div class="seat-map">
@@ -34,11 +37,6 @@
           </div>
         </th:block>
       </div>
-    </td>
-    <td>
-      <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
-    </td>
-    <td>
       <input type="hidden" id="selectedTripId" name="selectedTripId">
       <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
       <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
@@ -47,6 +45,9 @@
       <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
       <input type="hidden" name="bookedId" th:value="${bookedId}">
       <button class="btn btn-outline-primary book-button" th:id="${'bookButton_' + trip.id}">Tiếp tục</button>
+    </td>
+    <td>
+      <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
     </td>
   </tr>
 </th:block>

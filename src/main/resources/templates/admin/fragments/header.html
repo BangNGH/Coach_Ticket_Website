@@ -13,7 +13,10 @@
                     <div class="avatar me-1">
                         <img src="/img/i1.jpg" alt="" srcset="">
                     </div>
-                    <div class="d-none d-md-block d-lg-inline-block">Xin chào, Admin</div>
+                    <div class="d-none d-md-block d-lg-inline-block">Chào, <span th:remove="tag"
+                                                                                 th:text="${#authentication.principal.getFullName()}"></span>
+                    </div>
+
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="dropdown-item" href="/home"><i data-feather="user"></i> Trang người dùng</a>

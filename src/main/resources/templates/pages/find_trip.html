@@ -221,12 +221,6 @@
                                 <td>[[${trip.vehicle.name}]]</td>
                                 <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                                 <td th:text="${availableSeatsMap.get(trip.id)}"></td>
-                                <!--     <td>
-                                         <label>
-                                             <input type="radio" name="selectedTrip" th:value="${trip.id}">
-                                             <span class="radio-label">Chọn</span>
-                                         </label>
-                                     </td>-->
                                 <td>
                                     <label class="radio-container">
                                         <input type="radio" name="selectedTrip" th:value="${trip.id}">

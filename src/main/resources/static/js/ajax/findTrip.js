@@ -74,7 +74,6 @@ $(document).ready(function () {
         var vehicle = $(this).val();
         var sortPrice = $('#sortPrice').val();
         var startCity = $('#startCity').val();
-        alert(startCity);
         var sortTime = $('#sortTime').val();
         var endCity = $('#endCity').val();
         var startTime = $('#startTime').val();
