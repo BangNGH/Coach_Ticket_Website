@@ -14,9 +14,9 @@
                         <ul class="list-inline">
                             <li sec:authorize="isAuthenticated()">
                                 <a class="btn btn-outline-danger text-white" href="/logout">Đăng xuất</a>
-                                <a style="color: snow;" th:inline="text">Chào, <span style="font-weight: bold"
-                                                                                     th:remove="tag"
-                                                                                     th:text="${#authentication.principal.getFullName()}"></span></a>
+                                <a style="color: snow;" th:inline="text">Xin chào, <span style="font-weight: bold"
+                                                                                         th:remove="tag"
+                                                                                         th:text="${#authentication.principal.getFullName()}"></span></a>
                             </li>
                             <li sec:authorize="!isAuthenticated()">
                                 <a class="btn btn-outline-primary text-white" href="/login">Đăng nhập</a>

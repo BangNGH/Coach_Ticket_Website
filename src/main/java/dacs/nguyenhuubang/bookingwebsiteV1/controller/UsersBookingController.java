@@ -47,7 +47,6 @@ public class UsersBookingController {
     private final BookingDetailsService bookingDetailsService;
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
-    private final HttpServletRequest servletRequest;
     public static final String ACCOUNT_SID = "ACa3f5ab465b8859f75c2294541894d897";
     public static final String AUTH_TOKEN = "4c7654d646a88547f17ba6b438df7bbd";
     public static final String TWILIO_PHONE_NUMBER = "+13156303801";
@@ -66,17 +65,29 @@ public class UsersBookingController {
     public String bookRoundTrip(Principal p, Model model, @RequestParam(value = "bookedId", required = false) Integer bookedId, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
                                 @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re, @RequestParam(value = "endTime", required = false) LocalDate endTime) {
         String validEmail = p.getName();
-        UserEntity checkUser = userService.findbyEmail(validEmail).get();
-        if (checkUser.getAddress() == null) {
+        Optional<UserEntity> foundUser = userService.findbyEmail(validEmail);
+        UserEntity checkUser = null;
+        if (foundUser != null) {
+            checkUser = foundUser.get();
+        } else {
+            re.addFlashAttribute("errorMessage", "Lỗi tìm kiếm người dùng!");
+            return "redirect:/home";
+        }
+        if (!isValidEmail(validEmail) && checkUser.getAddress() == null) {
             model.addAttribute("user", checkUser);
+            model.addAttribute("header", "Cung cấp email");
+            model.addAttribute("currentPage", "Chỉnh sửa tài khoản");
+            model.addAttribute("title", "Để hoàn thành việc đặt vé và nhận vé, quý khách vui lòng cung cấp địa chỉ email.");
             model.addAttribute("gbUserName", checkUser.getEmail());
             return "pages/fill_out_email";
+
         }
         if (!isValidEmail(validEmail) && !isValidEmail(checkUser.getAddress())) {
             model.addAttribute("user", checkUser);
             model.addAttribute("gbUserName", checkUser.getEmail());
             return "pages/fill_out_email";
         }
+
         if (endTime != null) {
             List<Long> seatIds = new ArrayList<>();
             String[] seatIdArray = inputSelectedSeats.split(",");
@@ -238,7 +249,7 @@ public class UsersBookingController {
 
     @PostMapping("/save")
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
-    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "noteRoundTrip", required = false) String noteRoundTrip, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds) throws Exception {
+    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "noteRoundTrip", required = false) String noteRoundTrip, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds, final HttpServletRequest request) throws Exception {
 
         List<Seat> seatsReserved = new ArrayList<>();
         for (Integer seatId : seatIds) {
@@ -264,10 +275,8 @@ public class UsersBookingController {
         booking.setBookingDate(date);
         booking.setIsPaid(false);
         booking.setUser(user);
-        System.out.println("NOTE value" + note);
         if (note.isBlank()) {
             booking.setNote(null);
-            System.out.println("NOTE NULL");
         } else booking.setNote(note);
         Booking savedBooking = bookingService.save(booking);
 
@@ -317,7 +326,6 @@ public class UsersBookingController {
                 System.out.println("noteRoundTrip value " + noteRoundTrip);
                 if (noteRoundTrip.isBlank()) {
                     roundTrip.setNote(null);
-                    System.out.println("NOTE roundTrip NULL");
                 } else roundTrip.setNote(noteRoundTrip);
                 bookingService.save(roundTrip);
                 roundTripId = String.valueOf(bookedId);
@@ -335,12 +343,12 @@ public class UsersBookingController {
         // lấy url thanh toán VNPAY
 
         long vnpay_Amount = (long) ((savedBookingDetails.getTotalPrice() + roundTripPrice) * 100);
-        String vnpayPaymentUrl = paymentVnpay(vnpay_Amount, bookingId);
+        String vnpayPaymentUrl = paymentVnpay(vnpay_Amount, bookingId, request);
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
 
-        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId);
+        String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId, request);
         model.addAttribute("momo", momoPaymentUrl);
 
         model.addAttribute("vnpay", vnpayPaymentUrl);
@@ -383,16 +391,18 @@ public class UsersBookingController {
                 //Gửi sms
                 UserEntity checkUser = userService.findbyEmail(p.getName()).get();
                 String destinyPhone = checkUser.getAddress();
-                if (validatePhoneNumber(destinyPhone)) {
-                    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-                    String message = "Cám ơn bạn đã đặt vé tại Travelista, phương thức thanh toán VNPAY. Tuyến: " + myBooking.getTrip().getRoute().getName() + ", lúc: " + myBooking.getTrip().getStartTime() + ", mã vé: " + myBooking.getBookingDetails().get(0).getId().getTicketCode() + ". Vui lòng mang theo thông tin email hoặc tin nhắn này để soát vé trước khi lên xe, hãy kiểm tra email của bạn để xem chi tiết vé";
-                    // Sử dụng thư viện Twilio để gửi tin nhắn SMS
-                    System.out.println("Sending sms...");
-                    Message.creator(
-                            new PhoneNumber(destinyPhone), // Số điện thoại người nhận (+84 + số điện thoại)
-                            new PhoneNumber(TWILIO_PHONE_NUMBER), // Số điện thoại nguồn (Twilio phone number)
-                            message// Nội dung tin nhắn
-                    ).create();
+                if (destinyPhone != null) {
+                    if (validatePhoneNumber(destinyPhone)) {
+                        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+                        String message = "Cám ơn bạn đã đặt vé tại Travelista, phương thức thanh toán VNPAY. Tuyến: " + myBooking.getTrip().getRoute().getName() + ", lúc: " + myBooking.getTrip().getStartTime() + ", mã vé: " + myBooking.getBookingDetails().get(0).getId().getTicketCode() + ". Vui lòng mang theo thông tin email hoặc tin nhắn này để soát vé trước khi lên xe, hãy kiểm tra email của bạn để xem chi tiết vé";
+                        // Sử dụng thư viện Twilio để gửi tin nhắn SMS
+                        System.out.println("Sending sms...");
+                        Message.creator(
+                                new PhoneNumber(destinyPhone), // Số điện thoại người nhận (+84 + số điện thoại)
+                                new PhoneNumber(TWILIO_PHONE_NUMBER), // Số điện thoại nguồn (Twilio phone number)
+                                message// Nội dung tin nhắn
+                        ).create();
+                    }
                 }
             } else model.addAttribute("bookingTransit", false);
             String paymentMethod = "Thanh toán Vnpay ID: " + part1;
@@ -419,16 +429,16 @@ public class UsersBookingController {
 
 
     @GetMapping("/payment-basket")
-    private String basketPayment(@RequestParam("bookingId") int bookingId, @RequestParam("totalPrice") double totalPrice, Model model) throws Exception {
+    private String basketPayment(@RequestParam("bookingId") int bookingId, @RequestParam("totalPrice") double totalPrice, Model model, final HttpServletRequest request) throws Exception {
 
         long vnpay_Amount = (long) (totalPrice * 100);
-        String vnpayPaymentUrl = paymentVnpay(vnpay_Amount, String.valueOf(bookingId));
+        String vnpayPaymentUrl = paymentVnpay(vnpay_Amount, String.valueOf(bookingId), request);
 
         //Lấy url thanh toán Momo
         String momoAmount = String.valueOf(totalPrice);
         String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
 
-        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId));
+        String momoPaymentUrl = paymentMomo(sub_momoAmount, String.valueOf(bookingId), request);
         model.addAttribute("momo", momoPaymentUrl);
 
         model.addAttribute("vnpay", vnpayPaymentUrl);
@@ -436,7 +446,7 @@ public class UsersBookingController {
         return "pages/payment_methods";
     }
 
-    private String paymentVnpay(long send_amount, String bookingId) throws UnsupportedEncodingException {
+    private String paymentVnpay(long send_amount, String bookingId, HttpServletRequest request) throws UnsupportedEncodingException {
         //Thanh toán VNPAY
         long amount = send_amount;
         String vnp_TxnRef = Config.getRandomNumber(8);
@@ -452,7 +462,7 @@ public class UsersBookingController {
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", bookingId);
         vnp_Params.put("vnp_Locale", "vn");
-        String vnp_Returnurl = applicationUrl(servletRequest) + "/users/vnpay-payment-result";
+        String vnp_Returnurl = applicationUrl(request) + "/users/vnpay-payment-result";
         vnp_Params.put("vnp_ReturnUrl", vnp_Returnurl);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -495,7 +505,7 @@ public class UsersBookingController {
     }
 
 
-    public String paymentMomo(String send_amount, String bookingId) throws Exception {
+    public String paymentMomo(String send_amount, String bookingId, HttpServletRequest request) throws Exception {
 
         // Request params needed to request MoMo system
         String endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
@@ -508,8 +518,8 @@ public class UsersBookingController {
         String accessKey = "klm05TvNBzhg7h7j";
         String serectkey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";*/
 
-        String orderInfo = "Thanh toan dat ve";
-        String returnUrl = applicationUrl(servletRequest) + "/users/momo-payment-result";
+        String orderInfo = "Payment";
+        String returnUrl = applicationUrl(request) + "/users/momo-payment-result";
         String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
         String amount = send_amount;
         String orderId = String.valueOf(System.currentTimeMillis());

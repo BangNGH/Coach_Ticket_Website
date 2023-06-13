@@ -1,6 +1,7 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.dto.EditUserInfoRequest;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.validation.Valid;
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 @RequestMapping("/users/manage-account")
 @Controller
-public class HomeUserController {
+public class ManageAccountController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
@@ -24,7 +25,15 @@ public class HomeUserController {
         try {
             UserEntity user = userService.findbyEmail(username).get();
             if (user.getProvider() != null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng tạo tài khoản để chỉnh sửa được thông tin!");
+                if (user.getProvider() == Provider.GITHUB) {
+                    model.addAttribute("user", user);
+                    model.addAttribute("header", "Cung cấp email");
+                    model.addAttribute("currentPage", "Chỉnh sửa tài khoản");
+                    model.addAttribute("title", "Chỉnh sửa địa chỉ email của bạn.");
+                    model.addAttribute("gbUserName", user.getEmail());
+                    return "pages/fill_out_email";
+                }
+                redirectAttributes.addFlashAttribute("errorMessage", "Đã lấy thông tin từ tài khoản Google.");
                 return "redirect:/";
             }
             EditUserInfoRequest userInfoRequest = new EditUserInfoRequest();

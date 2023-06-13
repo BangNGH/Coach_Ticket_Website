@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 public class CustomOAuth2User implements OAuth2User {
     private OAuth2User oauth2User;
     private List<GrantedAuthority> authorities =
@@ -29,13 +30,22 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        return oauth2User.getAttribute("name");
+        if (oauth2User.getAttribute("email") == null) {
+            return oauth2User.getAttribute("login");
+        }
+        return oauth2User.getAttribute("email");
     }
 
     public String getEmail() {
         return oauth2User.getAttribute("email");
     }
+
     public String getLogin() {
         return oauth2User.getAttribute("login");
     }
+
+    public String getFullName() {
+        return oauth2User.getAttribute("name");
+    }
+
 }

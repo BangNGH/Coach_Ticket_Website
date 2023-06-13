@@ -145,7 +145,7 @@ public class HomeController {
     }
 
     @PostMapping("/save-email")
-    private String saveEmail(@ModelAttribute("user") UserEntity user, @RequestParam("gbUserName") String gbUserName, Model model) {
+    private String saveEmail(@ModelAttribute("user") UserEntity user, Model model) {
         Optional<UserEntity> existsGBUser = userService.findByGithubUserName(user.getAddress());
         Optional<UserEntity> existsGGUser = userService.findbyEmail(user.getAddress());
         if (existsGBUser != null) {

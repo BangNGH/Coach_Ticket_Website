@@ -9,7 +9,7 @@
 <body>
 <div layout:fragment="content">
   <form th:action="@{/home/save-email}" method="post" th:object="${user}"
-        style="max-width: 500px; margin: 0 auto;">
+        style="max-width: 500px; margin: 50px auto;">
     <input type="hidden" th:field="*{id}">
     <input type="hidden" th:field="*{fullname}">
     <input type="hidden" th:field="*{email}">
@@ -19,17 +19,17 @@
       <div th:if="${errorMessage}" class="alert alert-danger text-center">
         <p th:text="${errorMessage}"></p>
       </div>
-      <p class="text-center">Để hoàn thành việc đặt vé và nhận vé, quý khách vui lòng cung cấp địa chỉ email.</p>
+      <p class="text-center" th:text="${title}"></p>
+      <p class="text-center"><span class="text-danger">Lưu ý</span> chúng tôi sẽ gửi vé cho bạn qua email này.</p>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label">E-mail:</label>
+        <label class="col-sm-2 col-form-label">E-mail:</label>
         <div class="col-sm-8">
           <input type="email" th:field="*{address}" class="form-control" required minlength="8" maxlength="45">
         </div>
       </div>
-
       <div class="text-center">
-        <button type="submit" class="btn btn-primary m-2">Save</button>
-        <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Cancel</button>
+        <button type="submit" class="btn btn-primary m-2">Lưu</button>
+        <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
       </div>
     </div>
 <script>

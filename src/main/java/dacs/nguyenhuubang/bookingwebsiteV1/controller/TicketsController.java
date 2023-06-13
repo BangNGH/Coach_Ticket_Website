@@ -57,7 +57,10 @@ public class TicketsController {
             return "pages/transit-form";
         }
         try {
-            transitionService.save(shuttleBus);
+            ShuttleBus savedTransit = transitionService.save(shuttleBus);
+            Booking booking = savedTransit.getBooking();
+            booking.setShuttleBus(savedTransit);
+            bookingService.save(booking);
             re.addFlashAttribute("raMessage", "Chúng tôi đã lưu thông tin trung chuyển của bạn.");
             return "redirect:/users/tickets/manage-receipts";
         } catch (ResourceNotFoundException e) {

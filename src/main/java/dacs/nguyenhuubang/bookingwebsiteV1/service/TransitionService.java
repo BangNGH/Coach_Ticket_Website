@@ -23,7 +23,7 @@ public class TransitionService {
         return (List<ShuttleBus>) transitionRepository.findAll();
     }
 
-    public void save(ShuttleBus shuttleBus) {
+    public ShuttleBus save(ShuttleBus shuttleBus) {
         try {
             ShuttleBus exists = transitionRepository.findByBookingId(shuttleBus.getBooking().getId());
             if (exists == null) {
@@ -33,12 +33,12 @@ public class TransitionService {
                 exists.setPhone(shuttleBus.getPhone());
                 exists.setAddress(shuttleBus.getAddress());
                 transitionRepository.save(exists);
-                System.out.println(exists);
             }
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Không tìm thấy bất kỳ chuyến trung chuyển nào với ID: " + shuttleBus.getId() + "!");
         }
 
+        return shuttleBus;
     }
 
     public ShuttleBus get(Integer id) {

@@ -57,7 +57,7 @@
                             <th>Ghế đã chọn</th>
                             <th>Số lượng vé</th>
                             <th>Tổng tiền</th>
-                            <th></th>
+                            <th>Trung chuyển</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -83,7 +83,10 @@
                                 'POINT') + 'đ'}]]
                             </td>
                             <td>
-                                <a th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Trung chuyển</a>
+                                <a th:if="${booking.shuttleBus}" class="text-warning"
+                                   th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Chỉnh sửa</a>
+                                <a th:unless="${booking.shuttleBus}"
+                                   th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Đặt xe</a>
                             </td>
                         </tr>
                         </tbody>
