@@ -183,12 +183,6 @@
                             <option value="lms">Xe Limousine</option>
                         </select>
                     </div>
-                    <div>
-                        <label th:for="sample"
-                               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
-                        <label th:for="sample" style="color:black;font-size: 20px;"
-                        >: Đã được đặt trước</label>
-                    </div>
                 </div>
                 <form th:action="@{/users/booking-trip}" method="post">
                     <input type="hidden" id="selectedTripId" name="selectedTripId">
@@ -242,6 +236,12 @@
                                                        onclick="toggleCheckbox(this.previousElementSibling)"></label>
                                             </div>
                                         </th:block>
+                                    </div>
+                                    <div style="margin-top: 30px;">
+                                        <label th:for="sample"
+                                               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
+                                        <label th:for="sample" style="color:black;font-size: 20px;"
+                                        >: Đã được đặt trước</label>
                                     </div>
                                     <button style="margin-top: 30px;" class="btn btn-outline-primary book-button"
                                             th:id="${'bookButton_' + trip.id}">Tiếp tục
