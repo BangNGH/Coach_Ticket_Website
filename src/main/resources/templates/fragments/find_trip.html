@@ -44,7 +44,15 @@
       <input type="hidden" id="startCity" name="startCity" th:value="${startCity}">
       <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
       <input type="hidden" name="bookedId" th:value="${bookedId}">
-      <button class="btn btn-outline-primary book-button" th:id="${'bookButton_' + trip.id}">Tiếp tục</button>
+      <div style="margin-top: 30px;">
+        <label th:for="sample"
+               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
+        <label th:for="sample" style="color:black;font-size: 20px;"
+        >: Đã được đặt trước</label>
+      </div>
+      <button style="margin-top: 30px;" class="btn btn-outline-primary book-button"
+              th:id="${'bookButton_' + trip.id}">Tiếp tục
+      </button>
     </td>
     <td>
       <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">

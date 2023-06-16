@@ -214,7 +214,16 @@ public class AdminController {
             return "redirect:/admin";
         }
         try {
-            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            List<Trip> foundTrips = new ArrayList<>();
+            if (startTime.isEqual(LocalDate.now())) {
+                foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity).stream()
+                        .filter(trip -> trip.getStartTime().isAfter(LocalTime.now()))
+                        .sorted(Comparator.comparing(Trip::getStartTime))
+                        .collect(Collectors.toList());
+            } else {
+                foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+                foundTrips.sort(Comparator.comparing(Trip::getStartTime));
+            }
             if (foundTrips.isEmpty()) {
                 re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
                 return "redirect:/admin";

@@ -48,7 +48,8 @@
         <div class="form-group row">
           <label class="col-sm-4 col-form-label">Điện thoại</label>
           <div class="col-sm-8">
-            <input type="text" pattern="(\+84|0)\d{9,10}" th:field="*{address}" class="form-control"
+            <input type="text" pattern="(\+84)\d{9,10}" title="Vui lòng nhập số điện thoại hợp lệ" th:field="*{address}"
+                   class="form-control"
                    required th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''">
             <div class="invalid-feedback" th:errors="*{address}"></div>
           </div>

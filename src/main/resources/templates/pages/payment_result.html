@@ -3,7 +3,7 @@
       layout:decorate="layouts/sub_layout">
 <head>
     <meta charset="UTF-8">
-    <title>Payment</title>
+    <title>Đặt Vé Thành Công</title>
     <style>
         .payment-container {
             margin-top: 80px;
@@ -79,7 +79,8 @@
                             <div class="form-group">
                                 <label>Ghế đặt trước:</label>
                                 <span th:each="sr, iterStat : ${seatsReserved}">
-                                <span th:text="${sr.name}"></span>
+                                <span style=" background-color: #e0e059; font-weight: bold;"
+                                      th:text="${sr.name}"></span>
                                 <span th:if="${!iterStat.last}">, </span>
                                 </span>
                             </div>
@@ -166,7 +167,8 @@
                             <div class="form-group">
                                 <label>Ghế đặt trước:</label>
                                 <span th:each="sr, iterStat : ${seatsReserved2}">
-                                <span th:text="${sr.name}"></span>
+                                <span style=" background-color: #e0e059; font-weight: bold;"
+                                      th:text="${sr.name}"></span>
                                 <span th:if="${!iterStat.last}">, </span>
                                 </span>
                             </div>

@@ -5,11 +5,6 @@ import dacs.nguyenhuubang.bookingwebsiteV1.exception.CityNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping(value = {"", "/", "/home"})
@@ -156,17 +153,17 @@ public class HomeController {
             model.addAttribute("errorMessage", "Email này đã đuợc đăng ký rồi");
             return "pages/fill_out_email";
         }
-
         user.setProvider(Provider.GITHUB);
         user.setRole("USER");
         user.setEnabled(true);
         userService.save(user);
-        List<GrantedAuthority> authorities = new ArrayList<>();
+
+/*        List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("USER"));
         Authentication newAuthentication = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
 
         // Thiết lập Authentication mới cho SecurityContextHolder
-        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);*/
         model.addAttribute("message", "Cám ơn bạn đã cung cấp email, hãy hoàn tất tiếp tục đặt vé của bạn");
         return "success_message";
     }
@@ -176,8 +173,20 @@ public class HomeController {
                            @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
                            @RequestParam(value = "endTime", required = false) LocalDate endTime) {
         try {
-            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
-            foundTrips.sort(Comparator.comparing(Trip::getStartTime));
+            List<Trip> foundTrips = new ArrayList<>();
+            if (startTime.isEqual(LocalDate.now())) {
+                foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity).stream()
+                        .filter(trip -> trip.getStartTime().isAfter(LocalTime.now()))
+                        .sorted(Comparator.comparing(Trip::getStartTime))
+                        .collect(Collectors.toList());
+            } else {
+                foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+                foundTrips.sort(Comparator.comparing(Trip::getStartTime));
+            }
+            if (foundTrips.isEmpty()) {
+                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
+                return "redirect:/";
+            }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();

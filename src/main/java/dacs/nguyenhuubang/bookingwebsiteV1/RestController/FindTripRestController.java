@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/home")
 @RequiredArgsConstructor
-public class HomeRestController {
+public class FindTripRestController {
     private final BookingService bookingService;
     private final CityService cityService;
     private final TripService tripService;
@@ -64,9 +64,9 @@ public class HomeRestController {
         if (!vehicle.isBlank()) {
             String vehicleName = "";
             if (vehicle.equalsIgnoreCase("sixt"))
-                vehicleName = "Xe 16 chổ";
+                vehicleName = "Xe 16 chỗ";
             if (vehicle.equalsIgnoreCase("fourtf"))
-                vehicleName = "Xe 45 chổ";
+                vehicleName = "Xe 45 chỗ";
             if (vehicle.equalsIgnoreCase("lms"))
                 vehicleName = "Xe Limousine";
 

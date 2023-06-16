@@ -4,42 +4,29 @@
       layout:decorate="layouts/sub_layout">
 <head>
   <meta charset="UTF-8">
-  <title>Lỗi</title>
+  <title>Thành công</title>
   <style>
-    .row-container {
+    .row-containerX {
       margin-top: 80px;
       margin-bottom: 75px;
       text-align: center;
-    }
-
-    .term-heading {
-      font-weight: bold;
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
-
-    i {
-      color: #9ABC66;
-      font-size: 100px;
-      line-height: 200px;
-      margin-left: -15px;
-    }
-
-    .highlighted-text {
-      background-color: #e0e059;
-      font-weight: bold;
     }
   </style>
   <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
 </head>
 <body onload="getCurrentLocation()">
 <div layout:fragment="content">
-  <div class="row-container">
+  <div class="row-containerX">
     <div class="container-fluid">
-      <i class="checkmark">✓</i>
-      <h1 class="term-heading text-danger">Thành Công</h1>
+      <i style=" color: #118f11;
+      font-size: 100px;
+      line-height: 200px;
+      margin-left: -15px;" class="checkmark">✓</i>
+      <h1 style=" font-weight: bold;
+      font-size: 30px;
+      margin-bottom: 10px;color: #118f11">Thành Công</h1>
       <hr/>
-      <p style="font-size: 30px;" th:text="${message}"></p><br/>
+      <p style="font-size: 30px;font-weight: bold;" th:text="${message}"></p><br/>
       <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Trở về</button>
       </p>
     </div>

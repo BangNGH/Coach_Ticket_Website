@@ -57,11 +57,18 @@ public class UserService implements IUserService {
     public UserEntity registerUser(RegistrationRequest request) {
         Optional<UserEntity> user = this.findbyEmail(request.email());
         if (user != null) {
-            throw new UserAlreadyExistsException("User với email " + request.email() + " đã tồn tại!");
+            throw new UserAlreadyExistsException("Người dùng với email " + request.email() + " đã tồn tại!");
         }
         var newUser = new UserEntity();
         newUser.setFullname(request.fullname());
-        newUser.setAddress(request.address());
+        // Xóa bỏ các ký tự không phải số
+        String cleanedNumber = request.address().replaceAll("[^\\d]", "");
+        // Kiểm tra nếu số điện thoại bắt đầu bằng "0"
+        if (cleanedNumber.startsWith("0")) {
+            // Thay thế "0" đầu tiên bằng "+84"
+            cleanedNumber = "+84" + cleanedNumber.substring(1);
+        }
+        newUser.setAddress(cleanedNumber);
         newUser.setEmail(request.email());
         newUser.setPassword(passwordEncoder.encode(request.password()));
         newUser.setRole(request.role());
