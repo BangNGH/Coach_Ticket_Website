@@ -1,6 +1,4 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.event.listener;
-
-
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.SeatReservation;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
@@ -15,6 +13,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -43,15 +43,24 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         numberOfTicket = event.getNumberofTicket();
         ticketCode = event.getTicketCode();
         roundTripId = event.getRoundTripId();
-        String url = event.getApplicationUrl()+"&sentEmail=1";
+        String url = event.getApplicationUrl() + "&sentEmail=1";
         try {
             sendTicketCode(url);
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void sendTicketCode(String url) throws MessagingException, UnsupportedEncodingException {
+    private String generateQRCodeUrl(String text) {
+        String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
+        return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodedText;
+    }
+
+
+    public void sendTicketCode(String url) throws Exception {
+
         String subject = "Đặt Vé Thành Công";
         String senderName = "Nhà xe Travelista";
         StringBuilder mailContentBuilder = new StringBuilder();
@@ -94,8 +103,11 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         NumberFormat vn = NumberFormat.getInstance(localeVN);
         String str2 = vn.format(Double.parseDouble(totalPrice));
         mailContentBuilder.append("<p><strong>Tổng tiền:</strong> " + str2 + "đ</p>");
-        mailContentBuilder.append("<p>Vui lòng đến nhà xe trước thời gian khởi hành <strong>20 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình email này cho nhân viên soát vé.</p>");
-        mailContentBuilder.append("<p><a href=\"" + url + "\">Xem chi tiết vé</a></p>");
+        mailContentBuilder.append("<p>Quý khách vui lòng đến nhà xe trước thời gian khởi hành <strong>20 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình mã qr cho nhân viên soát vé.<a href=\"" + url + "\">Xem chi tiết vé</a></p>");
+        // Tạo mã QR từ URL
+        String qrCodeUrl = generateQRCodeUrl(url);
+        mailContentBuilder.append("<img src=\"" + qrCodeUrl + "\" alt=\"QR Code\" width=\"200\" height=\"200\">");
+
         mailContentBuilder.append("</div>");
         mailContentBuilder.append("</body>");
         mailContentBuilder.append("</html>");
