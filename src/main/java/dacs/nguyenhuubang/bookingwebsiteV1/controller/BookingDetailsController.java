@@ -49,7 +49,7 @@ public class BookingDetailsController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("pageTitle", "Create New");
+        model.addAttribute("pageTitle", "Tạo Chi Tiết Hóa Đơn");
         BookingDetails bookingDetails = new BookingDetails();
         model.addAttribute("bookingDetails", bookingDetails);
         return getList(model);
@@ -61,8 +61,8 @@ public class BookingDetailsController {
             return "admin/pages/booking_details_form";
         }
 
-       bookingDetailsService.save(bookingDetails, ticketCode);
-        re.addFlashAttribute("raMessage", "The booking-details has been saved successfully.");
+        bookingDetailsService.save(bookingDetails, ticketCode);
+        re.addFlashAttribute("raMessage", "Chi tiết hóa đơn được lưu thành công.");
         return "redirect:/admin/booking-details";
     }
 

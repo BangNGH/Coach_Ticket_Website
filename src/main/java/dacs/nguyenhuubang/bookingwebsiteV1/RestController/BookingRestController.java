@@ -32,11 +32,17 @@ public class BookingRestController {
         return bookings;
     }
 
+    @GetMapping("/search/bill")
+    @ResponseBody
+    public List<Booking> searchBills(@RequestParam("q") String q) {
+        List<Booking> bookings = bookingService.search(q).stream().filter(i -> i.getIsPaid().equals(false)).toList();
+        return bookings;
+    }
+
     @GetMapping("/search/bookings-today")
     @ResponseBody
     public List<Booking> searchBookingsToday(@RequestParam("q") String q) {
         List<Booking> bookings = bookingService.search(q).stream().filter(i -> i.getBookingDate().equals(LocalDate.now())).toList();
-        ;
         return bookings;
     }
 

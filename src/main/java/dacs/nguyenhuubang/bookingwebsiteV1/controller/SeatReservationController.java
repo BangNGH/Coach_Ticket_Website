@@ -1,14 +1,10 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Booking;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Seat;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.SeatReservation;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.SeatReservationRepository;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.TripRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.BookingService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.SeatReservationService;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.SeatService;
@@ -19,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -53,7 +51,7 @@ public class SeatReservationController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("pageTitle", "Create New");
+        model.addAttribute("pageTitle", "Thêm ghế đặt trước");
         model.addAttribute("seatReservation", new dacs.nguyenhuubang.bookingwebsiteV1.entity.SeatReservation());
         List<Seat> seats = seatService.getList();
         List<Booking> tickets = bookingService.getBookings();
@@ -75,7 +73,7 @@ public class SeatReservationController {
         try{
 
             seatReservationService.save(seatReservation, id);
-            re.addFlashAttribute("raMessage", "The seat-reservation has been saved successfully.");
+            re.addFlashAttribute("raMessage", "Ghế đặt trước đã được lưu thành công.");
         }catch (SeatHasBeenReseredException e){
             re.addFlashAttribute("errorMessage", e.getMessage());
         }
@@ -89,7 +87,7 @@ public class SeatReservationController {
         try {
             SeatReservation seatReservation = seatReservationService.get(id);
             model.addAttribute("seatReservation", seatReservation);
-            model.addAttribute("pageTitle", "Edit seat reservation (ID: " + id + ")");
+            model.addAttribute("pageTitle", "Sửa ghế đặt trước (ID: " + id + ")");
             List<Seat> seats = seatService.getList();
             List<Booking> tickets = bookingService.getBookings();
             model.addAttribute("tickets", tickets);
@@ -109,7 +107,7 @@ public class SeatReservationController {
             LocalDate booking_date =delSeatReservation.getBooking().getBooking_date();
            updateAvailableSeats(trip.getId(), booking_date);*/
             seatReservationService.delete(id);
-            ra.addFlashAttribute("raMessage", "The seat reservation (ID: " + id + ") has been deleted");
+            ra.addFlashAttribute("raMessage", "Ghế đặt trước (ID: " + id + ") đã bị xóa.");
         } catch (ResourceNotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }

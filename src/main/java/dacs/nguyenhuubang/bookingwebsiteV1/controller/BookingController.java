@@ -80,7 +80,7 @@ public class BookingController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        model.addAttribute("pageTitle", "Create New");
+        model.addAttribute("pageTitle", "Tạo Hóa Đơn");
         Booking booking = new Booking();
         model.addAttribute("booking", booking);
         return getList(model);
@@ -92,7 +92,7 @@ public class BookingController {
             return "admin/pages/booking_form";
         }
         bookingService.save(booking);
-        re.addFlashAttribute("raMessage", "The booking has been saved successfully.");
+        re.addFlashAttribute("raMessage", "Hóa đơn được lưu thành công.");
         return "redirect:/admin/bookings";
     }
 
@@ -102,7 +102,7 @@ public class BookingController {
         try{
             Booking booking = bookingService.get(id);
             model.addAttribute("booking", booking);
-            model.addAttribute("pageTitle", "Edit booking (ID: "+id+")");
+            model.addAttribute("pageTitle", "Sửa Hóa Đơn(ID: " + id + ")");
             return getList(model);
         }catch (VehicleNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());

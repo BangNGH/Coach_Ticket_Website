@@ -5,6 +5,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.service.TransitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,9 @@ public class TransitRestController {
     @GetMapping("/search/transits-today")
     @ResponseBody
     public List<ShuttleBus> searchTransitToday(@RequestParam("q") String q) {
-        List<ShuttleBus> cities = transitionService.search(q);
+        List<ShuttleBus> cities = transitionService.search(q).stream().filter(i -> i.getBooking().getBookingDate().equals(LocalDate.now())).toList();
+        ;
+        System.out.println(cities);
         return cities;
     }
 }

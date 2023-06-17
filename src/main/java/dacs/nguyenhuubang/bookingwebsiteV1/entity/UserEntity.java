@@ -73,7 +73,7 @@ public class UserEntity {
     @PreRemove
     private void checkForDependencies() {
         if (!bookings.isEmpty()) {
-            throw new CannotDeleteException("Không thể xóa user này vì có liên quan khóa ngoại đến bảng khác");
+            throw new CannotDeleteException("Không thể xóa người dùng này vì có liên quan đến dữ liệu khác");
         }
     }
 

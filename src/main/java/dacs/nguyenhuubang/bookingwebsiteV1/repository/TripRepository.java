@@ -13,7 +13,7 @@ import java.util.List;
 public interface TripRepository extends JpaRepository<Trip, Integer> {
     Long countById(Integer id);
 
-    @Query("SELECT p FROM Trip p WHERE CONCAT(p.route.name, ' ', p.vehicle.name,' ',p.startTime, ' ',p.price ) LIKE %?1%")
+    @Query("SELECT p FROM Trip p WHERE CONCAT(p.route.name, ' ', p.vehicle.name,' ',p.startTime, ' ',p.price, ' ',p.vehicle.licensePlates ) LIKE %?1%")
     List<Trip> search(String keyword);
 
     @Query("SELECT t FROM Trip t WHERE t.route.startCity = :startCity " +

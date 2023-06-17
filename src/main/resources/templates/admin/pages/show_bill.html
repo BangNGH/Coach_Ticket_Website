@@ -51,18 +51,8 @@
                                 <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.startTime&sortDir='+${reserseSortDir}}">Giờ
                                     khởi hành</a>
                             </th>
-                            <th>
-                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.name&sortDir='+${reserseSortDir}}">Loại
-                                    xe</a>
-                            </th>
-                            <th>
-                                <a th:href="@{'/admin/bill-page/page/'+${currentPage1}+'?sortField=trip.vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
-                                    số</a>
-                            </th>
-                            <th>Ghế đã chọn</th>
                             <th>Số lượng vé</th>
                             <th>Tổng tiền</th>
-                            <th></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -75,23 +65,14 @@
                             <td th:text="${booking.trip.route.name}"></td>
                             <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></td>
                             <td th:text="${booking.trip.startTime}"></td>
-                            <td th:text="${booking.trip.vehicle.name}"></td>
-                            <td th:text="${booking.trip.vehicle.licensePlates}"></td>
-                            <td>
-                                <span class="highlighted-text" th:each="sr, iterStat : ${booking.seatReservations}">
-                                <span th:text="${sr.seat.name}" th:value="${sr.seat.id}"></span>
-                                <span th:if="${!iterStat.last}">, </span>
-                                </span>
-                            </td>
                             <td th:text="${booking.seatReservations.size()}"></td>
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
                                 'POINT') +
                                 'đ'}]]
                             </td>
                             <td>
-                                <a th:href="@{'/admin/delete/' + ${booking.id}}">Hủy |</a>
+                                <a th:href="@{'/admin/delete/' + ${booking.id}}" class="text-danger">Hủy |</a>
                                 <a th:href="@{'/admin/send-email-reminder/' + ${booking.id}}">Nhắc nhở</a>
-
                             </td>
                         </tr>
                         </tbody>
@@ -127,6 +108,7 @@
             </div>
         </div>
     </div>
+    <!--<script th:src="@{/js/ajax/showBill.js}"></script>-->
     <script>
         $(document).ready(function () {
             const currentDate = new Date();

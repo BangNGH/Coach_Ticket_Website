@@ -50,7 +50,7 @@ public class TripController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        model.addAttribute("pageTitle", "Create New");
+        model.addAttribute("pageTitle", "Thêm chuyến");
         List<Route> routes = routeService.getRoutes();
         List<Vehicle> vehicles = vehiclesService.getList();
         if (routes.isEmpty() || vehicles.isEmpty()){
@@ -83,7 +83,7 @@ public class TripController {
         try{
             Trip trip = tripService.get(id);
             model.addAttribute("trip", trip);
-            model.addAttribute("pageTitle", "Edit Trip (ID: "+id+")");
+            model.addAttribute("pageTitle", "Sửa chuyến (ID: " + id + ")");
             List<Route> routes = routeService.getRoutes();
             model.addAttribute("routes", routes);
             List<Vehicle> vehicles = vehiclesService.getList();
@@ -99,7 +99,7 @@ public class TripController {
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
         try{
             tripService.delete(id);
-            ra.addFlashAttribute("raMessage", "The trip (ID: "+id+") has been deleted");
+            ra.addFlashAttribute("raMessage", "Chuyến đi (ID: " + id + ") đã bị xóa");
         }catch (ResourceNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }catch (CannotDeleteException e){

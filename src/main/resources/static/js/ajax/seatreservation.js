@@ -24,8 +24,8 @@ $(document).ready(function () {
                          <td>${seatReservation.booking.trip.startTime} ${booking_date} </td>
                         <td>${seatReservation.seatsAvailable}</td>
         <td>
-          <a href="/admin/seat-reservation/edit/${seatReservation.id}">Sửa</a> |
-          <a href="/admin/seat-reservation/delete/${seatReservation.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
+          <a href="/admin/seat-reservation/edit/${seatReservation.id}">Sửa</a> 
+         
         </td>
       </tr>
     `;
@@ -35,7 +35,7 @@ $(document).ready(function () {
                     // If there are no search results, display a message
                     const noResultsRow = `
     <tr>
-      <td colspan="8" class="text-center">No results found</td>
+      <td colspan="8" class="text-center">Không tìm thấy kết quả.</td>
     </tr>
   `;
                     usersTableBody.innerHTML = noResultsRow;

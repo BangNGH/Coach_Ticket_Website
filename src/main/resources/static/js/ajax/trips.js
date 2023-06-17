@@ -19,6 +19,7 @@ $(document).ready(function () {
          <td>${trip.id}</td>
             <td>${trip.route.name}</td>
             <td>${trip.vehicle.name}</td>
+             <td>${trip.vehicle.licensePlates}</td>
 <td>${trip.startTime}</td>
            <td>${price}đ</td>
         <td>
@@ -33,7 +34,7 @@ $(document).ready(function () {
                     // If there are no search results, display a message
                     const noResultsRow = `
     <tr>
-      <td colspan="8" class="text-center">No results found</td>
+      <td colspan="8" class="text-center">Không tìm thấy kết quả.</td>
     </tr>
   `;
                     usersTableBody.innerHTML = noResultsRow;

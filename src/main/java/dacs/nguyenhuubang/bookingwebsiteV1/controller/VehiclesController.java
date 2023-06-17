@@ -54,7 +54,7 @@ public class VehiclesController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        model.addAttribute("pageTitle", "Create New");
+        model.addAttribute("pageTitle", "Thêm mới xe");
         model.addAttribute("vehicle", new Vehicle());
         return "admin/pages/vehicle_form";
     }
@@ -82,7 +82,7 @@ public class VehiclesController {
             }
             ra.addFlashAttribute("raMessage", "Xe đã được lưu thành công.");
         }catch (DataIntegrityViolationException e){
-            ra.addFlashAttribute("errorMessage","License Plates " + vehicle.getLicensePlates() + " already exists "+e.getMessage());
+            ra.addFlashAttribute("errorMessage", "Biển số xe " + vehicle.getLicensePlates() + " đã được đăng ký " + e.getMessage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

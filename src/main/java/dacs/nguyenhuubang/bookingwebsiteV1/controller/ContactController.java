@@ -50,7 +50,7 @@ public class ContactController {
     public String delete(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
         try {
             contactService.delete(id);
-            ra.addFlashAttribute("raMessage", "The Contact (ID: " + id + ") has been deleted");
+            ra.addFlashAttribute("raMessage", "Liên hệ với (ID: " + id + ") đã bị xóa");
         } catch (ResourceNotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         } catch (CannotDeleteException e) {

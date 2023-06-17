@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý thành phố</title>
+    <title>Thành Phố</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -21,7 +21,7 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title">Quản lý thành phố</h4>
+                <h4 class="card-title">Quản Lý Thành Phố</h4>
                 <div class="d-flex ">
                     <i data-feather="download"></i>
                 </div>
@@ -119,7 +119,7 @@
             </nav>
         </div>
 
-        <a th:href="@{/admin/cities/new}" class="btn btn-info" style="float: right; margin: 10px">Create City</a>
+        <a th:href="@{/admin/cities/new}" class="btn btn-info" style="float: right; margin: 10px">Thêm thành phố</a>
 
     </div>
     <script th:src="@{/js/ajax/cities.js}"></script>

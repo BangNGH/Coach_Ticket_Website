@@ -57,7 +57,7 @@ public class CityController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        model.addAttribute("pageTitle", "Create New City");
+        model.addAttribute("pageTitle", "Thêm thành phố");
         model.addAttribute("city", new City());
         return "admin/pages/city_form";
     }
@@ -91,7 +91,7 @@ public class CityController {
         try{
             City city = cityService.get(id);
             model.addAttribute("city", city);
-            model.addAttribute("pageTitle", "Edit User (ID: "+id+")");
+            model.addAttribute("pageTitle", "Sửa thành phố (ID: " + id + ")");
             return "admin/pages/city_form";
         }catch (CityNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
@@ -103,7 +103,7 @@ public class CityController {
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra){
         try{
             cityService.delete(id);
-            ra.addFlashAttribute("raMessage", "The City (ID: "+id+") has been deleted");
+            ra.addFlashAttribute("raMessage", "Thành phố với (ID: " + id + ") đã bị xóa.");
         }catch (CityNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }catch (CannotDeleteException e){

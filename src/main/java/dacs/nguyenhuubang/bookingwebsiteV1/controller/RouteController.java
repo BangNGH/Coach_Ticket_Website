@@ -66,7 +66,7 @@ public class RouteController {
             return "admin/pages/route_form";
         }
         if (route.getEndCity().getName().equals(route.getStartCity().getName())) {
-            re.addFlashAttribute("errorMessage", "Start-city and End-city must be difference!");
+            re.addFlashAttribute("errorMessage", "Điểm đến và điển đi phải khác nhau!");
             return "redirect:/admin/routes";
         }
         try {
@@ -87,7 +87,7 @@ public class RouteController {
         try {
             Route route = routeService.get(id);
             model.addAttribute("route", route);
-            model.addAttribute("pageTitle", "Edit Route (ID: " + id + ")");
+            model.addAttribute("pageTitle", "Sửa tuyến (ID: " + id + ")");
             List<City> cities = cityService.getCities();
             model.addAttribute("cities", cities);
             return "admin/pages/route_form";
@@ -101,7 +101,7 @@ public class RouteController {
     public String delete(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
         try {
             routeService.delete(id);
-            ra.addFlashAttribute("raMessage", "The route (ID: " + id + ") has been deleted");
+            ra.addFlashAttribute("raMessage", "Tuyến đi (ID: " + id + ") đã bị xóa");
         } catch (RouteNotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }catch (CannotDeleteException e) {

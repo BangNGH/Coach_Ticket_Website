@@ -44,9 +44,8 @@ $(document).ready(function () {
             },
             error: (error) => {
                 alert(q + " search fail " + error)
-                console.log(error);
+                console.log(error.getMessage());
             }
         });
     });
-
 });

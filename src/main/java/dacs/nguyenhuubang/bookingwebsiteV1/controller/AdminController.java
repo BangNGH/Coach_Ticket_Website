@@ -63,7 +63,7 @@ public class AdminController {
     //Hóa đơn chưa thanh toán
     @GetMapping("/bill-page/page/{pageNo}")
     public String findPageBill(@PathVariable(value = "pageNo") int pageNo, Model model, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
-        int pageSize = 6;
+        int pageSize = 7;
 
         Page<Booking> bookedTripPage = bookingService.findPage(false, pageNo, pageSize, sortField, sortDir);
         List<Booking> bookedTrip = bookedTripPage.getContent();

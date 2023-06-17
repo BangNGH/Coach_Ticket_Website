@@ -12,10 +12,10 @@ import java.util.List;
 
 @Repository
 public interface TransitionRepository extends JpaRepository<ShuttleBus, Integer> {
-    public Integer countById(Integer id);
+    Integer countById(Integer id);
 
     @Query("SELECT p FROM ShuttleBus p WHERE CONCAT(p.name, ' ', p.address,' ',p.phone,' ',p.booking.trip.route.name, ' ', p.booking.bookingDate, ' ', p.booking.trip.startTime) LIKE %?1%")
-    public List<ShuttleBus> search(String keyword);
+    List<ShuttleBus> search(String keyword);
 
     @Query("SELECT p FROM ShuttleBus p WHERE p.booking.id =:id")
     ShuttleBus findByBookingId(int id);

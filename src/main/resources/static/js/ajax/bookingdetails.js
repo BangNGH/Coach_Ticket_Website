@@ -33,7 +33,7 @@ $(document).ready(function () {
                     // If there are no search results, display a message
                     const noResultsRow = `
     <tr>
-      <td colspan="8" class="text-center">No results found</td>
+      <td colspan="8" class="text-center">Không tìm thấy kết quả.</td>
     </tr>
   `;
                     usersTableBody.innerHTML = noResultsRow;

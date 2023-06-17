@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/layouts/dashboard">
 <head>
   <meta charset="UTF-8">
-  <title>Manage Trips</title>
+  <title>Chuyến Đi</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -22,42 +22,47 @@
     <div>
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h4 class="card-title">Manage Trips</h4>
+            <h4 class="card-title">Quản Lý Chuyến Đi</h4>
           <div class="d-flex ">
             <i data-feather="download"></i>
           </div>
         </div>
         <div class="card-body px-0 pb-0">
           <div class="table-responsive">
-            <table class='table mb-0' id="table1">
-              <thead>
-              <th>
-                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
-              </th>
-              <th>
-                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=route.name&sortDir='+${reserseSortDir}}">Tuyến</a>
-              </th>
-              <th>
-                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=vehicle.name&sortDir='+${reserseSortDir}}">Xe</a>
-              </th>
-              <th>
-                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=startTime&sortDir='+${reserseSortDir}}">Giờ
-                      khởi hành</a>
-              </th>
-              <th>
-                  <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=price&sortDir='+${reserseSortDir}}">Giá
-                      vé</a>
-              </th>
-              <th></th>
-              </thead>
-              <tbody id="tbody">
-              <th:block th:each="trip: ${trips}">
-                <tr>
-                  <td>[[${trip.id}]]</td>
-                  <td>[[${trip.route.name}]]</td>
-                  <td>[[${trip.vehicle.name}]]</td>
-                  <td>[[${trip.startTime}]]</td>
-                  <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
+              <table class='table mb-0' id="table1">
+                  <thead>
+                  <th>
+                      <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=id&sortDir='+${reserseSortDir}}">ID</a>
+                  </th>
+                  <th>
+                      <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=route.name&sortDir='+${reserseSortDir}}">Tuyến</a>
+                  </th>
+                  <th>
+                      <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=vehicle.name&sortDir='+${reserseSortDir}}">Xe</a>
+                  </th>
+                  <th>
+                      <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=vehicle.licensePlates&sortDir='+${reserseSortDir}}">Biển
+                          số</a>
+                  </th>
+                  <th>
+                      <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=startTime&sortDir='+${reserseSortDir}}">Giờ
+                          khởi hành</a>
+                  </th>
+                  <th>
+                      <a th:href="@{'/admin/trips/page/'+${currentPage}+'?sortField=price&sortDir='+${reserseSortDir}}">Giá
+                          vé</a>
+                  </th>
+                  <th></th>
+                  </thead>
+                  <tbody id="tbody">
+                  <th:block th:each="trip: ${trips}">
+                      <tr>
+                          <td>[[${trip.id}]]</td>
+                          <td>[[${trip.route.name}]]</td>
+                          <td>[[${trip.vehicle.name}]]</td>
+                          <td>[[${trip.vehicle.licensePlates}]]</td>
+                          <td>[[${trip.startTime}]]</td>
+                          <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
                   <td>
                     <a th:href="@{'/admin/trips/edit/' + ${trip.id}}">Sửa</a> |
                     <a class="text-danger" th:href="@{'/admin/trips/delete/' + ${trip.id}}"
@@ -124,7 +129,7 @@
         </nav>
       </div>
 
-      <a th:href="@{/admin/trips/new}" class="btn btn-info" style="float: right; margin: 10px">Create Trip</a>
+        <a th:href="@{/admin/trips/new}" class="btn btn-info" style="float: right; margin: 10px">Thêm chuyến</a>
     </div>
     <script th:src="@{/js/ajax/trips.js}"></script>
   </div>

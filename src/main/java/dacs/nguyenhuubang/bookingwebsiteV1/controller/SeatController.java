@@ -65,7 +65,7 @@ public class SeatController {
             return "admin/pages/seat_form";
         }
             seatService.save(seat);
-        re.addFlashAttribute("raMessage", "The vehicle has been saved successfully.");
+        re.addFlashAttribute("raMessage", "Lưu thành công ghế ngồi.");
         return "redirect:/admin/seats";
     }
 
@@ -75,7 +75,7 @@ public class SeatController {
         try{
             Seat seat = seatService.get(id);
             model.addAttribute("seat", seat);
-            model.addAttribute("pageTitle", "Edit seat (ID: "+id+")");
+            model.addAttribute("pageTitle", "Sửa ghế ngồi (ID: " + id + ")");
             List<Vehicle> vehicles = vehiclesService.getList();
             model.addAttribute("vehicles", vehicles);
             return "admin/pages/seat_form";
@@ -89,7 +89,7 @@ public class SeatController {
     public String delete(@PathVariable("id") Long id, Model model, RedirectAttributes ra){
         try{
             seatService.delete(id);
-            ra.addFlashAttribute("raMessage", "The seat (ID: "+id+") has been deleted");
+            ra.addFlashAttribute("raMessage", "Ghế ngồi (ID: " + id + ") đã bị xóa.");
         }catch (ResourceNotFoundException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }catch (CannotDeleteException e){

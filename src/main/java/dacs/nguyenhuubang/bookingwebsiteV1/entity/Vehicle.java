@@ -25,7 +25,7 @@ public class Vehicle {
     private int id;
 
     @NotBlank(message = "Têm phương tiện không được để trống")
-	@Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @NotBlank(message = "Biển số xe không được để trống")
@@ -51,7 +51,7 @@ public class Vehicle {
     @PreRemove
     private void checkForDependencies() {
         if (!seats.isEmpty()||!trips.isEmpty()) {
-            throw new CannotDeleteException("Không thể xóa phương tiện này vì có liên quan khóa ngoại đến bảng khác");
+            throw new CannotDeleteException("Không thể xóa phương tiện này vì có liên quan khóa ngoại đến dữ liệu khác");
         }
     }
 

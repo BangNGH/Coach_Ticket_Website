@@ -48,7 +48,7 @@ public class UsersBookingController {
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
     public static final String ACCOUNT_SID = "ACa3f5ab465b8859f75c2294541894d897";
-    public static final String AUTH_TOKEN = "c4c5f5319b00f3e3b6ab8d43713b6e22";
+    public static final String AUTH_TOKEN = "28c441bc38bc0eacbb20ab5362e83e66";
     public static final String TWILIO_PHONE_NUMBER = "+13156303801";
 
 

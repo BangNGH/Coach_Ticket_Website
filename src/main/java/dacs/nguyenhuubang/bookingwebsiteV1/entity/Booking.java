@@ -55,7 +55,7 @@ public class Booking {
     @JsonIgnore
     private List<BookingDetails> bookingDetails;
 
-    @OneToOne(mappedBy = "booking", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "booking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     private ShuttleBus shuttleBus;
 
