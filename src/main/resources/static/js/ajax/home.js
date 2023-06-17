@@ -76,4 +76,15 @@ $(document).ready(function () {
         });
     });
 
+    function scrollToChosenRow() {
+        const chosenRow = document.getElementById("choosenrow");
+        if (chosenRow) {
+            chosenRow.scrollIntoView({behavior: "smooth"});
+        }
+    }
+
+    const radioButtons = document.querySelectorAll('input[type="radio"][name="selectedTrip"]');
+    radioButtons.forEach(function (radio) {
+        radio.addEventListener("change", scrollToChosenRow);
+    });
 });

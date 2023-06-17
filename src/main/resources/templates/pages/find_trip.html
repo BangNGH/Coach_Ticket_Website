@@ -13,11 +13,12 @@
         tr:hover {
             background-color: #f8f8f8;
             color: black;
+            font-size: 14.7px;
         }
 
         .seat-map {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            grid-template-columns: repeat(4, 1fr); /* Chỉnh số cột thành 3 */
             gap: 5px;
         }
 
@@ -49,16 +50,6 @@
             color: white;
         }
 
-        /*        input[type="radio"] {
-                    transform: scale(2); !* Tăng kích thước 1.2 lần *!
-                    margin-right: 6px; !* Tạo khoảng cách giữa nút radio và văn bản *!
-                }
-
-                input[type="radio"]:checked + label {
-                    background-color: #6FCF97;
-                    color: white;
-                    font-weight: bold;
-                }*/
         .radio-container {
             position: relative;
             display: inline-block;
@@ -118,6 +109,11 @@
             font-weight: 500;
         }
 
+        tr.header-row:hover {
+            background-color: initial;
+            color: white;
+            font-size: 14px;
+        }
 
     </style>
     <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
@@ -194,8 +190,8 @@
                     <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
                     <input type="hidden" name="bookedId" th:value="${bookedId}">
                     <table class="table table-bordered">
-                        <thead class="thead-dark">
-                        <tr>
+                        <thead style="background-color: #23242a;color: white;">
+                        <tr class="header-row">
                             <th style="width: 13%">Thời gian</th>
                             <th style="width: 11%">Loại xe</th>
                             <th style="width: 8%">Giá vé</th>
@@ -204,6 +200,7 @@
                             <th style="width: 26%">Chọn ghế</th>
                             <th style="width: 30%">Sơ đồ ghế</th>
                         </tr>
+
                         </thead>
                         <tbody id="tbody">
                         <tr th:if="${isListEmpty}">
@@ -211,7 +208,7 @@
                         </tr>
 
                         <th:block th:unless="${isListEmpty}" th:each="trip: ${foundTrips}">
-                            <tr>
+                            <tr id="choosenrow">
                                 <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
                                 <td>[[${trip.vehicle.name}]]</td>
                                 <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
