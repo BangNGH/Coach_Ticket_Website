@@ -1,14 +1,18 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.config.Config;
+import dacs.nguyenhuubang.bookingwebsiteV1.config.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.SendEmailReminderEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.SeatHasBeenReseredException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.VehicleNotFoundException;
+import dacs.nguyenhuubang.bookingwebsiteV1.security.MoMoSecurity;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -18,8 +22,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -271,7 +279,7 @@ public class AdminController {
 
     @PostMapping("/booking-trip")
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
-    public String bookRoundTrip(Principal p, Model model, @RequestParam(value = "bookedId", required = false) Integer bookedId, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
+    public String bookRoundTrip(final HttpServletRequest request, Principal p, Model model, @RequestParam(value = "bookedId", required = false) Integer bookedId, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
                                 @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re, @RequestParam(value = "endTime", required = false) LocalDate endTime) {
 
         try {
@@ -371,7 +379,7 @@ public class AdminController {
                 model.addAttribute("startTime", endTime);
                 return "admin/pages/find_trip";
             } else {
-                return bookTrip(p, bookedId, model, startTime, selectedTripId, inputSelectedSeats, re);
+                return savedBooking(p, bookedId, model, startTime, selectedTripId, inputSelectedSeats, re, request);
             }
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -382,8 +390,8 @@ public class AdminController {
 
     @PostMapping("/book")
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
-    public String bookTrip(Principal p, Integer bookedId, Model model, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
-                           @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re) {
+    public String savedBooking(Principal p, Integer bookedId, Model model, @RequestParam("startTime") LocalDate startTime, @RequestParam("selectedTripId") Integer selectedTripId,
+                               @RequestParam("inputSelectedSeats") String inputSelectedSeats, RedirectAttributes re, HttpServletRequest request) {
         String validEmail = p.getName();
         UserEntity checkUser = userService.findbyEmail(validEmail).get();
         if (!isValidEmail(validEmail) && !isValidEmail(checkUser.getAddress())) {
@@ -420,14 +428,6 @@ public class AdminController {
                 Seat seat = seatService.get(seatId);
                 seatsReserved.add(seat);
             }
-
-            if (bookedId != null) {
-                Booking roundTrip = bookingService.get(bookedId);
-                model.addAttribute("roundTrip", roundTrip);
-                model.addAttribute("hasRoundTrip", true);
-            } else model.addAttribute("hasRoundTrip", false);
-
-
             if (!seatsReserved.isEmpty()) {
 
                 //Save booking
@@ -437,7 +437,7 @@ public class AdminController {
 
                 booking.setTrip(bookingTrip);
                 booking.setBookingDate(startTime);
-                booking.setIsPaid(true); //thanh toán tiền mặt
+                booking.setIsPaid(false);
                 booking.setUser(user);
 
                 Booking savedBooking = bookingService.save(booking);
@@ -472,26 +472,40 @@ public class AdminController {
                     }
                 }
                 Float roundTripPrice = 0.0F;
+                String roundTripId = "";
                 if (bookedId != null) {
-                    Booking roundTrip = bookingService.get(bookedId);
-                    roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
-                }
-                String totalPrice = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
-                String sub_totalPrice = totalPrice.substring(0, totalPrice.length() - 2);
+                    try {
+                        Booking roundTrip = bookingService.get(bookedId);
+                        model.addAttribute("roundTrip", roundTrip);
+                        model.addAttribute("hasRoundTrip", true);
+                        roundTripId = String.valueOf(bookedId);
+                        roundTripPrice = roundTrip.getBookingDetails().get(0).getTotalPrice();
+                    } catch (Exception e) {
+                        model.addAttribute("message", e.getMessage());
+                        model.addAttribute("header", "Xảy ra lỗi");
+                        model.addAttribute("currentPage", "Lỗi");
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        return "error_message";
+                    }
+                } else model.addAttribute("hasRoundTrip", false);
 
-                String paymentMethod = "Thanh toán tiền mặt ID: " + savedBooking.getId();
-                model.addAttribute("paymentMethod", paymentMethod);
-                model.addAttribute("totalPrice", sub_totalPrice);
-                Booking myBooking = bookingService.get(savedBooking.getId());
-                model.addAttribute("myBooking", myBooking);
-                model.addAttribute("seatsReserved", seatsReserved);
-                if (bookedId != null) {
-                    Booking booking2 = bookingService.get(bookedId);
-                    List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(booking2);
-                    model.addAttribute("myBooking2", booking2);
-                    model.addAttribute("seatsReserved2", reservedSeat2);
-                }
-                return "admin/pages/booking_info";
+                String bookingId = savedBooking.getId() + "_" + roundTripId;//nối chuỗi id gửi mail
+                // lấy url thanh toán VNPAY
+                long vnpay_Amount = (long) ((savedBookingDetails.getTotalPrice() + roundTripPrice) * 100);
+                String vnpayPaymentUrl = paymentVnpay(vnpay_Amount, bookingId, request);
+                //Lấy url thanh toán Momo
+                String momoAmount = String.valueOf(savedBookingDetails.getTotalPrice() + roundTripPrice);
+                String sub_momoAmount = momoAmount.substring(0, momoAmount.length() - 2);
+
+                String momoPaymentUrl = paymentMomo(sub_momoAmount, bookingId, request);
+                model.addAttribute("momo", momoPaymentUrl);
+
+                model.addAttribute("vnpay", vnpayPaymentUrl);
+                model.addAttribute("startTime", savedBooking.getBookingDate());
+                model.addAttribute("currentPage", "thanh toán");
+                model.addAttribute("amount", sub_momoAmount);
+                model.addAttribute("bookingId", bookingId);
+                return "admin/pages/payment_methods";
             } else {
                 re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -511,7 +525,44 @@ public class AdminController {
             if (bookedId != null)
                 bookingService.delete(bookedId);
             return "redirect:/admin";
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+
+    @PostMapping("/book-cash-payment")
+    public String cashPayment(@RequestParam("amount") String amount,
+                              @RequestParam("bookingId") String bookingId, Model model) {
+        String[] parts = bookingId.split("_");
+        String part1 = parts[0];
+        String part2 = parts.length > 1 ? parts[1] : "";
+        if (!part2.isBlank()) {
+            Booking booking = bookingService.get(Integer.parseInt(part2));
+            booking.setIsPaid(true);
+            Booking myBooking = bookingService.save(booking);
+            List<Seat> reservedSeat = seatReservationService.getReservedSeat(myBooking);
+            model.addAttribute("totalPrice2", amount);
+            model.addAttribute("myBooking2", myBooking);
+            model.addAttribute("seatsReserved2", reservedSeat);
+            String paymentMethod = "Thanh toán tiền mặt ID: " + part2;
+            model.addAttribute("paymentMethod2", paymentMethod);
+            model.addAttribute("hasRoundTrip", true);
+        }
+        Booking booking2 = bookingService.get(Integer.parseInt(part1));
+        booking2.setIsPaid(true);
+        Booking myBooking2 = bookingService.save(booking2);
+        List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(myBooking2);
+        model.addAttribute("totalPrice", amount);
+        model.addAttribute("myBooking", myBooking2);
+        model.addAttribute("seatsReserved", reservedSeat2);
+        String paymentMethod = "Thanh toán tiền mặt ID: " + part1;
+        model.addAttribute("paymentMethod", paymentMethod);
+        model.addAttribute("header", "Đặt vé thành công.");
+        model.addAttribute("currentPage", "Hóa đơn");
+        return "admin/pages/booking_info";
     }
 
     @GetMapping("/send-email-reminder/{id}")
@@ -592,4 +643,202 @@ public class AdminController {
 
     }
 
+    private String paymentVnpay(long send_amount, String bookingId, HttpServletRequest request) throws UnsupportedEncodingException {
+        //Thanh toán VNPAY
+        long amount = send_amount;
+        String vnp_TxnRef = Config.getRandomNumber(8);
+        String vnp_TmnCode = Config.vnp_TmnCode;
+
+        Map<String, String> vnp_Params = new HashMap<>();
+        vnp_Params.put("vnp_Version", Config.vnp_Version);
+        vnp_Params.put("vnp_Command", Config.vnp_Command);
+        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_Amount", String.valueOf(amount));
+        vnp_Params.put("vnp_CurrCode", "VND");
+        vnp_Params.put("vnp_BankCode", "VnPayQR");
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", bookingId);
+        vnp_Params.put("vnp_Locale", "vn");
+        String vnp_Returnurl = applicationUrl(request) + "/admin/vnpay-payment-result";
+        vnp_Params.put("vnp_ReturnUrl", vnp_Returnurl);
+
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String vnp_CreateDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+
+        cld.add(Calendar.MINUTE, 15);
+        String vnp_ExpireDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+        List fieldNames = new ArrayList(vnp_Params.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
+        Iterator itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            String fieldName = (String) itr.next();
+            String fieldValue = (String) vnp_Params.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                //Build hash data
+                hashData.append(fieldName);
+                hashData.append('=');
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                //Build query
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                query.append('=');
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                if (itr.hasNext()) {
+                    query.append('&');
+                    hashData.append('&');
+                }
+            }
+        }
+        String queryUrl = query.toString();
+        String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hashData.toString());
+        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+        String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
+        return paymentUrl;
+    }
+
+    public String paymentMomo(String send_amount, String bookingId, HttpServletRequest request) throws Exception {
+
+        // Request params needed to request MoMo system
+        String endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+        String partnerCode = "MOMOOJOI20210710";
+        String accessKey = "iPXneGmrJH0G8FOP";
+        String serectkey = "sFcbSGRSJjwGxwhhcEktCHWYUuTuPNDB";
+
+/*        String endpoint ="https://test-payment.momo.vn/v2/gateway/api/create";
+        String partnerCode = "MOMOBKUN20180529";
+        String accessKey = "klm05TvNBzhg7h7j";
+        String serectkey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";*/
+
+        String orderInfo = "Payment";
+        String returnUrl = applicationUrl(request) + "/admin/momo-payment-result";
+        String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
+        String amount = send_amount;
+        String orderId = String.valueOf(System.currentTimeMillis());
+        String requestId = String.valueOf(System.currentTimeMillis());
+        String extraData = bookingId;
+
+        // Before sign HMAC SHA256 signature
+        String rawHash = "partnerCode=" +
+                partnerCode + "&accessKey=" +
+                accessKey + "&requestId=" +
+                requestId + "&amount=" +
+                amount + "&orderId=" +
+                orderId + "&orderInfo=" +
+                orderInfo + "&returnUrl=" +
+                returnUrl + "&notifyUrl=" +
+                notifyUrl + "&extraData=" +
+                extraData;
+
+        MoMoSecurity crypto = new MoMoSecurity();
+        // Sign signature SHA256
+        String signature = crypto.signSHA256(rawHash, serectkey);
+
+        // Build body JSON request
+        JSONObject message = new JSONObject();
+        message.put("partnerCode", partnerCode);
+        message.put("accessKey", accessKey);
+        message.put("requestId", requestId);
+        message.put("amount", amount);
+        message.put("orderId", orderId);
+        message.put("orderInfo", orderInfo);
+        message.put("returnUrl", returnUrl);
+        message.put("notifyUrl", notifyUrl);
+        message.put("extraData", extraData);
+        message.put("requestType", "captureMoMoWallet");
+        message.put("signature", signature);
+
+        String responseFromMomo = PaymentRequest.sendPaymentRequest(endpoint, message.toString());
+        JSONObject jmessage = new JSONObject(responseFromMomo);
+        String payUrl = jmessage.getString("payUrl");
+        return payUrl;
+    }
+
+    @GetMapping("/momo-payment-result")
+    public String momoPaymentResult(@RequestParam("amount") String amount,
+                                    @RequestParam("errorCode") String errorCode,
+                                    @RequestParam("extraData") String bookingId, Model model
+    ) {
+        if (errorCode.equals("0")) {
+            String[] parts = bookingId.split("_");
+            String part1 = parts[0];
+            String part2 = parts.length > 1 ? parts[1] : "";
+            if (!part2.isBlank()) {
+                Booking booking = bookingService.get(Integer.parseInt(part2));
+                booking.setIsPaid(true);
+                Booking myBooking = bookingService.save(booking);
+                List<Seat> reservedSeat = seatReservationService.getReservedSeat(myBooking);
+                model.addAttribute("totalPrice2", amount);
+                model.addAttribute("myBooking2", myBooking);
+                model.addAttribute("seatsReserved2", reservedSeat);
+                String paymentMethod = "Thanh toán Momo ID: " + part2;
+                model.addAttribute("paymentMethod2", paymentMethod);
+                model.addAttribute("hasRoundTrip", true);
+            }
+            Booking booking2 = bookingService.get(Integer.parseInt(part1));
+            booking2.setIsPaid(true);
+            Booking myBooking2 = bookingService.save(booking2);
+            List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(myBooking2);
+            model.addAttribute("totalPrice", amount);
+            model.addAttribute("myBooking", myBooking2);
+            model.addAttribute("seatsReserved", reservedSeat2);
+            String paymentMethod = "Thanh toán Momo ID: " + part1;
+            model.addAttribute("paymentMethod", paymentMethod);
+            model.addAttribute("header", "Đặt vé thành công.");
+            model.addAttribute("currentPage", "Hóa đơn");
+            return "admin/pages/booking_info";
+        } else {
+            model.addAttribute("message", "Xảy ra lỗi trong quá trình thanh toán");
+            model.addAttribute("header", "Xảy ra lỗi");
+            model.addAttribute("currentPage", "Lỗi");
+            return "error_message";
+        }
+
+    }
+
+    @GetMapping("/vnpay-payment-result")
+    public String showResult(Model model, @RequestParam("vnp_Amount") String amount,
+                             @RequestParam("vnp_OrderInfo") String bookingId,
+                             @RequestParam("vnp_ResponseCode") String responseCode
+    ) {
+        if (responseCode.equals("00")) {
+            String[] parts = bookingId.split("_");
+            String part1 = parts[0];
+            String part2 = parts.length > 1 ? parts[1] : "";
+            Booking booking = bookingService.get(Integer.parseInt(part1));
+            booking.setIsPaid(true);
+            Booking myBooking = bookingService.save(booking);
+            List<Seat> reservedSeat = seatReservationService.getReservedSeat(myBooking);
+            String totalPrice = amount.substring(0, amount.length() - 2);
+
+            if (!part2.isBlank()) {
+                Booking booking2 = bookingService.get(Integer.parseInt(part2));
+                booking2.setIsPaid(true);
+                Booking myBooking2 = bookingService.save(booking2);
+                List<Seat> reservedSeat2 = seatReservationService.getReservedSeat(myBooking2);
+                model.addAttribute("myBooking2", myBooking2);
+                model.addAttribute("seatsReserved2", reservedSeat2);
+                model.addAttribute("hasRoundTrip", true);
+            }
+
+            String paymentMethod = "Thanh toán Vnpay ID: " + part1;
+            model.addAttribute("paymentMethod", paymentMethod);
+            model.addAttribute("totalPrice", totalPrice);
+            model.addAttribute("myBooking", myBooking);
+            model.addAttribute("seatsReserved", reservedSeat);
+            model.addAttribute("currentPage", "Hóa đơn");
+            model.addAttribute("header", "Đặt vé thành công.");
+            return "admin/pages/booking_info";
+        } else {
+            model.addAttribute("message", "Xảy ra lỗi trong quá trình thanh toán");
+            model.addAttribute("header", "Xảy ra lỗi");
+            model.addAttribute("currentPage", "Lỗi");
+            return "error_message";
+        }
+
+    }
 }

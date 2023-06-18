@@ -32,6 +32,10 @@
                         <thead>
                         <tr>
                             <th>
+                                <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=booking.id&sortDir='+${reserseSortDir}}">Mã
+                                    HĐ</a>
+                            </th>
+                            <th>
                                 <a th:href="@{'/admin/transit/page/'+${currentPage}+'?sortField=booking.trip.route.name&sortDir='+${reserseSortDir}}">Chuyến</a>
                             </th>
                             <th>
@@ -59,6 +63,7 @@
 
                         <th:block th:each="city : ${cities}">
                             <tr>
+                                <td>[[${city.booking.id}]]</td>
                                 <td>[[${city.booking.trip.route.name}]]</td>
                                 <td>[[${city.booking.bookingDate}]]</td>
                                 <td>[[${city.booking.trip.startTime}]]</td>
@@ -66,9 +71,7 @@
                                 <td>[[${city.address}]]</td>
                                 <td>[[${city.phone}]]</td>
                                 <td>
-                                    <a th:href="@{'/admin/transit/edit/' + ${city.getId()}}">Sửa</a> |
-                                    <a class="text-danger" th:href="@{'/admin/transit/delete/' + ${city.getId()}}"
-                                       onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
+                                    <a th:href="@{'/admin/transit/edit/' + ${city.getId()}}">Sửa</a>
                                 </td>
                             </tr>
                         </th:block>

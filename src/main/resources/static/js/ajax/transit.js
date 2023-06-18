@@ -16,7 +16,7 @@ $(document).ready(function () {
                     data.forEach((city) => {
                         const userRow = `
       <tr>
-
+<td>${city.booking.id}</td>
          <td>${city.booking.trip.route.name}</td>
                                 <td>${city.booking.bookingDate}</td>
                                 <td>${city.booking.trip.startTime}</td>

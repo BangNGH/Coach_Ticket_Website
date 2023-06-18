@@ -5,10 +5,62 @@
     <meta charset="UTF-8">
     <title>Đặt Trung Chuyển</title>
     <style>
+        .custom-checkbox {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            padding-left: 25px;
+            margin-right: 10px;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #eee;
+            border-radius: 3px;
+        }
+
+        .custom-checkbox:hover .checkmark {
+            background-color: #ccc;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: #2196F3;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .custom-checkbox .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
         .square-container {
             width: 490px;
             height: 300px;
-           text-align: center;
+            text-align: center;
         }
 
         .row-container {
@@ -17,6 +69,7 @@
             margin-top: 80px;
             margin-bottom: 75px;
         }
+
         .term-heading {
             font-weight: bold;
             font-size: 18px;
@@ -33,19 +86,21 @@
             font-weight: bold;
             text-decoration: underline;
         }
-
-
     </style>
     <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
 </head>
 <body onload="getCurrentLocation()">
 <div layout:fragment="content">
     <div class="row-container">
         <div class="container-fluid">
             <form th:action="@{/users/tickets/transit-form}" method="post" th:object="${shuttlebus}"
-                  style="max-width: 500px; margin: 0 auto;">
+                  style="max-width: 500px; margin: 0 auto;" onsubmit="checkDistance(event)">
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{booking}">
+                <input type="hidden" id="storeAddress" name="storeAddress" th:value="${storeAddress}">
+                <input type="hidden" id="isEdit" name="isEdit" th:value="${isEdit}">
                 <div class="border border-secondary rounded p-3">
 
                     <div class="form-group row">
@@ -67,7 +122,7 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Số điện thoại :</label>
+                        <label class="col-sm-4 col-form-label">Số điện thoại:</label>
                         <div class="col-sm-8">
                             <input type="text" pattern="(\+84|0)\d{9,10}" title="Vui lòng nhập số điện thoại hợp lệ"
                                    th:field="*{phone}" class="form-control" minlength="10" maxlength="12"
@@ -75,13 +130,27 @@
                             <div class="invalid-feedback" th:errors="*{phone}"></div>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Chọn địa chỉ:</label>
+                        <div class="col-sm-8">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="disableDistance" onclick="toggleDistanceCheck(event)">
+                                <span class="checkmark"></span>
+                            </label>
+                            <input type="hidden" id="disableDistanceHidden" name="disableDistance">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div id="openmap" style="width: 100%; height: 350px;" class="d-none"></div>
+                    </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary m-2">Gửi</button>
                         <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
+                        <button type="submit" class="btn btn-primary m-2" onclick="checkDistance(event)">Lưu</button>
                     </div>
                 </div>
 
             </form>
+
         </div>
 
         <div class="container-fluid">
@@ -102,7 +171,6 @@
             </div>
         </div>
     </div>
-
     <script type="text/javascript">
         function cancelForm() {
             window.location = "[[@{/users/tickets/manage-receipts}]]";
@@ -111,7 +179,6 @@
     <script type="text/javascript">
         function getCurrentLocation() {
             if (navigator.geolocation) {
-                //Nếu hàm getCurrentPosition() chạy thành công, thì nó trả về cho người dùng tọa độ vị trí thông qua hàm truyền tham số (showPosition)
                 navigator.geolocation.getCurrentPosition(showPosition);
             } else {
                 alert("Trình duyệt của bạn không hỗ trợ định vị");
@@ -119,28 +186,198 @@
         }
 
         function showPosition(position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
+            var userLatitude = position.coords.latitude;
+            var userLongitude = position.coords.longitude;
+
+            openmap(userLatitude, userLongitude);
+            var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + userLatitude + "&lon=" + userLongitude;
+
+            if (!document.getElementById("isEdit").value) {
+                $.ajax({
+                    url: nominatimApiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        var address = response.display_name;
+                        document.getElementById("address").value = address;
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    }
+                });
+            }
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            var earthRadius = 6371; // Đường kính trái đất (đơn vị: kilômét)
+            var dLat = toRadians(lat2 - lat1);
+            var dLon = toRadians(lon2 - lon1);
+            var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var distance = earthRadius * c;
+            return distance;
+        }
+
+        function toRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function checkDistance(event) {
+            event.preventDefault();
+            var addressInput = document.getElementById("address");
+            var storeAddressInput = document.getElementById("storeAddress");
+            var address = addressInput.value;
+            var storeAddress = storeAddressInput.value;
+            var addressApiUrl = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+            var storeAddressApiUrl = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(storeAddress);
+
+            var userLatitude;
+            var userLongitude;
+            var storeLatitude;
+            var storeLongitude;
 
             $.ajax({
-                url: nominatimApiUrl,
+                url: addressApiUrl,
                 type: "GET",
                 dataType: "json",
                 success: function (response) {
-                    // Lấy thông tin địa chỉ từ response và gán vào ô input "address"
-                    var address = response.display_name;
-                    document.getElementById("address").value = address;
+                    if (response.length > 0) {
+                        userLatitude = response[0].lat;
+                        userLongitude = response[0].lon;
+                        calculateStoreDistance(userLatitude, userLongitude);
+                    } else {
+                        alert("Không tìm thấy địa chỉ của bạn trên Openstreetmap.");
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.log("Error: " + error);
                 }
             });
 
+            function calculateStoreDistance(lat, lon) {
+                $.ajax({
+                    url: storeAddressApiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.length > 0) {
+                            storeLatitude = response[0].lat;
+                            storeLongitude = response[0].lon;
+                            var distance = calculateDistance(lat, lon, storeLatitude, storeLongitude);
+                            console.log(distance);
+                            if (distance > 4) {
+                                alert("Chúng tôi không trung chuyển quá bán kính 4km.");
+                            } else {
+                                // Nếu khoảng cách hợp lệ, submit form
+                                // Nếu khoảng cách hợp lệ, submit form
+                                event.target.closest('form').submit();
+
+                            }
+                        } else {
+                            alert("Không tìm thấy địa chỉ nhà xe trên Openstreetmap.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    }
+                });
+            }
         }
     </script>
+    <script type="text/javascript">
+        function toggleDistanceCheck(event) {
+            var disableDistanceCheckbox = document.getElementById("disableDistance");
+            var disableDistanceHiddenInput = document.getElementById("disableDistanceHidden");
+            var openMapDiv = document.getElementById("openmap");
 
-</div>
+            if (disableDistanceCheckbox.checked) {
+                disableDistanceHiddenInput.value = "true";
+                openMapDiv.classList.remove("d-none"); // Hiện openmap
+            } else {
+                disableDistanceHiddenInput.value = "";
+                openMapDiv.classList.add("d-none"); // Ẩn openmap
+            }
+        }
+
+        var markerLayer;
+
+        function openmap(lat1, lon1) {
+            const key = 'YwIwHi1e7tx1uvAjxmE5';
+            const source = new ol.source.TileJSON({
+                url: `https://api.maptiler.com/maps/streets-v2/tiles.json?key=${key}`,
+                tileSize: 512,
+                crossOrigin: 'anonymous'
+            });
+
+            const attribution = new ol.control.Attribution({
+                collapsible: false,
+            });
+
+            const map = new ol.Map({
+                layers: [
+                    new ol.layer.Tile({
+                        source: source
+                    })
+                ],
+                controls: ol.control.defaults.defaults({attribution: false}).extend([attribution]),
+                target: 'openmap',
+                view: new ol.View({
+                    constrainResolution: true,
+                    center: ol.proj.fromLonLat([lon1, lat1]),
+                    zoom: 17
+                })
+            });
+
+            // Create a reference to the marker feature
+            const marker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon1, lat1])),
+            });
+            const markerSource = new ol.source.Vector({
+                features: [marker]
+            });
+            markerLayer = new ol.layer.Vector({
+                source: markerSource,
+                style: new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 1],
+                        crossOrigin: 'anonymous',
+                        src: 'https://docs.maptiler.com/openlayers/default-marker/marker-icon.png',
+                    })
+                })
+            });
+            map.addLayer(markerLayer);
+
+            // Thêm chức năng chọn vị trí khi nhấp chuột vào bản đồ
+            map.on('click', function (event) {
+                var coordinate = event.coordinate;
+                var lonlat = ol.proj.toLonLat(coordinate);
+                var latitude = lonlat[1];
+                var longitude = lonlat[0];
+                // Gửi vị trí được chọn cho server hoặc xử lý theo yêu cầu của bạn
+                console.log('Selected Location:', latitude, longitude);
+                var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
+
+                $.ajax({
+                    url: nominatimApiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        var address = response.display_name;
+                        document.getElementById("address").value = address;
+
+                        // Update marker position
+                        marker.setGeometry(new ol.geom.Point(coordinate));
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    }
+                });
+            });
+        }
+    </script>
 </div>
 </body>
 </html>

@@ -40,6 +40,15 @@ public class TicketsController {
             ShuttleBus shuttlebus = new ShuttleBus();
             shuttlebus.setBooking(booking);
             model.addAttribute("booking", booking);
+            if (booking.getTrip().getRoute().getStartCity().getName().trim().equals("Sài Gòn")) {
+                model.addAttribute("storeAddress", "Trường Đại học Hutech - KCN Cao");
+            }
+            if (booking.getTrip().getRoute().getStartCity().getName().trim().equals("Tây Ninh")) {
+                model.addAttribute("storeAddress", "Bến xe Tây Ninh");
+            }
+            if (booking.getTrip().getRoute().getStartCity().getName().trim().equals("Vũng Tàu")) {
+                model.addAttribute("storeAddress", "Bến xe Vũng Tàu");
+            }
             model.addAttribute("shuttlebus", shuttlebus);
             model.addAttribute("header", "Đặt trung chuyển vé: " + booking.getBookingDetails().get(0).getId().getTicketCode());
             model.addAttribute("currentPage", "Đặt trung chuyển.");
@@ -81,6 +90,15 @@ public class TicketsController {
                 ShuttleBus shuttlebus = new ShuttleBus();
                 shuttlebus.setBooking(booking);
                 model.addAttribute("booking", booking);
+                if (booking.getTrip().getRoute().getStartCity().getName().trim().equals("Sài Gòn")) {
+                    model.addAttribute("storeAddress", "Trường Đại học Hutech - KCN Cao");
+                }
+                if (booking.getTrip().getRoute().getStartCity().getName().trim().equals("Tây Ninh")) {
+                    model.addAttribute("storeAddress", "Bến xe Tây Ninh");
+                }
+                if (booking.getTrip().getRoute().getStartCity().getName().trim().equals("Vũng Tàu")) {
+                    model.addAttribute("storeAddress", "Bến xe Vũng Tàu");
+                }
                 model.addAttribute("shuttlebus", shuttlebus);
                 model.addAttribute("header", "Đặt trung chuyển vé: " + booking.getBookingDetails().get(0).getId().getTicketCode());
                 model.addAttribute("currentPage", "Đặt trung chuyển.");
@@ -88,7 +106,17 @@ public class TicketsController {
             } else {
                 //edit
                 model.addAttribute("booking", shuttleBus.getBooking());
+                if (shuttleBus.getBooking().getTrip().getRoute().getStartCity().getName().trim().equals("Sài Gòn")) {
+                    model.addAttribute("storeAddress", "Trường Đại học Hutech - KCN Cao");
+                }
+                if (shuttleBus.getBooking().getTrip().getRoute().getStartCity().getName().trim().equals("Tây Ninh")) {
+                    model.addAttribute("storeAddress", "Bến xe Tây Ninh");
+                }
+                if (shuttleBus.getBooking().getTrip().getRoute().getStartCity().getName().trim().equals("Vũng Tàu")) {
+                    model.addAttribute("storeAddress", "Bến xe Vũng Tàu");
+                }
                 model.addAttribute("shuttlebus", shuttleBus);
+                model.addAttribute("isEdit", true);
                 model.addAttribute("header", "Đặt trung chuyển vé: " + booking.getBookingDetails().get(0).getId().getTicketCode());
                 model.addAttribute("currentPage", "Đặt trung chuyển.");
                 return "pages/transit-form";

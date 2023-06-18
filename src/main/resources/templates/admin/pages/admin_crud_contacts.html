@@ -53,7 +53,7 @@
                                 <td>[[${city.title}]]</td>
                                 <td>[[${city.content}]]</td>
                                 <td>
-                                    <a th:href="@{'/admin/contacts/delete/' + ${city.getId()}}">Delete</a>
+                                    <a th:href="@{'/admin/contacts/delete/' + ${city.getId()}}" class="text-danger">Delete</a>
                                 </td>
                             </tr>
                         </th:block>

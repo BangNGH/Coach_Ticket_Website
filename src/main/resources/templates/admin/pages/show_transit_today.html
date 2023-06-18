@@ -32,6 +32,10 @@
                         <thead>
                         <tr>
                             <th>
+                                <a th:href="@{'/admin/transit/transit-today/page/'+${currentPage}+'?sortField=booking.id&sortDir='+${reserseSortDir}}">Mã
+                                    HĐ</a>
+                            </th>
+                            <th>
                                 <a th:href="@{'/admin/transit/transit-today/page/'+${currentPage}+'?sortField=booking.trip.route.name&sortDir='+${reserseSortDir}}">Chuyến</a>
                             </th>
                             <th>
@@ -62,6 +66,7 @@
 
                         <th:block th:unless="${isListEmpty}" th:each="city : ${cities}">
                             <tr>
+                                <td>[[${city.booking.id}]]</td>
                                 <td>[[${city.booking.trip.route.name}]]</td>
                                 <td>[[${city.booking.bookingDate}]]</td>
                                 <td>[[${city.booking.trip.startTime}]]</td>

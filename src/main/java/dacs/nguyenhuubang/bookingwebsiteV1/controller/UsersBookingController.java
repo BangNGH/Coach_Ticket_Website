@@ -323,7 +323,6 @@ public class UsersBookingController {
         if (bookedId != null) {
             try {
                 Booking roundTrip = bookingService.get(bookedId);
-                System.out.println("noteRoundTrip value " + noteRoundTrip);
                 if (noteRoundTrip.isBlank()) {
                     roundTrip.setNote(null);
                 } else roundTrip.setNote(noteRoundTrip);
