@@ -4,90 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Đặt Trung Chuyển</title>
-    <style>
-        .custom-checkbox {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            padding-left: 25px;
-            margin-right: 10px;
-        }
-
-        .custom-checkbox input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 20px;
-            width: 20px;
-            background-color: #eee;
-            border-radius: 3px;
-        }
-
-        .custom-checkbox:hover .checkmark {
-            background-color: #ccc;
-        }
-
-        .custom-checkbox input:checked ~ .checkmark {
-            background-color: #2196F3;
-        }
-
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-        }
-
-        .custom-checkbox input:checked ~ .checkmark:after {
-            display: block;
-        }
-
-        .custom-checkbox .checkmark:after {
-            left: 6px;
-            top: 2px;
-            width: 4px;
-            height: 9px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        .square-container {
-            width: 490px;
-            height: 300px;
-            text-align: center;
-        }
-
-        .row-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 80px;
-            margin-bottom: 75px;
-        }
-
-        .term-heading {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .highlighted-text {
-            background-color: #e0e059;
-            font-weight: bold;
-        }
-
-        .highlighted-link {
-            color: blue;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-    </style>
     <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/transit_form.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
 </head>
@@ -140,8 +58,12 @@
                             <input type="hidden" id="disableDistanceHidden" name="disableDistance">
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div id="openmap" style="width: 100%; height: 350px;" class="d-none"></div>
+                    <div class="form-group row d-none" id="divsearch">
+                        <label class="col-sm-4 col-form-label">Tìm kiếm địa chỉ:</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="search" class="form-control" placeholder="Nhập địa chỉ cần tìm kiếm">
+                        </div>
+                        <div id="openmap" style="width: 100%; height: 350px;"></div>
                     </div>
                     <div class="text-center">
                         <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
@@ -155,18 +77,24 @@
 
         <div class="container-fluid">
             <div class="border border-secondary rounded p-3 square-container">
-                <p class="term-heading">LƯU Ý</p>
+                <p class="term-heading text-danger">LƯU Ý</p>
                 <hr/>
                 <p>
-                    (*) Quý khách vui lòng mang email có chứa mã vé đến văn phòng để đổi vé lên xe trước giờ xuất bến ít
+                    <span class="text-danger">(*)</span> Quý khách vui lòng mang email có chứa mã vé đến văn phòng để
+                    đổi vé lên xe trước giờ xuất bến ít
                     nhất
                     <span class="highlighted-text"> <strong>20 phút</strong> </span>
                 </p>
                 <p>
-                    (*) Quý khách vui lòng điền thông tin trung chuyển vào mẫu này, hoặc liên hệ số điện thoại
+                    <span class="text-danger">(*)</span> Quý khách vui lòng điền thông tin trung chuyển vào mẫu này để
+                    đặt xe trung chuyển. Chúng tôi không trung chuyển khách ở những nơi không đón được hoặc vượt quá bán
+                    kính
+                    <span class="highlighted-text"> <strong>4km</strong> </span> từ bến xe.
+                </p>
+                <p>
+                    <span class="text-danger">(*)</span> Mọi chi tết
+                    liên hệ số điện thoại
                     <a class="highlighted-link">0345712873</a>
-                    sau khi đặt vé. Chúng tôi không trung chuyển khách ở những nơi không đón được hoặc vượt quá bán kính
-                    4km từ nhà xe
                 </p>
             </div>
         </div>
@@ -291,7 +219,7 @@
         function toggleDistanceCheck(event) {
             var disableDistanceCheckbox = document.getElementById("disableDistance");
             var disableDistanceHiddenInput = document.getElementById("disableDistanceHidden");
-            var openMapDiv = document.getElementById("openmap");
+            var openMapDiv = document.getElementById("divsearch");
 
             if (disableDistanceCheckbox.checked) {
                 disableDistanceHiddenInput.value = "true";
@@ -344,11 +272,17 @@
                     image: new ol.style.Icon({
                         anchor: [0.5, 1],
                         crossOrigin: 'anonymous',
-                        src: 'https://docs.maptiler.com/openlayers/default-marker/marker-icon.png',
+                        src: '/img/marker.png',
                     })
                 })
             });
             map.addLayer(markerLayer);
+
+            function centerMap(latitude, longitude) {
+                var view = map.getView();
+                view.setCenter(ol.proj.fromLonLat([longitude, latitude]));
+                view.setZoom(17);
+            }
 
             // Thêm chức năng chọn vị trí khi nhấp chuột vào bản đồ
             map.on('click', function (event) {
@@ -376,6 +310,40 @@
                     }
                 });
             });
+
+            // Xử lý sự kiện tìm kiếm
+            var searchInput = document.getElementById("search");
+            searchInput.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchAddress();
+                }
+            });
+
+            function searchAddress() {
+                var address = searchInput.value;
+                var addressApiUrl = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+
+                $.ajax({
+                    url: addressApiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.length > 0) {
+                            var latitude = response[0].lat;
+                            var longitude = response[0].lon;
+                            console.log("FOUND COoRdiante: " + latitude + "; " + longitude);
+                            var coordinate = ol.proj.fromLonLat([longitude, latitude]);
+                            marker.setGeometry(new ol.geom.Point(coordinate));
+                        } else {
+                            alert("Không tìm thấy địa chỉ trên bản đồ.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    }
+                });
+            }
         }
     </script>
 </div>

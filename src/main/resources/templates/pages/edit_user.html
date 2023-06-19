@@ -12,6 +12,58 @@
       margin: 50px auto;
       text-align: center;
     }
+
+    .custom-checkbox {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      padding-left: 25px;
+      margin-right: 100%;
+    }
+
+    .custom-checkbox input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 25px;
+      width: 50px;
+      background-color: #eee;
+      border-radius: 10px;
+    }
+
+    .custom-checkbox:hover .checkmark {
+      background-color: #ccc;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+      background-color: #2196F3;
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    .custom-checkbox .checkmark:after {
+      left: 6px;
+      top: 2px;
+      width: 4px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
   </style>
 </head>
 <body>
@@ -63,28 +115,36 @@
             <div class="invalid-feedback" th:errors="*{oldPassword}"></div>
           </div>
         </div>
-        <hr/>
-        <div class="form-group text-center">
-          <h5 class="text-warning">Điền vào ô dưới đây nếu bạn muốn đổi mật khẩu hoặc bỏ qua nó</h5>
-        </div>
         <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Mật khẩu mới:</label>
+          <label class="col-sm-4 col-form-label">Đổi mật khẩu</label>
           <div class="col-sm-8">
-            <input type="password" th:field="*{newPassword}" name="newPassword" id="newPassword" class="form-control"
-                   minlength="6"
-                   maxlength="20">
-
+            <label class="custom-checkbox">
+              <input type="checkbox" id="disableDistance" onclick="toggleDistanceCheck(event)">
+              <span class="checkmark"></span>
+            </label>
+            <input type="hidden" id="disableDistanceHidden" name="disableDistance">
           </div>
         </div>
-        <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Nhập lại khẩu mới:</label>
-          <div class="col-sm-8">
-            <input type="password" th:field="*{confirmPassword}" id="confirmPassword" name="confirmPassword"
-                   class="form-control" minlength="6"
-                   maxlength="20">
+        <div class="d-none" id="divsearch">
+          <hr>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Mật khẩu mới:</label>
+            <div class="col-sm-8">
+              <input type="password" th:field="*{newPassword}" name="newPassword" id="newPassword" class="form-control"
+                     minlength="6"
+                     maxlength="20">
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Nhập lại khẩu mới:</label>
+            <div class="col-sm-8">
+              <input type="password" th:field="*{confirmPassword}" id="confirmPassword" name="confirmPassword"
+                     class="form-control" minlength="6"
+                     maxlength="20">
+            </div>
           </div>
         </div>
-
         <div class="text-center">
           <button type="submit" class="btn btn-primary m-2">Lưu</button>
           <button type="button" class="btn btn-secondary m-2" onclick="cancelForm()">Hủy</button>
@@ -117,6 +177,20 @@
         }
       }
       return true;
+    }
+
+    function toggleDistanceCheck(event) {
+      var disableDistanceCheckbox = document.getElementById("disableDistance");
+      var disableDistanceHiddenInput = document.getElementById("disableDistanceHidden");
+      var openMapDiv = document.getElementById("divsearch");
+
+      if (disableDistanceCheckbox.checked) {
+        disableDistanceHiddenInput.value = "true";
+        openMapDiv.classList.remove("d-none"); // Hiện openmap
+      } else {
+        disableDistanceHiddenInput.value = "";
+        openMapDiv.classList.add("d-none"); // Ẩn openmap
+      }
     }
   </script>
 

@@ -52,6 +52,7 @@
                                     thái</a>
                             </th>
                             <th>Ghi chú</th>
+                            <th>Nơi đón</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -74,6 +75,7 @@
                                     <span class="badge bg-danger">Chưa thanh toán</span>
                                 </td>
                                 <td th:text="${booking.note != null ? booking.note : 'Không có ghi chú'}"></td>
+                                <td th:text="${booking.userAddress != null ? booking.userAddress : 'Tại nhà xe'}"></td>
                                 <td>
                                     <a th:href="@{'/admin/bookings/edit/' + ${booking.id}}">Sửa</a> <!--|
                                     <a class="text-danger" th:href="@{'/admin/bookings/delete/' + ${booking.id}}"

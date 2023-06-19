@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping(value = {"/users/tickets"})
@@ -133,10 +131,7 @@ public class TicketsController {
         String email = principal.getName();
         UserEntity user = userService.findbyEmail(email).get();
         Page<Booking> bookedTripPage = bookingService.findPage(user.getId(), true, pageNo, pageSize, sortField, sortDir);
-        List<Booking> bookedTrip = bookedTripPage.getContent().stream()
-                .sorted(Comparator.comparing(Booking::getBookingDate))
-                .collect(Collectors.toList());
-        bookedTrip.sort(Comparator.comparing(Booking::getBookingDate));
+        List<Booking> bookedTrip = bookedTripPage.getContent();
         if (bookedTrip.isEmpty()) {
             model.addAttribute("notFound", true);
         } else model.addAttribute("notFound", false);
@@ -156,13 +151,13 @@ public class TicketsController {
 
     @GetMapping("/manage-receipts")
     public String viewPage(Model model, Principal principal) {
-        return findPageReceipt(1, model, "id", "asc", principal);
+        return findPageReceipt(1, model, "bookingDate", "desc", principal);
 
     }
 
     @GetMapping("/basket")
     public String showBill(Model model, Principal principal) {
-        return findPageBill(1, model, "id", "asc", principal);
+        return findPageBill(1, model, "bookingDate", "desc", principal);
     }
 
     @GetMapping("/bill-page/page/{pageNo}")
@@ -171,9 +166,8 @@ public class TicketsController {
         String email = principal.getName();
         UserEntity user = userService.findbyEmail(email).get();
         Page<Booking> bookedTripPage = bookingService.findPage(user.getId(), false, pageNo, pageSize, sortField, sortDir);
-        List<Booking> bookedTrip = bookedTripPage.getContent().stream()
-                .sorted(Comparator.comparing(Booking::getBookingDate))
-                .collect(Collectors.toList());
+        List<Booking> bookedTrip = bookedTripPage.getContent();
+
         if (bookedTrip.isEmpty()) {
             model.addAttribute("notFound", true);
         } else model.addAttribute("notFound", false);

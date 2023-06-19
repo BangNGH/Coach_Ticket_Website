@@ -46,6 +46,8 @@ public class Booking {
     @Column(name = "note", nullable = true)
     private String note = null;
 
+    @Column(name = "user_address", nullable = true)
+    private String userAddress = null;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore

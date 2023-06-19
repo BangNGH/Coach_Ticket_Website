@@ -11,9 +11,7 @@ $(document).ready(function () {
             dataType: "html",
             success: function (response) {
                 $('#tbody').html(response);
-                const script = document.createElement("script");
-                script.src = "/js/ajax/findBill.js"; // Đường dẫn đến script
-                document.body.appendChild(script);
+                $.getScript("/js/ajax/findBill.js");
             },
             error: function () {
                 alert("ERROR!" + keyword);

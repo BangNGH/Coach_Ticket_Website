@@ -4,41 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Xác Nhận Vé</title>
-    <style>
-        .square-container {
-            width: 490px; /* Điều chỉnh theo kích thước mong muốn */
-            height: 450px;
-            text-align: center;
-        }
-
-        .row-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 80px;
-            margin-bottom: 75px;
-        }
-
-        .term-heading {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .highlighted-text {
-            background-color: #e0e059;
-            font-weight: bold;
-        }
-
-        .highlighted-link {
-            color: blue;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/css/confirm_booking.css}">
     <link rel="shortcut icon" th:href="@{/img/favicon.svg}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
 </head>
-<body>
+<body onload="getCurrentLocation()">
 <div layout:fragment="content">
     <div class="row-container">
         <div class="container-fluid" th:if="${hasRoundTrip}">
@@ -97,7 +68,10 @@
         </div>
         <div class="container-fluid">
             <form th:action="@{/users/save}" method="post" th:object="${trip}"
-                  style="max-width: 500px; margin: 0 auto;">
+                  style="max-width: 500px; margin: 0 auto;" onsubmit="checkDistance(event)">
+
+                <input type="hidden" id="storeAddress" name="storeAddress" th:value="${storeAddress}">
+
                 <input type="hidden" name="bookedId" th:value="${bookedId}">
                 <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" th:field="*{route}"/>
@@ -171,6 +145,29 @@
                         </div>
                     </div>
 
+                    <!--Map-->
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Chọn điểm đón:</label>
+                        <div class="col-sm-8">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="disableDistance" onclick="toggleDistanceCheck(event)">
+                                <span class="checkmark"></span>
+                            </label>
+                            <input type="hidden" id="disableDistanceHidden" name="disableDistance">
+                        </div>
+                    </div>
+                    <div class="form-group row d-none" id="dAddess">
+                        <label class="col-sm-4 col-form-label">Nơi đón:</label>
+                        <div class="col-sm-8" style="margin-bottom: 12px;">
+                            <input type="text" id="address" name="address" class="form-control">
+                        </div>
+                        <label class="col-sm-4 col-form-label">Tìm kiếm địa chỉ:</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="search" class="form-control" placeholder="Nhập địa chỉ cần tìm kiếm">
+                        </div>
+                        <div id="openmap" style="width: 100%; height: 350px;" class="d-none"></div>
+                    </div>
+
                     <div class="form-group row">
                         <div class="col-sm-8 offset-sm-4">
                             <div class="form-check">
@@ -235,6 +232,166 @@
 
         function cancelForm() {
             window.location = "[[@{/home}]]";
+        }
+    </script>
+
+    <script type="text/javascript">
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Trình duyệt của bạn không hỗ trợ định vị");
+            }
+        }
+
+        function showPosition(position) {
+            var userLatitude = position.coords.latitude;
+            var userLongitude = position.coords.longitude;
+            console.log("userLongitude: " + userLongitude);
+            console.log("userLatitude: " + userLatitude);
+            openmap(userLatitude, userLongitude);
+            var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + userLatitude + "&lon=" + userLongitude;
+
+            $.ajax({
+                url: nominatimApiUrl,
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    var address = response.display_name;
+                    document.getElementById("address").value = address;
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+
+        }
+    </script>
+    <script type="text/javascript">
+        function toggleDistanceCheck(event) {
+            var disableDistanceCheckbox = document.getElementById("disableDistance");
+            var disableDistanceHiddenInput = document.getElementById("disableDistanceHidden");
+            var openMapDiv = document.getElementById("openmap");
+            var address = document.getElementById("dAddess");
+
+            if (disableDistanceCheckbox.checked) {
+                disableDistanceHiddenInput.value = "true";
+                openMapDiv.classList.remove("d-none"); // Hiện openmap
+                address.classList.remove("d-none"); // Hiện address
+            } else {
+                disableDistanceHiddenInput.value = "";
+                openMapDiv.classList.add("d-none"); // Ẩn openmap
+                address.classList.add("d-none"); // Ẩn address
+            }
+        }
+
+        var markerLayer;
+
+        function openmap(lat1, lon1) {
+            const key = 'YwIwHi1e7tx1uvAjxmE5';
+            const source = new ol.source.TileJSON({
+                url: `https://api.maptiler.com/maps/streets-v2/tiles.json?key=${key}`,
+                tileSize: 512,
+                crossOrigin: 'anonymous'
+            });
+
+            const attribution = new ol.control.Attribution({
+                collapsible: false,
+            });
+
+            const map = new ol.Map({
+                layers: [
+                    new ol.layer.Tile({
+                        source: source
+                    })
+                ],
+                controls: ol.control.defaults.defaults({attribution: false}).extend([attribution]),
+                target: 'openmap',
+                view: new ol.View({
+                    constrainResolution: true,
+                    center: ol.proj.fromLonLat([lon1, lat1]),
+                    zoom: 17
+                })
+            });
+
+            // Create a reference to the marker feature
+            const marker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon1, lat1])),
+            });
+            const markerSource = new ol.source.Vector({
+                features: [marker]
+            });
+            markerLayer = new ol.layer.Vector({
+                source: markerSource,
+                style: new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 1],
+                        crossOrigin: 'anonymous',
+                        src: '/img/marker.png',
+                    })
+                })
+            });
+            map.addLayer(markerLayer);
+
+            // Thêm chức năng chọn vị trí khi nhấp chuột vào bản đồ
+            map.on('click', function (event) {
+                var coordinate = event.coordinate;
+                var lonlat = ol.proj.toLonLat(coordinate);
+                var latitude = lonlat[1];
+                var longitude = lonlat[0];
+                // Gửi vị trí được chọn cho server hoặc xử lý theo yêu cầu của bạn
+                console.log('Selected Location:', latitude, longitude);
+                var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
+
+                $.ajax({
+                    url: nominatimApiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        var address = response.display_name;
+                        document.getElementById("address").value = address;
+
+                        // Update marker position
+                        marker.setGeometry(new ol.geom.Point(coordinate));
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    }
+                });
+            });
+            // Xử lý sự kiện tìm kiếm
+            var searchInput = document.getElementById("search");
+            searchInput.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchAddress();
+                }
+            });
+
+            function searchAddress() {
+                var address = searchInput.value;
+                var addressApiUrl = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+
+                $.ajax({
+                    url: addressApiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.length > 0) {
+                            var latitude = response[0].lat;
+                            var longitude = response[0].lon;
+                            console.log("FOUND COoRdiante: " + latitude + "; " + longitude);
+                            var coordinate = ol.proj.fromLonLat([longitude, latitude]);
+                            marker.setGeometry(new ol.geom.Point(coordinate));
+                        } else {
+                            alert("Không tìm thấy địa chỉ trên bản đồ.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    }
+                });
+            }
         }
     </script>
 </div>

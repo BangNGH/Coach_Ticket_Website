@@ -25,10 +25,12 @@
     <td th:text="${booking.seatReservations.size()}"></td>
     <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
     <td>
-        <a th:href="@{'/users/tickets/delete/' + ${booking.id}}">Hủy |</a>
+        <a class="text-danger" th:href="@{'/users/tickets/delete/' + ${booking.id}}"
+           onclick="return confirm('Bạn có chắc muốn hủy chuyến này chứ?')">Hủy |</a>
         <a th:href="@{'/users/payment-basket?bookingId=' + ${booking.id} + '&totalPrice=' + ${booking.bookingDetails.get(0).totalPrice}}">Thanh
             toán</a>
     </td>
+
 </tr>
 </tbody>
 </body>

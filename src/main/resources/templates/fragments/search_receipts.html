@@ -27,7 +27,13 @@
     <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
         'POINT') + 'đ'}]]
     </td>
-    <td th:text="${booking.isPaid} ? 'Đã thanh toán' : 'Chưa thanh toán'"></td>
+    <td th:text="${booking.userAddress != null ? booking.userAddress : 'Tại nhà xe'}"></td>
+    <td>
+        <a th:if="${booking.shuttleBus}" class="text-warning"
+           th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Chỉnh sửa</a>
+        <a th:unless="${booking.shuttleBus}"
+           th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Đặt xe</a>
+    </td>
 </tr>
 </tbody>
 </body>

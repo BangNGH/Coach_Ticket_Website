@@ -57,7 +57,8 @@
                             <th>Ghế đã chọn</th>
                             <th>Số lượng vé</th>
                             <th>Tổng tiền</th>
-                            <th>Trung chuyển</th>
+                            <th>Điểm đón</th>
+                            <th>Đặt trung chuyển</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -82,6 +83,7 @@
                             <td>[[${#numbers.formatDecimal(booking.bookingDetails.get(0).totalPrice, 0, 'COMMA', 0,
                                 'POINT') + 'đ'}]]
                             </td>
+                            <td th:text="${booking.userAddress != null ? booking.userAddress : 'Tại nhà xe'}"></td>
                             <td>
                                 <a th:if="${booking.shuttleBus}" class="text-warning"
                                    th:href="@{'/users/tickets/transit/edit/' + ${booking.id}}">Chỉnh sửa</a>

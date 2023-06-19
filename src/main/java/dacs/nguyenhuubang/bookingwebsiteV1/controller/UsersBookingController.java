@@ -232,6 +232,17 @@ public class UsersBookingController {
                 model.addAttribute("startTime", startTime);
                 model.addAttribute("header", "Xác nhận chuyến đi");
                 model.addAttribute("currentPage", "xác nhận");
+
+                if (trip.getRoute().getStartCity().getName().trim().equals("Sài Gòn")) {
+                    model.addAttribute("storeAddress", "Trường Đại học Hutech - KCN Cao");
+                }
+                if (trip.getRoute().getStartCity().getName().trim().equals("Tây Ninh")) {
+                    model.addAttribute("storeAddress", "Bến xe Tây Ninh");
+                }
+                if (trip.getRoute().getStartCity().getName().trim().equals("Vũng Tàu")) {
+                    model.addAttribute("storeAddress", "Bến xe Vũng Tàu");
+                }
+
                 return "pages/confirm_booking";
             } else {
                 re.addFlashAttribute("errorMessage", "Không tìm thấy ghế ngồi");
@@ -249,7 +260,7 @@ public class UsersBookingController {
 
     @PostMapping("/save")
     @Transactional(rollbackFor = {Exception.class, Throwable.class, SeatHasBeenReseredException.class})
-    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "noteRoundTrip", required = false) String noteRoundTrip, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds, final HttpServletRequest request) throws Exception {
+    public String saveBooking(@RequestParam(value = "note", required = false) String note, @RequestParam(value = "address", required = false) String userAddress, @RequestParam(value = "noteRoundTrip", required = false) String noteRoundTrip, @RequestParam(value = "bookedId", required = false) Integer bookedId, Model model, @ModelAttribute("trip") Trip trip, @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate date, RedirectAttributes re, @RequestParam("seatsReserved") List<Integer> seatIds, final HttpServletRequest request) throws Exception {
 
         List<Seat> seatsReserved = new ArrayList<>();
         for (Integer seatId : seatIds) {
@@ -278,6 +289,9 @@ public class UsersBookingController {
         if (note.isBlank()) {
             booking.setNote(null);
         } else booking.setNote(note);
+        if (userAddress.isBlank()) {
+            booking.setUserAddress(null);
+        } else booking.setUserAddress(userAddress);
         Booking savedBooking = bookingService.save(booking);
 
         //Save booking details

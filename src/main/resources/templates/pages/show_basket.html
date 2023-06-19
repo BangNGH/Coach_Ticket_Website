@@ -85,7 +85,6 @@
                                    onclick="return confirm('Bạn có chắc muốn hủy chuyến này chứ?')">Hủy |</a>
                                 <a th:href="@{'/users/payment-basket?bookingId=' + ${booking.id} + '&totalPrice=' + ${booking.bookingDetails.get(0).totalPrice}}">Thanh
                                     toán</a>
-
                             </td>
                         </tr>
                         </tbody>
