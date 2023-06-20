@@ -26,10 +26,12 @@
     <div class="container-fluid text-center">
         <hr/>
         <div>
-            <h2><span th:text="'Chuyến ' + ${startCity}"></span> ➝ <span th:text="${endCity}"></span></h2>
+            <h2 style="color: #f8b600;"><span th:text="'Chuyến ' + ${startCity}"></span> ➝ <span
+                    th:text="${endCity}"></span></h2>
         </div>
         <div>
-            <h3><span th:text="'Ngày '+${#temporals.format(startTime, 'dd/MM/yyyy')}"></span></h3>
+            <h3 style="color: #f8b600;"><span th:text="'Ngày '+${#temporals.format(startTime, 'dd/MM/yyyy')}"></span>
+            </h3>
         </div>
         <div>
             <div class="seat-map-container">
