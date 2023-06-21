@@ -1,5 +1,6 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller;
 
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.ResetPasswordEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserNotFoundException;
@@ -26,12 +27,22 @@ public class ForgotPassword {
     private final HttpServletRequest servletRequest;
 
     @PostMapping("/process-forgot-password")
-    public String processForgotPassword(@RequestParam("email") String email, Model model, final HttpServletRequest request) {
+    public String processForgotPassword(@RequestParam("email") String email, Model model) {
         try {
             Optional<UserEntity> foundUser = userService.findbyEmail(email);
             if (foundUser == null) {
                 model.addAttribute("error", "Không tìm thấy người dùng với email: " + email);
                 return "auth-forgot-password";
+            }
+            if (foundUser.get().getProvider() != null) {
+                if (foundUser.get().getProvider() == Provider.GITHUB) {
+                    model.addAttribute("error", "Bạn đã đăng nhập bằng tài khoản Github với email này.");
+                    return "auth-forgot-password";
+                }
+                if (foundUser.get().getProvider() == Provider.GOOGLE) {
+                    model.addAttribute("error", "Bạn đã đăng nhập bằng tài khoản Google với email này.");
+                    return "auth-forgot-password";
+                }
             }
             publisher.publishEvent(new ResetPasswordEvent(foundUser.get(), applicationUrl(servletRequest)));
             model.addAttribute("success", "Gửi yêu cầu thành công, hãy kiểm tra email của bạn.");

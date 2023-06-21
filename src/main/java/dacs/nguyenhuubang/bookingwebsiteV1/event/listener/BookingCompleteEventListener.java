@@ -68,15 +68,17 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         mailContentBuilder.append("<head>");
         mailContentBuilder.append("<style>");
         mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
-        mailContentBuilder.append("h2 { color: #383429; }");
-        mailContentBuilder.append(".container { background-color: #ffffff;margin: 20px; padding: 20px; border: 3px solid #ffffff; }");
+        mailContentBuilder.append("h3 { color: #383429; }");
+        mailContentBuilder.append("h1 { color: #ffc31e; }");
+        mailContentBuilder.append(".container { background-color: #ffffff;max-width: 500px;margin: 20px; padding: 20px; border: 3px solid #ffffff;border-radius: 10px;}");
         mailContentBuilder.append("p { margin-bottom: 10px; }");
-        mailContentBuilder.append("a { color: #28a745; }");
+        mailContentBuilder.append("a { color: #ffc31e; text-decoration: none;}");
         mailContentBuilder.append("</style>");
         mailContentBuilder.append("</head>");
-        mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px\">");
+        mailContentBuilder.append("<body style=\"background-color: #e1dada;padding:20px;border-radius: 10px;margin: 0 auto; max-width: fit-content;\">");
         mailContentBuilder.append("<div class=\"container\">");
-        mailContentBuilder.append("<h2>Xin chào, " + theBooking.getUser().getFullname() + "</h2>");
+        mailContentBuilder.append("<h1>TRAVELISTA</h1><hr>");
+        mailContentBuilder.append("<h3>Xin chào, " + theBooking.getUser().getFullname() + "</h3>");
         mailContentBuilder.append("<p>Cám ơn bạn đã chọn nhà xe của chúng tôi, dưới đây là thông tin vé của bạn</p>");
         mailContentBuilder.append("<p><strong>Thông tin vé lượt đi:</strong> tuyến: " + theBooking.getTrip().getRoute().getName() + ", ngày: " + theBooking.getBookingDate() + ", lúc: " + theBooking.getTrip().getStartTime() + "</p>");
         mailContentBuilder.append("<p><strong>Số lượng vé lượt đi:</strong> " + numberOfTicket + "</p>");
@@ -103,7 +105,7 @@ public class BookingCompleteEventListener implements ApplicationListener<Booking
         NumberFormat vn = NumberFormat.getInstance(localeVN);
         String str2 = vn.format(Double.parseDouble(totalPrice));
         mailContentBuilder.append("<p><strong>Tổng tiền:</strong> " + str2 + "đ</p>");
-        mailContentBuilder.append("<p>Quý khách vui lòng đến nhà xe trước thời gian khởi hành <strong>20 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình mã qr cho nhân viên soát vé.<a href=\"" + url + "\">Xem chi tiết vé</a></p>");
+        mailContentBuilder.append("<p>Quý khách vui lòng đến nhà xe trước thời gian khởi hành <strong>20 phút</strong>. Khi lên xe, quý khách vui lòng xuất trình mã QR cho nhân viên soát vé.<a href=\"" + url + "\"> Xem chi tiết vé ở đây</a></p>");
         // Tạo mã QR từ URL
         String qrCodeUrl = generateQRCodeUrl(url);
         mailContentBuilder.append("<img src=\"" + qrCodeUrl + "\" alt=\"QR Code\" width=\"200\" height=\"200\">");

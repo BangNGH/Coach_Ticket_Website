@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Tìm Chuyến Xe</title>
+</head>
+<body>
+<tbody th:fragment="destinationTrips">
+<tr th:if="${isListEmpty}">
+  <td colspan='11' class='text-center'>Không tìm thấy chuyến nào trong hôm nay.</td>
+</tr>
+
+<th:block th:unless="${isListEmpty}" th:each="trip: ${foundTrips}">
+  <tr>
+    <td th:text="${trip.route.startCity.name} + ' ➝ ' + ${trip.route.endCity.name}"></td>
+    <td th:text="${trip.startTime} + ' ➝ ' + ${trip.startTime.plusHours(trip.route.timeTrip)}"></td>
+    <td>[[${trip.vehicle.name}]]</td>
+    <td>[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') + 'đ'}]]</td>
+    <td th:text="${availableSeatsMap.get(trip.id)}"></td>
+    <td>
+      <label class="radio-container">
+        <input type="radio" name="selectedTrip" th:value="${trip.id}">
+        <span class="radio-checkmark"></span>
+        <span class="radio-label">Chọn</span>
+      </label>
+    </td>
+    <td>
+      <div class="seat-map">
+        <th:block th:each="seat : ${trip.getVehicle().getSeats()}">
+          <div class="seat-item">
+            <input type="checkbox" name="selectedSeats" th:value="${seat.getId()}"
+                   disabled th:id="'seatReserved-' + ${seat.getId()}"
+                   th:checked="${listReservedSeat.get(trip.id).contains(seat)}"
+                   th:disabled="${listReservedSeat.get(trip.id).contains(seat)}">
+            <label th:text="${seat.getName()}" th:for="'seat-' + ${seat.getId()}"
+                   th:style="${listReservedSeat.get(trip.id).contains(seat)} ? 'background-color: #b93333;color:white;' : ''"
+                   onclick="toggleCheckbox(this.previousElementSibling)"></label>
+          </div>
+        </th:block>
+      </div>
+      <input type="hidden" id="selectedTripId" name="selectedTripId">
+      <input type="hidden" id="inputSelectedSeats" name="inputSelectedSeats">
+      <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
+      <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
+      <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
+      <div style="margin-top: 30px;">
+        <label th:for="sample"
+               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
+        <label th:for="sample" style="color:black;font-size: 20px;"
+        >: Đã được đặt trước</label>
+      </div>
+      <button style="margin-top: 30px;" class="btn btn-outline-primary book-button"
+              th:id="${'bookButton_' + trip.id}">Tiếp tục
+      </button>
+    </td>
+    <td>
+      <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
+    </td>
+  </tr>
+</th:block>
+</tbody>
+</body>
+</html>

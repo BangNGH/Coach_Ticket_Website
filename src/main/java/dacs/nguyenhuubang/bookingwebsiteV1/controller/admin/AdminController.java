@@ -1,8 +1,8 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.controller.admin;
 
 import dacs.nguyenhuubang.bookingwebsiteV1.config.momo.MoMoSecurity;
+import dacs.nguyenhuubang.bookingwebsiteV1.config.momo.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.vnpay.Config;
-import dacs.nguyenhuubang.bookingwebsiteV1.config.vnpay.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.SendEmailReminderEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.CannotDeleteException;
@@ -655,9 +655,12 @@ public class AdminController {
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
+        String vnp_IpAddr = Config.getIpAddress(request);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         vnp_Params.put("vnp_BankCode", "VnPayQR");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", bookingId);
+        vnp_Params.put("vnp_OrderType", "billpayment");
         vnp_Params.put("vnp_Locale", "vn");
         String vnp_Returnurl = applicationUrl(request) + "/admin/vnpay-payment-result";
         vnp_Params.put("vnp_ReturnUrl", vnp_Returnurl);
@@ -698,6 +701,7 @@ public class AdminController {
         String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
+        System.out.println("Called: " + paymentUrl);
         return paymentUrl;
     }
 

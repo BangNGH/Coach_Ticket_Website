@@ -108,52 +108,36 @@
 			</div>
 		</section>
 		<!-- End popular-destination Area -->
-
-		<section class="price-area section-gap">
-			<div class="container">
-				<div class="row d-flex justify-content-center">
-					<div class="menu-content pb-70 col-lg-8">
-						<div class="title text-center">
-							<h1 class="mb-10">Chúng tôi luôn cung cấp chuyến đi với giá cả hợp lý.</h1>
-						</div>
+		<div class="container">
+			<div class="row d-flex justify-content-center">
+				<div class="menu-content pb-70 col-lg-8">
+					<div class="title text-center">
+						<h1 class="mb-10">Chúng tôi luôn cung cấp chuyến đi với giá cả hợp lý</h1>
+						<p>
+							Gợi ý cho bạn chuyến xe phổ biến tại Travelista.
+						</p>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<div class="card">
-							<div class="card-body">
-								<h4 class="card-title">CHUYẾN ĐI PHỔ BIẾN</h4>
-								<div class="table-responsive">
-									<table class="table table-striped" style="margin-left: 50px;">
-										<thead>
-										<tr>
-											<th>Điểm đi</th>
-											<th>Điểm đến</th>
-											<th>Giá tiền</th>
-										</tr>
-										</thead>
-										<tbody id="tbody">
-										<th:block th:each="trip: ${topTripList}">
-											<tr>
-												<td>[[${trip.route.startCity.name}]]</td>
-												<td>[[${trip.route.endCity.name}]]</td>
-												<td>
-													<a th:href="@{'/booking-popular-trip/'+${trip.id} }"
-													   class="btn btn-primary">
-														[[${#numbers.formatDecimal(trip.price, 0, 'COMMA', 0, 'POINT') +
-														'đ'}]]
-													</a>
-												</td>
-											</tr>
-										</th:block>
-										</tbody>
-									</table>
-								</div>
-							</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-4" th:each="trip: ${topTripList}">
+					<div class="single-destination relative">
+						<div class="thumb relative">
+							<div class="overlay overlay-bg"></div>
+							<img alt="hình thành phố" style="width: 700px;height: 350px;" class="img-fluid"
+								 th:src="@{${trip.route.startCity.cityImagePath}}">
+						</div>
+						<div class="desc">
+							<a th:href="@{'/booking-popular-trip/'+${trip.id} }" class="price-btn">[[${#numbers.formatDecimal(trip.price,
+								0, 'COMMA', 0, 'POINT') +
+								'đ'}]]</a>
+							<h4 th:text="${trip.route.startCity.name} + ' ➝ ' + ${trip.route.endCity.name}"></h4>
+							<p></p>
 						</div>
 					</div>
 				</div>
 			</div>
+		</div>
 		</section>
 
 		<!-- End price Area -->

@@ -13,7 +13,6 @@
 	<artifactId>bookingwebsiteV1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bookingwebsiteV1</name>
-	<packaging>war</packaging>
 	<description>v1 </description>
 	<properties>
 		<mysql.version>8.0.33</mysql.version>

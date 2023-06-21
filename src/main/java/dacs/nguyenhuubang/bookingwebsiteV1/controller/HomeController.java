@@ -173,7 +173,7 @@ public class HomeController {
                            @RequestParam("endCity") City endCity, @RequestParam("startTime") LocalDate startTime,
                            @RequestParam(value = "endTime", required = false) LocalDate endTime) {
         try {
-            List<Trip> foundTrips = new ArrayList<>();
+            List<Trip> foundTrips;
             if (startTime.isEqual(LocalDate.now())) {
                 foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity).stream()
                         .filter(trip -> trip.getStartTime().isAfter(LocalTime.now()))
@@ -229,7 +229,14 @@ public class HomeController {
     private String findDestination(@PathVariable("id") Integer cityId, RedirectAttributes re, Model model) {
         try {
             City endCity = cityService.get(cityId);
-            List<Trip> foundTrips = tripService.findTripsByDestination(endCity);
+            List<Trip> foundTrips = tripService.findTripsByDestination(endCity).stream()
+                    .filter(trip -> trip.getStartTime().isAfter(LocalTime.now()))
+                    .sorted(Comparator.comparing(Trip::getStartTime))
+                    .collect(Collectors.toList());
+            if (foundTrips.isEmpty()) {
+                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
+                return "redirect:/";
+            }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();
@@ -251,11 +258,10 @@ public class HomeController {
             model.addAttribute("header", "Tất cả chuyến đến " + endCity.getName());
             model.addAttribute("currentPage", "Tìm chuyến");
             model.addAttribute("startTime", LocalDate.now());
-            model.addAttribute("startCity", " ");
             model.addAttribute("endCity", endCity.getName());
             model.addAttribute("endTime", "");
 
-            return "pages/find_trip";
+            return "pages/find_trip_by_detination";
         } catch (CityNotFoundException e) {
             re.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/";
@@ -269,7 +275,11 @@ public class HomeController {
             City startCity = foundTrip.getRoute().getStartCity();
             City endCity = foundTrip.getRoute().getEndCity();
 
-            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity);
+            List<Trip> foundTrips = tripService.findTripsByCitiesAndStartTime(startCity, endCity).stream().filter(trip -> trip.getStartTime().isAfter(LocalTime.now()))
+                    .sorted(Comparator.comparing(Trip::getStartTime))
+                    .collect(Collectors.toList());
+            ;
+
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();

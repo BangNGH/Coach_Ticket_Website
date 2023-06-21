@@ -1,4 +1,4 @@
-package dacs.nguyenhuubang.bookingwebsiteV1.config.vnpay;
+package dacs.nguyenhuubang.bookingwebsiteV1.config.momo;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;

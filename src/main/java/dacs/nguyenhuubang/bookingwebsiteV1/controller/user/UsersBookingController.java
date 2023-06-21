@@ -4,8 +4,8 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.momo.MoMoSecurity;
+import dacs.nguyenhuubang.bookingwebsiteV1.config.momo.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.config.vnpay.Config;
-import dacs.nguyenhuubang.bookingwebsiteV1.config.vnpay.PaymentRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.*;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.BookingCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
@@ -471,10 +471,14 @@ public class UsersBookingController {
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
+        String vnp_IpAddr = Config.getIpAddress(request);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         // vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", bookingId);
+        vnp_Params.put("vnp_OrderType", "billpayment");
         vnp_Params.put("vnp_Locale", "vn");
+
         String vnp_Returnurl = applicationUrl(request) + "/users/vnpay-payment-result";
         vnp_Params.put("vnp_ReturnUrl", vnp_Returnurl);
 
@@ -514,6 +518,7 @@ public class UsersBookingController {
         String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
+        System.out.println("Called: " + paymentUrl);
         return paymentUrl;
     }
 
@@ -607,16 +612,18 @@ public class UsersBookingController {
                 //Gửi sms
                 UserEntity checkUser = userService.findbyEmail(p.getName()).get();
                 String destinyPhone = checkUser.getAddress();
-                if (validatePhoneNumber(destinyPhone)) {
-                    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-                    System.out.println("Sending sms...");
-                    String message = "Cám ơn bạn đã đặt vé tại Travelista, phương thức thanh toán MOMO. Tuyến: " + myBooking2.getTrip().getRoute().getName() + ", lúc: " + myBooking2.getTrip().getStartTime() + ", mã vé: " + myBooking2.getBookingDetails().get(0).getId().getTicketCode() + ". Vui lòng mang theo thông tin email hoặc tin nhắn này để soát vé trước khi lên xe, hãy kiểm tra email của bạn để xem chi tiết vé";
-                    // Sử dụng thư viện Twilio để gửi tin nhắn SMS
-                    Message.creator(
-                            new PhoneNumber(destinyPhone), // Số điện thoại người nhận (+84 + số điện thoại)
-                            new PhoneNumber(TWILIO_PHONE_NUMBER), // Số điện thoại nguồn (Twilio phone number)
-                            message// Nội dung tin nhắn
-                    ).create();
+                if (destinyPhone != null) {
+                    if (validatePhoneNumber(destinyPhone)) {
+                        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+                        System.out.println("Sending sms...");
+                        String message = "Cám ơn bạn đã đặt vé tại Travelista, phương thức thanh toán MOMO. Tuyến: " + myBooking2.getTrip().getRoute().getName() + ", lúc: " + myBooking2.getTrip().getStartTime() + ", mã vé: " + myBooking2.getBookingDetails().get(0).getId().getTicketCode() + ". Vui lòng mang theo thông tin email hoặc tin nhắn này để soát vé trước khi lên xe, hãy kiểm tra email của bạn để xem chi tiết vé";
+                        // Sử dụng thư viện Twilio để gửi tin nhắn SMS
+                        Message.creator(
+                                new PhoneNumber(destinyPhone), // Số điện thoại người nhận (+84 + số điện thoại)
+                                new PhoneNumber(TWILIO_PHONE_NUMBER), // Số điện thoại nguồn (Twilio phone number)
+                                message// Nội dung tin nhắn
+                        ).create();
+                    }
                 }
 
                 model.addAttribute("bookingTransit", true);
