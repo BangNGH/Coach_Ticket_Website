@@ -31,8 +31,8 @@ $(document).ready(function () {
             <td>${booking.note != null ? booking.note : 'Không có ghi chú'}</td>
             <td>${booking.userAddress != null ? booking.userAddress : 'Tại nhà xe'}</td>
         <td>
-          <a href="/admin/bookings/edit/${booking.id}">Sửa</a> |
-          <a href="/admin/bookings/delete/${booking.id}" class="text-danger" onclick="return confirm('Bạn có chắc muốn xóa chứ?')">Xóa</a>
+          <a href="/admin/bookings/edit/${booking.id}">Sửa</a>
+        
         </td>
       </tr>
     `;

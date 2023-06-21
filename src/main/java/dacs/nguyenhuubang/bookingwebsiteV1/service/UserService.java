@@ -1,14 +1,13 @@
 package dacs.nguyenhuubang.bookingwebsiteV1.service;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.config.IUserService;
 import dacs.nguyenhuubang.bookingwebsiteV1.dto.RegistrationRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
+import dacs.nguyenhuubang.bookingwebsiteV1.entity.VerificationToken;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserAlreadyExistsException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserNotFoundException;
-import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationToken;
-import dacs.nguyenhuubang.bookingwebsiteV1.registration.token.VerificationTokenRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.UserRepository;
+import dacs.nguyenhuubang.bookingwebsiteV1.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
