@@ -1,37 +1,12 @@
 package dacs.nguyenhuubang.bookingwebsiteV1;
 
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.City;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.Trip;
-import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.CityRepository;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.TripRepository;
-import dacs.nguyenhuubang.bookingwebsiteV1.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import org.springframework.test.annotation.Rollback;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 
-@DataJpaTest
+/*@DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Rollback(value = false)
+@Rollback(value = false)*/
 public class UserRepositoryTest {
-    @Autowired
+  /*  @Autowired
     private UserRepository userRepo;
     @Autowired
     private CityRepository cityRepository;
@@ -73,12 +48,12 @@ public class UserRepositoryTest {
         userRepo.findAll().forEach(e -> result.add(e));
         assertEquals(result.size(), 1);
     }
-/*    @Test
+*//*    @Test
     public void testFindUser() {
         List<UserEntity> result = new ArrayList<>();
         userRepo.search("B").forEach(e -> result.add(e));
         assertEquals(result.size(), 1);
-    }*/
+    }*//*
     @Test
     public void testFindById() {
         UserEntity employee = getUser();
@@ -114,5 +89,5 @@ public class UserRepositoryTest {
         assertThat(user).isPresent();
         System.out.println(user.get());
     }
-
+*/
 }

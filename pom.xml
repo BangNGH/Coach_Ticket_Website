@@ -13,6 +13,7 @@
 	<artifactId>bookingwebsiteV1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bookingwebsiteV1</name>
+	<packaging>war</packaging>
 	<description>v1 </description>
 	<properties>
 		<mysql.version>8.0.33</mysql.version>
@@ -59,12 +60,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
             <version>6.0.3</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
 		</dependency>
 
 		<dependency>
@@ -127,10 +122,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
