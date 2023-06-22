@@ -31,7 +31,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
         userService.saveUserVerificationToken(theUser, verificationToken);
         String url = event.getApplicationUrl()+"/register/verifyEmail?token="+verificationToken;
         try {
-            sendVerificationEmail(url);
+            sendVerificationEmail(theUser, url);
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -39,41 +39,17 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 
     }
 
-/*    public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
+    public void sendVerificationEmail(UserEntity theUser, String url) throws MessagingException, UnsupportedEncodingException {
         String subject = "Xác Nhận Tài Khoản";
-        String senderName = "Nhà xe Travelista";
-        String mailContent = "<html><head><style>" +
-                "body { font-family: Arial, sans-serif; }" +
-                "h2 { color: #325174; }" +
-                "p { font-size: 16px; }" +
-                "a { background-color: #bbbfcb; color: #FFFFFF; padding: 10px 15px; border-radius: 5px; text-decoration: none; }" +
-                "</style></head>" +
-                "<body>" +
-                "<h2>Hi, " + theUser.getFullname() + "</h2>" +
-                "<p>Cám ơn bạn đã đăng ký tại khoản tại Travelista. Để xác nhận việc đăng ký tài khoản của bạn, vui lòng ấn vòng đường link bên dưới:</p>" +
-                "<p><a href=\"" + url + "\">Xác nhận đăng ký</a></p>" +
-                "<p>Xin cám ơn,<br>Nhà xe Travelista</p>" +
-                "</body></html>";
-        MimeMessage message = mailSender.createMimeMessage();
-        var messageHelper = new MimeMessageHelper(message);
-        messageHelper.setFrom("nghbang1909@gmail.com", senderName);
-        System.out.println("Sending email to" + theUser.getEmail() + "...");
-        messageHelper.setTo(theUser.getEmail());
-        messageHelper.setSubject(subject);
-        messageHelper.setText(mailContent, true);
-        mailSender.send(message);
-    } */
-public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
-    String subject = "Xác Nhận Tài Khoản";
-    String senderName = "Travelista";
-    StringBuilder mailContentBuilder = new StringBuilder();
-    mailContentBuilder.append("<html>");
-    mailContentBuilder.append("<head>");
-    mailContentBuilder.append("<style>");
-    mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
-    mailContentBuilder.append("h3 { color: #383429; }");
-    mailContentBuilder.append("h1 { color: #ffc31e; }");
-    mailContentBuilder.append(".container { background-color: #ffffff;max-width: 400px;margin: 20px; padding: 20px; border: 3px solid #ffffff;border-radius: 10px;}");
+        String senderName = "Travelista";
+        StringBuilder mailContentBuilder = new StringBuilder();
+        mailContentBuilder.append("<html>");
+        mailContentBuilder.append("<head>");
+        mailContentBuilder.append("<style>");
+        mailContentBuilder.append("body { font-family: Arial, sans-serif; }");
+        mailContentBuilder.append("h3 { color: #383429; }");
+        mailContentBuilder.append("h1 { color: #ffc31e; }");
+        mailContentBuilder.append(".container { background-color: #ffffff;max-width: 400px;margin: 20px; padding: 20px; border: 3px solid #ffffff;border-radius: 10px;}");
     mailContentBuilder.append("p { margin-bottom: 10px; }");
     mailContentBuilder.append("a { color: #ffc31e; text-decoration: none; }");
     mailContentBuilder.append("</style>");

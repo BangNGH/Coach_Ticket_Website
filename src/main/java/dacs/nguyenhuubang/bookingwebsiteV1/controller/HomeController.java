@@ -184,7 +184,7 @@ public class HomeController {
                 foundTrips.sort(Comparator.comparing(Trip::getStartTime));
             }
             if (foundTrips.isEmpty()) {
-                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
+                re.addFlashAttribute("errorMessage", "Chưa có chuyến mà bạn tìm kiếm trong hôm nay");
                 return "redirect:/";
             }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
@@ -197,9 +197,9 @@ public class HomeController {
                 List<Seat> listReservedSeat = seatReservationService.listReservedSeat(trip.getVehicle(), trip, startTime);
                 int availableSeats = totalSeat - seatReserved;
 
-                loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);
-                loadReservedSeat.put(trip.getId(), listReservedSeat);
-                availableSeatsMap.put(trip.getId(), availableSeats);
+                loadAvailableSeatsMap.put(trip.getId(), seatsAvailable);//ghế có thể đặt
+                loadReservedSeat.put(trip.getId(), listReservedSeat);//ghế đã được đặt
+                availableSeatsMap.put(trip.getId(), availableSeats);//số lượng ghế có thể đặt
             }
 
             if (foundTrips.isEmpty()) {
@@ -234,7 +234,7 @@ public class HomeController {
                     .sorted(Comparator.comparing(Trip::getStartTime))
                     .collect(Collectors.toList());
             if (foundTrips.isEmpty()) {
-                re.addFlashAttribute("errorMessage", "Hiện chưa có chuyến mà bạn tìm kiếm");
+                re.addFlashAttribute("errorMessage", "Chưa có chuyến mà bạn tìm kiếm trong hôm nay");
                 return "redirect:/";
             }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
@@ -279,7 +279,10 @@ public class HomeController {
                     .sorted(Comparator.comparing(Trip::getStartTime))
                     .collect(Collectors.toList());
             ;
-
+            if (foundTrips.isEmpty()) {
+                re.addFlashAttribute("errorMessage", "Chưa có chuyến mà bạn tìm kiếm trong hôm nay");
+                return "redirect:/";
+            }
             Map<Integer, Integer> availableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadAvailableSeatsMap = new HashMap<>();
             Map<Integer, List<Seat>> loadReservedSeat = new HashMap<>();

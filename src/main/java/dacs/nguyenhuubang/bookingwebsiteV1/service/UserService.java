@@ -4,6 +4,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.dto.RegistrationRequest;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.Provider;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.VerificationToken;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserAlreadyExistsException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.UserRepository;
@@ -110,6 +111,9 @@ public class UserService implements IUserService {
     @Override
     public VerificationToken generateNewVerificationToken(String oldToken) {
         VerificationToken verificationToken = tokenRepository.findByToken(oldToken);
+        if (verificationToken == null) {
+            throw new ResourceNotFoundException("Token " + oldToken + " is not valid");
+        }
         var verificationTokenTime = new VerificationToken();
         verificationToken.setToken(UUID.randomUUID().toString());
         verificationToken.setExpirationTime(verificationTokenTime.getTokenExpirationTime());

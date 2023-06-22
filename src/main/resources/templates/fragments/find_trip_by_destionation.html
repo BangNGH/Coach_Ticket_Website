@@ -43,17 +43,34 @@
       <input type="hidden" name="startTime" id="startTime" th:value="${startTime}">
       <input type="hidden" id="endTime" name="endTime" th:value="${endTime}">
       <input type="hidden" name="endCity" id="endCity" th:value="${endCity}">
-      <div style="margin-top: 30px;">
-        <label th:for="sample"
-               style="background-color: #b93333;color:white;padding: 6px;">Ghế</label>
-        <label th:for="sample" style="color:black;font-size: 20px;"
-        >: Đã được đặt trước</label>
+      <div style="margin-top: 20px;flex-direction: column;" class="d-flex">
+        <div style="margin-top: 10px;">
+          <label th:for="sample"
+                 style="float: left;margin-left:10%;background-color: #ECECEC;color:black;padding: 6px;border-radius:7px;">Ghế</label>
+          <label th:for="sample"
+                 style="float: left;margin-left:10%;color:black;font-size: 20px;"
+          >: Trống</label>
+        </div>
+        <div style="margin-top: 10px;">
+          <label th:for="sample"
+                 style="float: left;margin-left:10%;background-color: #6fcf97;color:white;padding: 6px;border-radius:7px;">Ghế</label>
+          <label th:for="sample"
+                 style="float: left;margin-left:10%;color:black;font-size: 20px;"
+          >: Đang chọn</label>
+        </div>
+        <div style="margin-top: 10px;">
+          <label th:for="sample"
+                 style="float: left;margin-left:10%;background-color: #b93333;color:white;padding: 6px;border-radius:7px;">Ghế</label>
+          <label th:for="sample"
+                 style="float: left;margin-left:10%;color:black;font-size: 20px;"
+          >: Đã được đặt trước</label>
+        </div>
       </div>
       <button style="margin-top: 30px;" class="btn btn-outline-primary book-button"
               th:id="${'bookButton_' + trip.id}">Tiếp tục
       </button>
     </td>
-    <td>
+    <td style="background-color: white">
       <img alt="seat-map" th:src="@{${trip.vehicle.routeImagePath}}">
     </td>
   </tr>

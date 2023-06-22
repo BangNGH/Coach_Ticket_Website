@@ -5,6 +5,7 @@ import dacs.nguyenhuubang.bookingwebsiteV1.entity.UserEntity;
 import dacs.nguyenhuubang.bookingwebsiteV1.entity.VerificationToken;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.RegistrationCompleteEvent;
 import dacs.nguyenhuubang.bookingwebsiteV1.event.listener.RegistrationCompleteEventListener;
+import dacs.nguyenhuubang.bookingwebsiteV1.exception.ResourceNotFoundException;
 import dacs.nguyenhuubang.bookingwebsiteV1.exception.UserAlreadyExistsException;
 import dacs.nguyenhuubang.bookingwebsiteV1.repository.VerificationTokenRepository;
 import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
@@ -59,7 +60,7 @@ public class RegisterController {
 
     @GetMapping("/verifyEmail")
     public String verifyEmail(@RequestParam("token") String token, Model model) {
-
+        System.out.println("TOKEN: " + token);
         String url = applicationUrl(servletRequest)+"/register/resend-verification-token?token="+token;
         VerificationToken theToken = tokenRepository.findByToken(token);
         if (theToken.getUser().isEnabled()) {
@@ -72,7 +73,7 @@ public class RegisterController {
                 model.addAttribute("message", "Xác nhận tài khoản thành công. Bạn đã có thể đăng nhập");
             } else {
                 model.addAttribute("title", "Lỗi");
-                model.addAttribute("message", "Đường dẫn này đã hết hạn, hãy<a href=\"" + url + "\">lấy đường dẫn mới </a>để kích hoạt tài khoản của bạn!");
+                model.addAttribute("message", "Đường dẫn này đã hết hạn, hãy <a href=\"" + url + "\">lấy đường dẫn mới </a>để kích hoạt tài khoản của bạn!");
             }
         }
         return "registerVerifyResult";
@@ -84,15 +85,23 @@ public class RegisterController {
 
     @GetMapping("/resend-verification-token")
     public String resendVerificationToken(@RequestParam("token") String oldToken, final HttpServletRequest request, Model model) throws MessagingException, UnsupportedEncodingException {
-        VerificationToken verificationToken = userService.generateNewVerificationToken(oldToken);
-        UserEntity theUser = verificationToken.getUser();
-        resendVerificationTokenEmail(theUser, applicationUrl(request), verificationToken);
-        model.addAttribute("message", "Đường dẫn mới đã được gửi đến email của bạn và sẽ hết hạn trong vòng 15 phút, hãy kiểm tra đường dẫn để kích hoạt tài khoản.");
+        try {
+            VerificationToken verificationToken = userService.generateNewVerificationToken(oldToken);
+            UserEntity theUser = verificationToken.getUser();
+            resendVerificationTokenEmail(theUser, applicationUrl(request), verificationToken);
+            model.addAttribute("title", "Thông báo");
+            model.addAttribute("message", "Đường dẫn mới đã được gửi đến email của bạn và sẽ hết hạn trong vòng 15 phút, hãy kiểm tra đường dẫn để kích hoạt tài khoản.");
+
+        } catch (ResourceNotFoundException e) {
+            model.addAttribute("title", "Lỗi");
+            model.addAttribute("message", "Có lỗi xảy ra trong quá trình tìm kiếm token của bạn!.");
+        }
         return "registerVerifyResult";
+
     }
 
     private void resendVerificationTokenEmail(UserEntity theUser, String applicationUrl, VerificationToken verificationToken) throws MessagingException, UnsupportedEncodingException {
         String url = applicationUrl+"/register/verifyEmail?token="+verificationToken.getToken();
-        eventListener.sendVerificationEmail(url);
+        eventListener.sendVerificationEmail(theUser, url);
     }
 }

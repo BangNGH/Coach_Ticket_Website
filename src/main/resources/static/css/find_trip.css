@@ -7,7 +7,6 @@
 tr:hover {
     background-color: #f8f8f8;
     color: black;
-    font-size: 14.7px;
 }
 
 .seat-map {
@@ -33,6 +32,7 @@ tr:hover {
     text-align: center;
     cursor: pointer;
     flex: 1;
+    border-radius: 7px;
 }
 
 .seat-item input[type="checkbox"] {
