@@ -34,13 +34,17 @@ public class RegisterController {
 
     @GetMapping("")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("registrationRequest", new RegistrationRequest("USER","", "", "", ""));
+        model.addAttribute("registrationRequest", new RegistrationRequest("USER", "", "", "", ""));
+        String url = applicationUrl(servletRequest) + "/home";
+        model.addAttribute("url", url);
         return "auth-register";
     }
 
     @PostMapping("/process_register")
     public String processRegister(@Valid @ModelAttribute("registrationRequest") RegistrationRequest registrationRequest, BindingResult bindingResult, final HttpServletRequest request, Model model) {
         if (bindingResult.hasErrors()) {
+            String url = applicationUrl(servletRequest) + "/home";
+            model.addAttribute("url", url);
             return "auth-register";
         }
         try {
@@ -53,8 +57,12 @@ public class RegisterController {
             model.addAttribute("email", user.getEmail());
         } catch (UserAlreadyExistsException e) {
             model.addAttribute("errorMessage", e.getMessage());
+            String url = applicationUrl(servletRequest) + "/home";
+            model.addAttribute("url", url);
             return "auth-register";
         }
+        String url = applicationUrl(servletRequest) + "/home";
+        model.addAttribute("url", url);
         return "registerResult";
     }
 

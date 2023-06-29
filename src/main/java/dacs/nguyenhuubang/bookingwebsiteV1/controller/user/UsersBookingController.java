@@ -48,7 +48,7 @@ public class UsersBookingController {
     private final SeatReservationService seatReservationService;
     private final ApplicationEventPublisher publisher;
     public static final String ACCOUNT_SID = "ACa3f5ab465b8859f75c2294541894d897";
-    public static final String AUTH_TOKEN = "28c441bc38bc0eacbb20ab5362e83e66";
+    public static final String AUTH_TOKEN = "f842a3b72331083b7d0d5072e6841d69";
     public static final String TWILIO_PHONE_NUMBER = "+13156303801";
 
 
@@ -538,7 +538,7 @@ public class UsersBookingController {
 
         String orderInfo = "Payment";
         String returnUrl = applicationUrl(request) + "/users/momo-payment-result";
-        String notifyUrl = "https://4c8d-2001-ee0-5045-50-58c1-b2ec-3123-740d.ap.ngrok.io/home";
+        String notifyUrl = "https://d796-101-99-32-135.ngrok-free.app/home";
         String amount = send_amount;
         String orderId = String.valueOf(System.currentTimeMillis());
         String requestId = String.valueOf(System.currentTimeMillis());

@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {///login controller handle by this
-        registry.addViewController("/login").setViewName("auth-login");
         registry.addViewController("/forgot-password").setViewName("auth-forgot-password");
     }
     @Override

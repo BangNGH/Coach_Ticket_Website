@@ -8,7 +8,6 @@ import dacs.nguyenhuubang.bookingwebsiteV1.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +22,14 @@ import java.util.Optional;
 public class ForgotPassword {
     private final UserService userService;
     private final ApplicationEventPublisher publisher;
-    private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest servletRequest;
+
+    @GetMapping("/login")
+    public String login(Model model) {
+        String url = applicationUrl(servletRequest) + "/home";
+        model.addAttribute("url", url);
+        return "auth-login";
+    }
 
     @PostMapping("/process-forgot-password")
     public String processForgotPassword(@RequestParam("email") String email, Model model) {

@@ -27,6 +27,7 @@ public class HomeController {
     private final ContactService contactService;
     private final SeatReservationService seatReservationService;
 
+
     @GetMapping("/book-now")
     public String bookNow(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("successMessage", "Chọn chuyến đi phù hợp với bạn ở đây");

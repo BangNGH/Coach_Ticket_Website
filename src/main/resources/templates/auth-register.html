@@ -21,10 +21,12 @@
 				<div class="card pt-4">
 					<div class="card-body">
 						<div class="text-center mb-5">
-							<img th:src="@{/img/favicon.svg}" height="48" class='mb-4'>
+							<a th:href="${url}">
+								<img th:src="@{/img/favicon.svg}" height="48" class='mb-4'>
+							</a>
 							<h3>Đăng Ký</h3>
 							<p>Vui lòng điền Thông tin vào mẫu bên dưới.</p>
-							</div>
+						</div>
 							<form th:action="@{/register/process_register}" th:object="${registrationRequest}" method="post">
 								<div th:if="${errorMessage}" class="alert alert-danger">
 									<p th:text="${errorMessage}"></p>
